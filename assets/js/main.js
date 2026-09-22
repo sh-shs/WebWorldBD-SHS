@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (lang === 'bn') {
       const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
       const bnYear = year.replace(/\d/g, d => bnDigits[d]);
-      return `© ${bnYear} WebWorldBD। সর্বস্বত্ব সংরক্ষিত সাফায়েত হোসেন ছারিফ দ্বারা।`;
+      return `© ${bnYear} WebWorldBD। সর্বস্বত্ব সংরক্ষিত শাফাএত হোসেন ছারিফ দ্বারা।`;
     }
     return `© ${year} WebWorldBD. Created with passion by SHAFAET HOSSEN SARIP. All rights reserved.`;
   }
@@ -418,17 +418,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     container.innerHTML = servicesToRender.map(s => `
       <div class="glass-card service-card">
-        <div>
+        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%;">
           <div class="service-icon"><i class="${s.icon || 'fas fa-laptop-code'}"></i></div>
           <h3>${currentLang === 'bn' ? s.title_bn : s.title_en}</h3>
           <p>${currentLang === 'bn' ? s.desc_bn : s.desc_en}</p>
         </div>
-        <div>
+        <div style="width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center;">
           <div class="service-price">
             <span>${translations[currentLang].startingFrom}</span>
             <span>${currentLang === 'bn' ? s.price_bn : s.price_en}</span>
           </div>
-          <a href="${getServiceUrl(s.slug)}" class="btn btn-secondary service-detail-btn" style="width: 100%; margin-top: 1rem; display: flex; align-items: center; justify-content: space-between; font-size: 0.88rem; padding: 0.65rem 1.1rem;">
+          <a href="${getServiceUrl(s.slug)}" class="btn btn-secondary service-detail-btn" style="width: 100%; margin-top: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.88rem; padding: 0.65rem 1.1rem;">
             <span>${btnText}</span>
             <i class="fas fa-arrow-right" style="font-size: 0.85rem;"></i>
           </a>
