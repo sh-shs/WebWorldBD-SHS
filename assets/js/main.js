@@ -297,6 +297,154 @@ document.addEventListener('DOMContentLoaded', () => {
     `).join('');
   }
 
+  function renderProjectThumbnail(projectId, isDetailView = false) {
+    const project = portfolioData.projects.find(p => p.id === projectId);
+    const projectUrl = project ? project.url : '#';
+    const thumbClass = isDetailView ? 'project-thumb project-thumb-detail' : 'project-thumb';
+    let patternSvg = '';
+    let iconSvg = '';
+    let cardClass = '';
+
+    switch (projectId) {
+      case 'shs-bazar':
+        cardClass = 'thumb-shs-bazar';
+        patternSvg = `
+          <svg class="thumb-pattern" viewBox="0 0 400 200" preserveAspectRatio="none">
+            <defs>
+              <pattern id="grid-pattern-shs" width="20" height="20" patternUnits="userSpaceOnUse">
+                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255, 255, 255, 0.22)" stroke-width="1"/>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid-pattern-shs)"/>
+            <circle cx="200" cy="100" r="110" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" stroke-dasharray="4 4"/>
+            <line x1="0" y1="100" x2="400" y2="100" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+          </svg>
+        `;
+        iconSvg = `
+          <svg class="thumb-icon-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 20H48V52C48 54.2091 46.2091 56 44 56H20C17.7909 56 16 54.2091 16 52V20Z" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M24 24V16C24 11.5817 27.5817 8 32 8C36.4183 8 40 11.5817 40 16V24" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M25 34L30 39L39 29" stroke="#38BDF8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="20" y1="47" x2="44" y2="47" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        `;
+        break;
+
+      case 'student-tools-ai':
+        cardClass = 'thumb-student-tools-ai';
+        patternSvg = `
+          <svg class="thumb-pattern" viewBox="0 0 400 200" preserveAspectRatio="none">
+            <defs>
+              <pattern id="dots-pattern-edu" width="28" height="28" patternUnits="userSpaceOnUse">
+                <circle cx="6" cy="6" r="1.5" fill="rgba(255, 255, 255, 0.3)"/>
+                <circle cx="20" cy="20" r="2" fill="rgba(255, 255, 255, 0.2)"/>
+                <circle cx="24" cy="8" r="1" fill="rgba(255, 255, 255, 0.4)"/>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#dots-pattern-edu)"/>
+            <path d="M0 150 Q 100 50, 200 150 T 400 150" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+          </svg>
+        `;
+        iconSvg = `
+          <svg class="thumb-icon-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M32 10L6 23L32 36L58 23L32 10Z" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M14 27.5V42C14 42 22 48 32 48C42 48 50 42 50 42V27.5" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M52 24.5V38C52 39.1046 51.1046 40 50 40C48.8954 40 48 39.1046 48 38V36" stroke="#C084FC" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M48 10C48 13.5 50.5 16 54 16C50.5 16 48 18.5 48 22C48 18.5 45.5 16 42 16C45.5 16 48 13.5 48 10Z" fill="#38BDF8"/>
+            <path d="M12 40C12 42.5 13.5 44 16 44C13.5 44 12 45.5 12 48C12 45.5 10.5 44 8 44C10.5 44 12 42.5 12 40Z" fill="#C084FC"/>
+          </svg>
+        `;
+        break;
+
+      case 'happy-birthday-wish':
+        cardClass = 'thumb-happy-birthday-wish';
+        patternSvg = `
+          <svg class="thumb-pattern" viewBox="0 0 400 200" preserveAspectRatio="none">
+            <defs>
+              <pattern id="confetti-pattern-bday" width="40" height="40" patternUnits="userSpaceOnUse">
+                <circle cx="10" cy="10" r="2" fill="#FFE4E6"/>
+                <circle cx="30" cy="25" r="2.5" fill="#FEF08A"/>
+                <rect x="22" y="8" width="3" height="3" transform="rotate(25 22 8)" fill="#A7F3D0"/>
+                <circle cx="6" cy="32" r="1.5" fill="#FBCFE8"/>
+                <path d="M34 5 Q 38 12, 34 18" fill="none" stroke="#FDE68A" stroke-width="1.5"/>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#confetti-pattern-bday)"/>
+          </svg>
+        `;
+        iconSvg = `
+          <svg class="thumb-icon-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M32 8C22.0589 8 14 16.0589 14 26C14 34.5 21 40 30 43.5L29 47H35L34 43.5C43 40 50 34.5 50 26C50 16.0589 41.9411 8 32 8Z" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M22 18C24 15 27 13 31 12.5" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M32 47C32 49 35 51 33 54C31 57 34 58 33 60" stroke="#FFE4E6" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M10 18L12 22L16 24L12 26L10 30L8 26L4 24L8 22L10 18Z" fill="#FEF08A"/>
+            <path d="M52 36L53.5 39L56.5 40.5L53.5 42L52 45L50.5 42L47.5 40.5L50.5 39L52 36Z" fill="#A7F3D0"/>
+          </svg>
+        `;
+        break;
+
+      case 'animated-heart':
+        cardClass = 'thumb-animated-heart';
+        patternSvg = `
+          <svg class="thumb-pattern" viewBox="0 0 400 200" preserveAspectRatio="none">
+            <defs>
+              <pattern id="sparkle-pattern-heart" width="45" height="45" patternUnits="userSpaceOnUse">
+                <circle cx="12" cy="12" r="1.5" fill="rgba(255,255,255,0.3)"/>
+                <circle cx="35" cy="30" r="2" fill="rgba(254,205,211,0.4)"/>
+                <path d="M24 6 L26 10 L30 12 L26 14 L24 18 L22 14 L18 12 L22 10 Z" fill="rgba(255,255,255,0.2)"/>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#sparkle-pattern-heart)"/>
+            <circle cx="200" cy="100" r="80" fill="rgba(244,63,94,0.18)" filter="blur(20px)"/>
+          </svg>
+        `;
+        iconSvg = `
+          <svg class="thumb-icon-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M32 54.5C32 54.5 8 40 8 23.5C8 15.5 14.5 9 22.5 9C27.2 9 31.3 11.2 32 14.5C32.7 11.2 36.8 9 41.5 9C49.5 9 56 15.5 56 23.5C56 40 32 54.5 32 54.5Z" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="rgba(244,63,94,0.2)"/>
+            <path d="M18 21.5C18.5 17.5 22 14.5 26 14.5" stroke="#FECDD3" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M46 16L47 18.5L49.5 19.5L47 20.5L46 23L45 20.5L42.5 19.5L45 18.5L46 16Z" fill="#FFFFFF"/>
+          </svg>
+        `;
+        break;
+
+      default:
+        cardClass = 'thumb-shs-bazar';
+        patternSvg = '';
+        iconSvg = `<i class="fas fa-code" style="font-size:3rem; color:#fff;"></i>`;
+    }
+
+    if (isDetailView) {
+      return `
+        <div class="${thumbClass} ${cardClass}" style="width: 100%; height: 320px; border-radius: 16px; margin-bottom: 2.5rem; position: relative;">
+          ${patternSvg}
+          <div class="thumb-icon-wrapper">
+            ${iconSvg}
+          </div>
+          <div style="position: absolute; bottom: 15px; right: 15px; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); padding: 0.5rem 1rem; border-radius: 30px; font-size: 0.85rem; color: #fff; z-index: 4;">
+            <i class="fas fa-shield-alt" style="color: var(--accent-blue);"></i> WebWorldBD Verified
+          </div>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="${thumbClass} ${cardClass}">
+        ${patternSvg}
+        <div class="thumb-icon-wrapper">
+          ${iconSvg}
+        </div>
+        <div class="project-thumb-overlay">
+          <a href="${projectUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="padding:0.5rem 1rem; font-size:0.85rem;">
+            <i class="fas fa-external-link-alt"></i> ${translations[currentLang].btnLivePreview}
+          </a>
+          <a href="project-details.html?id=${projectId}" class="btn btn-secondary" style="padding:0.5rem 1rem; font-size:0.85rem;">
+            <i class="fas fa-info-circle"></i> ${translations[currentLang].btnProjectDetails}
+          </a>
+        </div>
+      </div>
+    `;
+  }
+
   function renderProjects(filterCategory = 'all', searchQuery = '') {
     const container = document.getElementById('projects-grid');
     if (!container) return;
@@ -331,16 +479,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     container.innerHTML = filtered.map(p => `
       <div class="glass-card project-card">
-        <div class="project-thumb" style="background-image: url('${p.image}');">
-          <div class="project-thumb-overlay">
-            <a href="${p.url}" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="padding:0.5rem 1rem; font-size:0.85rem;">
-              <i class="fas fa-external-link-alt"></i> ${translations[currentLang].btnLivePreview}
-            </a>
-            <a href="project-details.html?id=${p.id}" class="btn btn-secondary" style="padding:0.5rem 1rem; font-size:0.85rem;">
-              <i class="fas fa-info-circle"></i> ${translations[currentLang].btnProjectDetails}
-            </a>
-          </div>
-        </div>
+        ${renderProjectThumbnail(p.id)}
         <div class="project-info">
           <span class="project-category">${currentLang === 'bn' ? p.categoryName_bn : p.categoryName_en}</span>
           <h3>${p.title}</h3>
@@ -461,11 +600,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </a>
         </div>
 
-        <div style="width: 100%; height: 380px; border-radius: 16px; background: url('${project.image}') center/cover no-repeat; border: 1px solid var(--border-glass); margin-bottom: 2.5rem; position: relative;">
-          <div style="position: absolute; bottom: 15px; right: 15px; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); padding: 0.5rem 1rem; border-radius: 30px; font-size: 0.85rem; color: #fff;">
-            <i class="fas fa-shield-alt" style="color: var(--accent-blue);"></i> WebWorldBD Verified
-          </div>
-        </div>
+        ${renderProjectThumbnail(project.id, true)}
 
         <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 2.5rem;">
           <div>
