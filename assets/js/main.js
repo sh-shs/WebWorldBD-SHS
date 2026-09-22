@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('testimonials-grid')) renderTestimonials();
   if (document.getElementById('faq-accordion')) renderFAQs();
   if (document.getElementById('project-detail-content')) initProjectDetailsPage();
+  if (document.getElementById('service-detail-app')) initServiceDetailPage();
 
   /* --------------------------------------------------------------------------
      2. Theme & Language Functions
@@ -105,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('testimonials-grid')) renderTestimonials();
     if (document.getElementById('faq-accordion')) renderFAQs();
     if (document.getElementById('project-detail-content')) initProjectDetailsPage();
+    if (document.getElementById('service-detail-app')) initServiceDetailPage();
   }
 
   function initLangSwitch() {
@@ -187,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const currentPath = window.location.pathname.toLowerCase();
       let activeNavKey = 'home';
 
-      if (currentPath.endsWith('services.html')) {
+      if (currentPath.endsWith('services.html') || currentPath.includes('/services/')) {
         activeNavKey = 'services';
       } else if (currentPath.endsWith('contact.html')) {
         activeNavKey = 'fab';
@@ -303,6 +305,30 @@ document.addEventListener('DOMContentLoaded', () => {
     counterEls.forEach(el => observer.observe(el));
   }
 
+  /* Helper to determine relative URL path to service detail page */
+  function getServiceUrl(slug) {
+    const isSubdir = window.location.pathname.includes('/services/');
+    return isSubdir ? `${slug}.html` : `services/${slug}.html`;
+  }
+
+  /* Helper to determine relative URL path to contact page */
+  function getContactUrl() {
+    const isSubdir = window.location.pathname.includes('/services/');
+    return isSubdir ? `../contact.html` : `contact.html`;
+  }
+
+  /* Helper to determine relative URL path to home page */
+  function getHomeUrl() {
+    const isSubdir = window.location.pathname.includes('/services/');
+    return isSubdir ? `../index.html` : `index.html`;
+  }
+
+  /* Helper to determine relative URL path to services page */
+  function getServicesPageUrl() {
+    const isSubdir = window.location.pathname.includes('/services/');
+    return isSubdir ? `../services.html` : `services.html`;
+  }
+
   /* --------------------------------------------------------------------------
      6. Dynamic Content Renderers
      -------------------------------------------------------------------------- */
@@ -316,16 +342,24 @@ document.addEventListener('DOMContentLoaded', () => {
       servicesToRender = servicesToRender.filter(s => s.featured).slice(0, limit);
     }
 
+    const btnText = translations[currentLang]?.btnLearnMore || (currentLang === 'bn' ? 'প্রজেক্ট সম্পর্কে বিস্তারিত জানুন' : 'Learn More');
+
     container.innerHTML = servicesToRender.map(s => `
       <div class="glass-card service-card">
         <div>
-          <div class="service-icon"><i class="fas fa-laptop-code"></i></div>
+          <div class="service-icon"><i class="${s.icon || 'fas fa-laptop-code'}"></i></div>
           <h3>${currentLang === 'bn' ? s.title_bn : s.title_en}</h3>
           <p>${currentLang === 'bn' ? s.desc_bn : s.desc_en}</p>
         </div>
-        <div class="service-price">
-          <span>${translations[currentLang].startingFrom}</span>
-          <span>${currentLang === 'bn' ? s.price_bn : s.price_en}</span>
+        <div>
+          <div class="service-price">
+            <span>${translations[currentLang].startingFrom}</span>
+            <span>${currentLang === 'bn' ? s.price_bn : s.price_en}</span>
+          </div>
+          <a href="${getServiceUrl(s.slug)}" class="btn btn-secondary service-detail-btn" style="width: 100%; margin-top: 1rem; display: flex; align-items: center; justify-content: space-between; font-size: 0.88rem; padding: 0.65rem 1.1rem;">
+            <span>${btnText}</span>
+            <i class="fas fa-arrow-right" style="font-size: 0.85rem;"></i>
+          </a>
         </div>
       </div>
     `).join('');
@@ -688,6 +722,183 @@ document.addEventListener('DOMContentLoaded', () => {
             </a>
           </div>
         </div>
+      </div>
+    `;
+  }
+
+  /* --------------------------------------------------------------------------
+     7b. Dedicated Service Detail Page View Handler
+     -------------------------------------------------------------------------- */
+  function initServiceDetailPage() {
+    const container = document.getElementById('service-detail-app');
+    if (!container) return;
+
+    // Determine service slug from attribute or path
+    const attrSlug = container.getAttribute('data-service-slug');
+    let serviceSlug = attrSlug;
+
+    if (!serviceSlug) {
+      const pathParts = window.location.pathname.split('/');
+      const fileName = pathParts[pathParts.length - 1];
+      serviceSlug = fileName.replace('.html', '');
+    }
+
+    const service = portfolioData.services.find(s => s.slug === serviceSlug || s.id === serviceSlug) || portfolioData.services[0];
+
+    // Page Title Update
+    document.title = `${currentLang === 'bn' ? service.title_bn : service.title_en} | WebWorldBD`;
+
+    const titleText = currentLang === 'bn' ? service.title_bn : service.title_en;
+    const descText = currentLang === 'bn' ? service.desc_bn : service.desc_en;
+    const priceText = currentLang === 'bn' ? service.price_bn : service.price_en;
+    const overviewText = currentLang === 'bn' ? service.overview_bn : service.overview_en;
+    const includesList = currentLang === 'bn' ? service.includes_bn : service.includes_en;
+    const featuresList = currentLang === 'bn' ? service.features_bn : service.features_en;
+    const audienceList = currentLang === 'bn' ? service.audience_bn : service.audience_en;
+    const deliveryText = currentLang === 'bn' ? service.delivery_bn : service.delivery_en;
+    const revisionsText = currentLang === 'bn' ? service.revisions_bn : service.revisions_en;
+    const responsiveText = currentLang === 'bn' ? service.responsive_bn : service.responsive_en;
+
+    const contactLink = getContactUrl();
+    const servicesLink = getServicesPageUrl();
+    const homeLink = getHomeUrl();
+
+    container.innerHTML = `
+      <!-- Breadcrumb Navigation -->
+      <nav style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--text-muted); flex-wrap: wrap;">
+        <a href="${homeLink}" style="color: var(--text-muted); text-decoration: none;" hover="color: var(--accent-blue);">
+          <i class="fas fa-home"></i> ${translations[currentLang].breadcrumbHome}
+        </a>
+        <span>/</span>
+        <a href="${servicesLink}" style="color: var(--text-muted); text-decoration: none;">
+          ${translations[currentLang].breadcrumbServices}
+        </a>
+        <span>/</span>
+        <span style="color: var(--accent-blue); font-weight: 600;">${titleText}</span>
+      </nav>
+
+      <!-- Hero Card -->
+      <div class="glass-card" style="padding: 2.5rem; margin-bottom: 2.5rem; border-color: rgba(56, 189, 248, 0.3);">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;">
+          <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
+            <div class="service-icon" style="width: 70px; height: 70px; font-size: 2rem; margin-bottom: 0;">
+              <i class="${service.icon || 'fas fa-laptop-code'}"></i>
+            </div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                <h1 style="font-size: 2.2rem; font-weight: 800; margin: 0;">${titleText}</h1>
+                <span class="badge-pill" style="font-weight: 700; padding: 0.35rem 0.9rem;">
+                  <i class="fas fa-tag"></i> ${translations[currentLang].serviceStartingFrom} ${priceText}
+                </span>
+              </div>
+              <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 650px; margin: 0;">
+                ${descText}
+              </p>
+            </div>
+          </div>
+          <div>
+            <a href="${contactLink}" class="btn btn-primary" style="padding: 0.85rem 1.8rem; font-size: 1rem;">
+              <i class="fas fa-rocket"></i> ${translations[currentLang].btnStartProjectNow}
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Service Overview ("সার্ভিস পরিচিতি") -->
+      <div class="glass-card" style="padding: 2.25rem; margin-bottom: 2.5rem;">
+        <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: var(--accent-blue); display: flex; align-items: center; gap: 0.6rem;">
+          <i class="fas fa-info-circle"></i> ${translations[currentLang].sectionOverviewTitle}
+        </h2>
+        <p style="color: var(--text-main); font-size: 1.08rem; line-height: 1.85; margin: 0;">
+          ${overviewText}
+        </p>
+      </div>
+
+      <!-- What's Included ("যা যা পাচ্ছেন") - 3 Column Checklist Grid -->
+      <div class="glass-card" style="padding: 2.25rem; margin-bottom: 2.5rem;">
+        <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--accent-blue); display: flex; align-items: center; gap: 0.6rem;">
+          <i class="fas fa-list-check"></i> ${translations[currentLang].sectionIncludesTitle}
+        </h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+          ${includesList.map(item => `
+            <div style="display: flex; align-items: flex-start; gap: 0.75rem; background: var(--bg-glass); border: 1px solid var(--border-glass); padding: 0.9rem 1.1rem; border-radius: var(--radius-md);">
+              <i class="fas fa-check-circle" style="color: var(--accent-blue); font-size: 1.15rem; margin-top: 3px; flex-shrink: 0;"></i>
+              <span style="font-size: 0.95rem; font-weight: 600; color: var(--text-main); line-height: 1.5;">${item}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- Key Features ("প্রধান ফিচারসমূহ") - 2 to 3 Highlighted Cards -->
+      <div style="margin-bottom: 2.5rem;">
+        <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--accent-blue); display: flex; align-items: center; gap: 0.6rem;">
+          <i class="fas fa-star"></i> ${translations[currentLang].sectionFeaturesTitle}
+        </h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+          ${featuresList.map(feat => `
+            <div class="glass-card" style="padding: 1.75rem;">
+              <div class="service-icon" style="margin-bottom: 1rem;">
+                <i class="${feat.icon}"></i>
+              </div>
+              <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem;">${feat.title}</h3>
+              <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0; line-height: 1.6;">${feat.desc}</p>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- Target Audience ("কারা এই সার্ভিস নেবেন?") - 4 Bullet Chips -->
+      <div class="glass-card" style="padding: 2.25rem; margin-bottom: 2.5rem;">
+        <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--accent-blue); display: flex; align-items: center; gap: 0.6rem;">
+          <i class="fas fa-bullseye"></i> ${translations[currentLang].sectionAudienceTitle}
+        </h2>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.85rem;">
+          ${audienceList.map(aud => `
+            <div style="padding: 0.6rem 1.3rem; border-radius: var(--radius-full); background: rgba(56, 189, 248, 0.1); border: 1px solid var(--border-glow); color: var(--text-main); font-weight: 600; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 0.5rem;">
+              <i class="fas fa-user-check" style="color: var(--accent-blue);"></i>
+              ${aud}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- Delivery & Support Info ("ডেলিভারি ও সাপোর্ট তথ্য") - 3 Info Cards -->
+      <div style="margin-bottom: 3rem;">
+        <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--accent-blue); display: flex; align-items: center; gap: 0.6rem;">
+          <i class="fas fa-clock-rotate-left"></i> ${translations[currentLang].sectionDeliveryTitle}
+        </h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem;">
+          <div class="glass-card" style="padding: 1.5rem; text-align: center;">
+            <i class="fas fa-truck-fast" style="font-size: 2rem; color: var(--accent-blue); margin-bottom: 0.75rem;"></i>
+            <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.3rem;">${translations[currentLang].cardDeliveryTime}</h4>
+            <p style="color: var(--accent-blue); font-weight: 700; font-size: 1.1rem; margin: 0;">${deliveryText}</p>
+          </div>
+
+          <div class="glass-card" style="padding: 1.5rem; text-align: center;">
+            <i class="fas fa-rotate-left" style="font-size: 2rem; color: var(--accent-purple); margin-bottom: 0.75rem;"></i>
+            <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.3rem;">${translations[currentLang].cardRevisionPolicy}</h4>
+            <p style="color: var(--accent-purple); font-weight: 700; font-size: 1.1rem; margin: 0;">${revisionsText}</p>
+          </div>
+
+          <div class="glass-card" style="padding: 1.5rem; text-align: center;">
+            <i class="fas fa-mobile-screen-button" style="font-size: 2rem; color: var(--accent-emerald); margin-bottom: 0.75rem;"></i>
+            <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.3rem;">${translations[currentLang].cardMobileOptimization}</h4>
+            <p style="color: var(--accent-emerald); font-weight: 700; font-size: 1.1rem; margin: 0;">${responsiveText}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Start Project CTA Banner -->
+      <div class="glass-card" style="padding: 2.75rem; text-align: center; border-color: rgba(56, 189, 248, 0.4); background: linear-gradient(135deg, rgba(15,23,42,0.85) 0%, rgba(30,41,59,0.85) 100%);">
+        <h3 style="font-size: 1.85rem; margin-bottom: 0.75rem; font-weight: 800;">
+          ${currentLang === 'bn' ? `আপনার ${title_bn} প্রজেক্ট শুরু করতে প্রস্তুত?` : `Ready to start your ${title_en} project?`}
+        </h3>
+        <p style="color: var(--text-muted); max-width: 620px; margin: 0 auto 1.75rem; font-size: 1.05rem;">
+          ${currentLang === 'bn' ? 'আমাদের সাথে যোগাযোগ করে আজই আপনার কাস্টম প্রজেক্টের ফ্রি কোটেশন বা কনসালটেন্সি নিন।' : 'Contact WebWorldBD today for a free project consultation and custom quote.'}
+        </p>
+        <a href="${contactLink}" class="btn btn-primary" style="padding: 0.85rem 2.2rem; font-size: 1.05rem;">
+          <i class="fas fa-paper-plane"></i> ${translations[currentLang].btnStartProjectNow}
+        </a>
       </div>
     `;
   }

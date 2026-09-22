@@ -23,6 +23,22 @@ const translations = {
     btnSendMessage: "Send Message",
     btnLivePreview: "Live Preview",
     btnProjectDetails: "Project Details",
+    btnLearnMore: "Learn More",
+    btnViewDetails: "View Details",
+
+    /* Service Details Page Titles & Headings */
+    breadcrumbHome: "Home",
+    breadcrumbServices: "Services",
+    sectionOverviewTitle: "Service Overview",
+    sectionIncludesTitle: "What's Included",
+    sectionFeaturesTitle: "Key Features",
+    sectionAudienceTitle: "Who Is This For?",
+    sectionDeliveryTitle: "Delivery & Support Info",
+    cardDeliveryTime: "Estimated Delivery Time",
+    cardRevisionPolicy: "Revision Policy",
+    cardMobileOptimization: "Mobile Optimization",
+    btnStartProjectNow: "Start Project Now",
+    serviceStartingFrom: "Starting from:",
 
     /* Hero Section */
     heroBadge: "Available for Freelance & Contract Projects",
@@ -170,11 +186,27 @@ const translations = {
     btnSendMessage: "মেসেজ পাঠান",
     btnLivePreview: "লাইভ প্রিভিউ",
     btnProjectDetails: "প্রজেক্ট ডিটেইলস",
+    btnLearnMore: "প্রজেক্ট সম্পর্কে বিস্তারিত জানুন",
+    btnViewDetails: "বিস্তারিত জানুন",
+
+    /* Service Details Page Titles & Headings */
+    breadcrumbHome: "হোম",
+    breadcrumbServices: "সার্ভিস",
+    sectionOverviewTitle: "সার্ভিস পরিচিতি",
+    sectionIncludesTitle: "যা যা পাচ্ছেন",
+    sectionFeaturesTitle: "প্রধান ফিচারসমূহ",
+    sectionAudienceTitle: "কারা এই সার্ভিস নেবেন?",
+    sectionDeliveryTitle: "ডেলিভারি ও সাপোর্ট তথ্য",
+    cardDeliveryTime: "আনুমানিক ডেলিভারি সময়",
+    cardRevisionPolicy: "রিভিশন পলিসি",
+    cardMobileOptimization: "মোবাইল অপটিমাইজেশন",
+    btnStartProjectNow: "প্রজেক্ট শুরু করুন",
+    serviceStartingFrom: "শুরু হচ্ছে:",
 
     /* Hero Section */
     heroBadge: "ফ্রিল্যান্স ও কন্ট্রাক্ট প্রজেক্টের জন্য প্রস্তুত",
     heroHeadingPrefix: "আইডিয়াকে রূপ দিই",
-    heroHeadingGradient: "শক্তিশালী ডিজিটাল অভিজ্ঞতায়।",
+    heroHeadingGradient: "শক্তিশালী ডিজিটাল অভিজ্ঞতায়।",
     heroSubtitle: "হ্যালো! আমি শাফায়াত হোসেন সারিপ। আপনার ব্যবসার সাফল্যের জন্য দ্রুতগতিসম্পন্ন, আল্ট্রা-রেসপনসিভ ওয়েবসাইট, ওয়েব অ্যাপ এবং মোবাইল অ্যাপ তৈরি করি।",
     statCompleted: "সম্পন্ন প্রজেক্ট",
     statClients: "সন্তুষ্ট ক্লায়েন্ট",

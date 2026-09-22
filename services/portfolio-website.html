@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio Website | WebWorldBD — SHAFAET HOSSEN SARIP</title>
+  <meta name="description" content="Personal brand portfolio website development for freelancers, creators, and professionals by WebWorldBD.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="../assets/images/logo.png">
+
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+  <!-- Particle Background Canvas -->
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- Navigation Header -->
+  <header class="header">
+    <div class="container header-container">
+      <a href="../index.html" class="logo-brand">
+        <img src="../assets/images/logo.png" alt="WebWorldBD Logo">
+        <span>WebWorld<span style="color:var(--accent-blue);">BD</span></span>
+      </a>
+
+      <nav class="nav-menu" id="nav-menu">
+        <a href="../index.html" class="nav-link" data-i18n="navHome">Home</a>
+        <a href="../index.html#about" class="nav-link" data-i18n="navAbout">About Me</a>
+        <a href="../services.html" class="nav-link active" data-i18n="navServices">Services</a>
+        <a href="../projects.html" class="nav-link" data-i18n="navProjects">Projects</a>
+        <a href="../index.html#process" class="nav-link" data-i18n="navProcess">Process</a>
+        <a href="../contact.html" class="nav-link" data-i18n="navContact">Contact</a>
+        <a href="../contact.html" class="btn btn-primary mobile-hire-btn" data-i18n="btnHireMe">Hire Me</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="toggle-btn" id="theme-toggle-btn" title="Toggle Theme">
+          <i class="fas fa-sun"></i>
+        </button>
+        <button class="lang-switch-btn" id="lang-switch-btn">
+          <i class="fas fa-globe"></i> BN
+        </button>
+        <a href="../contact.html" class="btn btn-primary" data-i18n="btnHireMe">Hire Me</a>
+        <div class="mobile-toggle" id="mobile-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Service Detail Main Container -->
+  <section class="services-section" style="padding-top: calc(var(--header-height) + 2rem);">
+    <div class="container" id="service-detail-app" data-service-slug="portfolio-website"></div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="../index.html" class="logo-brand">
+            <img src="../assets/images/logo.png" alt="WebWorldBD Logo">
+            <span>WebWorld<span style="color:var(--accent-blue);">BD</span></span>
+          </a>
+          <p data-i18n="footerDesc">
+            SHAFAET HOSSEN SARIP — WebWorldBD. Building powerful digital experiences, high-converting websites, and modern apps with zero compromise on quality and ethics.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="footer-title" data-i18n="quickLinksTitle">Quick Links</h4>
+          <div class="footer-links">
+            <a href="../index.html" data-i18n="navHome">Home</a>
+            <a href="../index.html#about" data-i18n="navAbout">About Me</a>
+            <a href="../services.html" data-i18n="navServices">Services</a>
+            <a href="../projects.html" data-i18n="navProjects">Projects</a>
+            <a href="../contact.html" data-i18n="navContact">Contact</a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-title" data-i18n="servicesListTitle">Popular Services</h4>
+          <div class="footer-links">
+            <a href="../services/business-website.html">Business Website</a>
+            <a href="../services/ecommerce-website.html">E-commerce Website</a>
+            <a href="../services/portfolio-website.html">Portfolio Website</a>
+            <a href="../services/webapp-saas.html">Web App / SaaS</a>
+            <a href="../services/ai-website.html">AI Website & Tools</a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-title" data-i18n="contactTitle">Contact Info</h4>
+          <div class="footer-links">
+            <span>Kushtia, Bangladesh</span>
+            <a href="mailto:saripofficialsupport@gmail.com">saripofficialsupport@gmail.com</a>
+            <a href="https://wa.me/8801342697743" target="_blank" rel="noopener noreferrer">+8801342697743</a>
+            <a href="tel:+8809658183506">+8809658183506</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p data-i18n="copyrightText">© 2025 WebWorldBD. Created with passion by SHAFAET HOSSEN SARIP. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="mobile-bottom-nav" id="mobile-bottom-nav" aria-label="Mobile Bottom Navigation">
+    <a href="../index.html" class="mobile-nav-item" data-nav="home">
+      <div class="mobile-nav-icon"><i class="fas fa-house"></i></div>
+      <span class="mobile-nav-label" data-i18n="mobileNavHome">হোম</span>
+    </a>
+    <a href="../services.html" class="mobile-nav-item active" data-nav="services">
+      <div class="mobile-nav-icon"><i class="fas fa-layer-group"></i></div>
+      <span class="mobile-nav-label" data-i18n="mobileNavServices">সার্ভিস</span>
+    </a>
+    <a href="../contact.html" class="mobile-nav-item mobile-fab-item" data-nav="fab">
+      <div class="mobile-fab-btn">
+        <i class="fas fa-rocket"></i>
+      </div>
+      <span class="mobile-nav-label mobile-fab-label" data-i18n="mobileNavStartProject">প্রজেক্ট শুরু করুন</span>
+    </a>
+    <a href="../projects.html" class="mobile-nav-item" data-nav="projects">
+      <div class="mobile-nav-icon"><i class="fas fa-desktop"></i></div>
+      <span class="mobile-nav-label" data-i18n="mobileNavLivePreview">লাইভ প্রিভিউ</span>
+    </a>
+    <a href="../account.html" class="mobile-nav-item" data-nav="account">
+      <div class="mobile-nav-icon"><i class="fas fa-user"></i></div>
+      <span class="mobile-nav-label" data-i18n="mobileNavAccount">অ্যাকাউন্ট</span>
+    </a>
+  </nav>
+
+  <!-- Floating WhatsApp & Back to Top Buttons -->
+  <a href="https://wa.me/8801342697743" target="_blank" rel="noopener noreferrer" class="floating-whatsapp" title="Chat on WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+
+  <button class="back-to-top" id="back-to-top" title="Back to top">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+
+  <!-- Application Scripts -->
+  <script src="../assets/js/data.js"></script>
+  <script src="../assets/js/translations.js"></script>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>
