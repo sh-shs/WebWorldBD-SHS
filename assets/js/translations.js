@@ -170,13 +170,13 @@ const translations = {
     quickLinksTitle: "Quick Links",
     servicesListTitle: "Popular Services",
     contactTitle: "Contact Info",
-    copyrightText: "© 2025 WebWorldBD. Created with passion by SHAFAET HOSSEN SARIP. All rights reserved."
+    copyrightText: "© 2026 WebWorldBD. Created with passion by SHAFAET HOSSEN SARIP. All rights reserved."
   },
 
   bn: {
     /* Brand & Nav */
     brandName: "WebWorldBD",
-    developerName: "শাফায়াত হোসেন সারিপ",
+    developerName: "সাফায়েত হোসেন ছারিফ",
     developerTitle: "ওয়েব ও অ্যাপ ডেভেলপার | ডিজিটাল সলিউশন ক্রিয়েটর",
     navHome: "হোম",
     navAbout: "আমার সম্পর্কে",
@@ -219,7 +219,7 @@ const translations = {
     heroBadge: "ফ্রিল্যান্স ও কন্ট্রাক্ট প্রজেক্টের জন্য প্রস্তুত",
     heroHeadingPrefix: "আইডিয়াকে রূপ দিই",
     heroHeadingGradient: "শক্তিশালী ডিজিটাল অভিজ্ঞতায়।",
-    heroSubtitle: "হ্যালো! আমি শাফায়াত হোসেন সারিপ। আপনার ব্যবসার সাফল্যের জন্য দ্রুতগতিসম্পন্ন, আল্ট্রা-রেসপনসিভ ওয়েবসাইট, ওয়েব অ্যাপ এবং মোবাইল অ্যাপ তৈরি করি।",
+    heroSubtitle: "হ্যালো! আমি সাফায়েত হোসেন ছারিফ। আপনার ব্যবসার সাফল্যের জন্য দ্রুতগতিসম্পন্ন, আল্ট্রা-রেসপনসিভ ওয়েবসাইট, ওয়েব অ্যাপ এবং মোবাইল অ্যাপ তৈরি করি।",
     statCompleted: "সম্পন্ন প্রজেক্ট",
     statClients: "সন্তুষ্ট ক্লায়েন্ট",
     statExp: "বছরের অভিজ্ঞতা",
@@ -335,10 +335,10 @@ const translations = {
     mobileNavAccount: "অ্যাকাউন্ট",
 
     /* Footer */
-    footerDesc: "শাফায়াত হোসেন সারিপ — WebWorldBD। গুণমান ও নীতিতে কোনো আপস না করে তৈরি করি শক্তিশালী ওয়েবসাইট ও মোবাইল অ্যাপ।",
+    footerDesc: "সাফায়েত হোসেন ছারিফ — WebWorldBD। গুণমান ও নীতিতে কোনো আপস না করে তৈরি করি শক্তিশালী ওয়েবসাইট ও মোবাইল অ্যাপ।",
     quickLinksTitle: "কুইক লিঙ্ক",
     servicesListTitle: "জনপ্রিয় সার্ভিসসমূহ",
     contactTitle: "যোগাযোগের ঠিকানা",
-    copyrightText: "© ২০২৫ WebWorldBD। সর্বস্বত্ব সংরক্ষিত শাফায়াত হোসেন সারিপ দ্বারা।"
+    copyrightText: "© ২০২৬ WebWorldBD। সর্বস্বত্ব সংরক্ষিত সাফায়েত হোসেন ছারিফ দ্বারা।"
   }
 };

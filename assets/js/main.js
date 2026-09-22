@@ -64,6 +64,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function getDynamicCopyrightText(lang) {
+    const year = new Date().getFullYear().toString();
+    if (lang === 'bn') {
+      const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+      const bnYear = year.replace(/\d/g, d => bnDigits[d]);
+      return `© ${bnYear} WebWorldBD। সর্বস্বত্ব সংরক্ষিত সাফায়েত হোসেন ছারিফ দ্বারা।`;
+    }
+    return `© ${year} WebWorldBD. Created with passion by SHAFAET HOSSEN SARIP. All rights reserved.`;
+  }
+
   function applyLanguage(lang) {
     currentLang = lang;
     localStorage.setItem('webworldbd_lang', lang);
@@ -74,11 +84,16 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.classList.remove('lang-bn');
     }
 
+    // Dynamic copyright text generator
+    const dynamicCopyright = getDynamicCopyrightText(lang);
+
     // Update text elements with data-i18n attribute
     const i18nElements = document.querySelectorAll('[data-i18n]');
     i18nElements.forEach(el => {
       const key = el.getAttribute('data-i18n');
-      if (translations[lang] && translations[lang][key]) {
+      if (key === 'copyrightText') {
+        el.textContent = dynamicCopyright;
+      } else if (translations[lang] && translations[lang][key]) {
         if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
           el.placeholder = translations[lang][key];
         } else {
