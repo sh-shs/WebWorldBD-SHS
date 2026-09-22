@@ -138,42 +138,99 @@ document.addEventListener('DOMContentLoaded', () => {
   function initMobileMenu() {
     const mobileToggle = document.getElementById('mobile-toggle');
     const navMenu = document.getElementById('nav-menu');
+    const navMenuClose = document.getElementById('nav-menu-close');
 
-    if (mobileToggle && navMenu) {
+    if (!navMenu) return;
+
+    function openMenu() {
+      navMenu.classList.add('active');
+      if (mobileToggle) mobileToggle.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenu() {
+      navMenu.classList.remove('active');
+      if (mobileToggle) mobileToggle.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    if (mobileToggle) {
       mobileToggle.addEventListener('click', (e) => {
         e.stopPropagation();
-        navMenu.classList.toggle('active');
-        const icon = mobileToggle.querySelector('i');
-        if (icon) {
-          icon.classList.toggle('fa-bars');
-          icon.classList.toggle('fa-times');
-        }
-      });
-
-      // Close menu when clicking links
-      navMenu.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-          navMenu.classList.remove('active');
-          const icon = mobileToggle.querySelector('i');
-          if (icon) {
-            icon.classList.add('fa-bars');
-            icon.classList.remove('fa-times');
-          }
-        });
-      });
-
-      // Close menu when clicking outside
-      document.addEventListener('click', (e) => {
-        if (navMenu.classList.contains('active') && !navMenu.contains(e.target) && !mobileToggle.contains(e.target)) {
-          navMenu.classList.remove('active');
-          const icon = mobileToggle.querySelector('i');
-          if (icon) {
-            icon.classList.add('fa-bars');
-            icon.classList.remove('fa-times');
-          }
+        if (navMenu.classList.contains('active')) {
+          closeMenu();
+        } else {
+          openMenu();
         }
       });
     }
+
+    if (navMenuClose) {
+      navMenuClose.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeMenu();
+      });
+    }
+
+    // Highlight active link in drawer based on current URL
+    function highlightActiveNavLink() {
+      const currentPath = window.location.pathname.toLowerCase();
+      const currentHash = window.location.hash.toLowerCase();
+      const navLinks = navMenu.querySelectorAll('.nav-link[data-nav-id]');
+
+      navLinks.forEach(link => {
+        const navId = link.getAttribute('data-nav-id');
+        let isActive = false;
+
+        if (currentPath.endsWith('services.html') || currentPath.includes('/services/')) {
+          isActive = (navId === 'services');
+        } else if (currentPath.endsWith('projects.html') || currentPath.endsWith('project-details.html')) {
+          isActive = (navId === 'projects');
+        } else if (currentPath.endsWith('account.html')) {
+          isActive = (navId === 'account');
+        } else if (currentPath.endsWith('contact.html')) {
+          isActive = (navId === 'contact');
+        } else {
+          // Home page index.html with or without section hashes
+          if (currentHash === '#about') {
+            isActive = (navId === 'about');
+          } else if (currentHash === '#why') {
+            isActive = (navId === 'why');
+          } else if (currentHash === '#process') {
+            isActive = (navId === 'process');
+          } else if (currentHash === '#testimonials') {
+            isActive = (navId === 'testimonials');
+          } else if (currentHash === '#faq') {
+            isActive = (navId === 'faq');
+          } else {
+            isActive = (navId === 'home');
+          }
+        }
+
+        if (isActive) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+    }
+
+    highlightActiveNavLink();
+    window.addEventListener('hashchange', highlightActiveNavLink);
+
+    // Close menu when clicking links
+    navMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        closeMenu();
+      });
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (navMenu.classList.contains('active') && !navMenu.contains(e.target) && (!mobileToggle || !mobileToggle.contains(e.target))) {
+        closeMenu();
+      }
+    });
   }
 
   /* --------------------------------------------------------------------------
