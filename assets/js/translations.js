@@ -83,9 +83,9 @@ const translations = {
     aboutSec4Desc: "I work on building positive, professional, and business-oriented websites and digital platforms. I do NOT build <span class=\"about-highlight-danger\">Gambling or Betting Websites</span>.",
 
     /* Services Section */
-    servicesBadge: "Service & Pricing",
-    servicesHeading: "Premium Web Services at Affordable Prices",
-    servicesSub: "Custom web solutions at smart pricing to expand your business.",
+    servicesBadge: "Our Services",
+    servicesHeading: "High-Performance Custom Web Services",
+    servicesSub: "Professional web solutions tailored to elevate and scale your business.",
     startingFrom: "Starting from",
     specialCapabilitiesTitle: "Specialized Development Capabilities",
 
@@ -274,9 +274,9 @@ const translations = {
     aboutSec4Desc: "আমি Positive, Professional এবং Business-oriented Website ও Digital Platform তৈরিতে কাজ করি। আমি <span class=\"about-highlight-danger\">Gambling বা Betting Website</span> তৈরি করি না।",
 
     /* Services Section */
-    servicesBadge: "সার্ভিস ও প্রাইসিং",
-    servicesHeading: "সাশ্রয়ী মূল্যে প্রিমিয়াম ওয়েব সার্ভিসেস",
-    servicesSub: "আপনার ব্যবসার পরিধি বাড়াতে স্মার্ট প্রাইসিং মূল্যে কাস্টম ওয়েব সলিউশন।",
+    servicesBadge: "আমাদের সার্ভিসসমূহ",
+    servicesHeading: "হাই-পারফর্ম্যান্স কাস্টম ওয়েব সার্ভিসেস",
+    servicesSub: "আপনার ব্যবসার পরিধি বাড়াতে ও মান উন্নত করতে আধুনিক কাস্টম ওয়েব সলিউশন।",
     startingFrom: "শুরু মাত্র",
     specialCapabilitiesTitle: "বিশেষ ডেভেলপমেন্ট দক্ষতাসমূহ",
 
