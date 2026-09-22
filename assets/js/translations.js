@@ -58,22 +58,28 @@ const translations = {
 
     /* About Section */
     aboutBadge: "Who I Am",
+    aboutMainHeading: "SHAFAET HOSSEN SARIP",
+    aboutSubtitle: "Web & App Developer | Digital Solutions Creator",
     aboutProfileTitle: "Founder & Lead Developer @ WebWorldBD",
     aboutProfileLocation: "Kushtia, Khulna, Bangladesh",
     aboutTagVerified: "Verified Developer",
     aboutTagFast: "Fast & Reliable",
 
-    aboutSec1Label: "Who I Am",
+    aboutSec1Label: "About Me",
+    aboutSec1Title: "About Me",
     aboutSec1Heading: "SHAFAET HOSSEN SARIP",
-    aboutSec1Desc: "I am a <span class=\"about-highlight\">Web & App Developer</span> from Kushtia, Khulna, Bangladesh. I am a student at Kushtia Government Polytechnic Institute in the Department of Electronics Technology and have been working on <span class=\"about-highlight\">Web Development</span> for over a year.",
+    aboutSec1Desc: "I am a <span class=\"about-highlight\">Web & App Developer</span> from Kushtia, Khulna, Bangladesh. I am a student in the <span class=\"about-highlight\">Electronics Technology</span> department at Kushtia Government Polytechnic Institute and have been working with <span class=\"about-highlight\">Web Development</span> for over a year.",
 
-    aboutSec2Label: "My Skills & Experience",
-    aboutSec2Desc: "I build modern Websites, Web Applications, <span class=\"about-highlight\">E-commerce Platforms</span>, Business Websites, Educational Platforms, <span class=\"about-highlight\">AI-powered Websites</span>, and various Custom Digital Solutions for clients and my own ventures.",
+    aboutSec2Label: "Skills & Experience",
+    aboutSec2Title: "Skills & Experience",
+    aboutSec2Desc: "I build modern <span class=\"about-highlight\">Websites</span>, <span class=\"about-highlight\">Web Applications</span>, <span class=\"about-highlight\">E-commerce Platforms</span>, Business Websites, Educational Platforms, <span class=\"about-highlight\">AI-powered Websites</span>, and various <span class=\"about-highlight\">Custom Digital Solutions</span> for clients and my own ventures.",
 
-    aboutSec3Label: "Our Mission",
-    aboutSec3Desc: "To build fast, reliable, and high-quality digital platforms ranging from small Business Websites to complete <span class=\"about-highlight\">E-commerce Platforms</span>, Web Applications, and Custom Digital Solutions.",
+    aboutSec3Label: "My Goal",
+    aboutSec3Title: "My Goal",
+    aboutSec3Desc: "To build fast, reliable, and high-quality digital platforms ranging from small Business Websites to complete <span class=\"about-highlight\">E-commerce Platforms</span>, <span class=\"about-highlight\">Web Applications</span>, and <span class=\"about-highlight\">Custom Digital Solutions</span>.",
 
-    aboutSec4Label: "Our Policy",
+    aboutSec4Label: "Policy",
+    aboutSec4Title: "Policy",
     aboutSec4Desc: "I work on building positive, professional, and business-oriented websites and digital platforms. I do NOT build <span class=\"about-highlight-danger\">Gambling or Betting Websites</span>.",
 
     /* Services Section */
@@ -238,22 +244,28 @@ const translations = {
 
     /* About Section */
     aboutBadge: "আমার পরিচয়",
+    aboutMainHeading: "সাফায়েত হোসেন ছারিফ",
+    aboutSubtitle: "Web & App Developer | Digital Solutions Creator",
     aboutProfileTitle: "Founder & Lead Developer @ WebWorldBD",
     aboutProfileLocation: "কুষ্টিয়া, খুলনা, বাংলাদেশ",
     aboutTagVerified: "ভেরিফাইড ডেভেলপার",
     aboutTagFast: "দ্রুত ও নির্ভরযোগ্য",
 
     aboutSec1Label: "আমার পরিচয়",
+    aboutSec1Title: "আমার পরিচয়",
     aboutSec1Heading: "সাফায়েত হোসেন ছারিফ",
-    aboutSec1Desc: "আমি কুষ্টিয়া, খুলনা, বাংলাদেশের একজন <span class=\"about-highlight\">Web & App Developer</span>। আমি কুষ্টিয়া সরকারি পলিটেকনিক ইনস্টিটিউটের Electronics Technology বিভাগের একজন শিক্ষার্থী এবং এক বছরেরও বেশি সময় ধরে <span class=\"about-highlight\">Web Development</span> নিয়ে কাজ করছি।",
+    aboutSec1Desc: "আমি কুষ্টিয়া, খুলনা, বাংলাদেশের একজন <span class=\"about-highlight\">Web & App Developer</span>। আমি কুষ্টিয়া সরকারি পলিটেকনিক ইনস্টিটিউটের <span class=\"about-highlight\">Electronics Technology</span> বিভাগের একজন শিক্ষার্থী এবং এক বছরেরও বেশি সময় ধরে <span class=\"about-highlight\">Web Development</span> নিয়ে কাজ করছি।",
 
     aboutSec2Label: "আমার দক্ষতা ও অভিজ্ঞতা",
-    aboutSec2Desc: "আমি ক্লায়েন্টদের জন্য এবং নিজের বিভিন্ন উদ্যোগের জন্য আধুনিক Website, Web Application, <span class=\"about-highlight\">E-commerce Platform</span>, Business Website, Educational Platform, <span class=\"about-highlight\">AI-powered Website</span> এবং বিভিন্ন ধরনের Custom Digital Solution তৈরি করি।",
+    aboutSec2Title: "আমার দক্ষতা ও অভিজ্ঞতা",
+    aboutSec2Desc: "আমি ক্লায়েন্টদের জন্য এবং নিজের বিভিন্ন উদ্যোগের জন্য আধুনিক <span class=\"about-highlight\">Website</span>, <span class=\"about-highlight\">Web Application</span>, <span class=\"about-highlight\">E-commerce Platform</span>, Business Website, Educational Platform, <span class=\"about-highlight\">AI-powered Website</span> এবং বিভিন্ন ধরনের <span class=\"about-highlight\">Custom Digital Solution</span> তৈরি করি।",
 
     aboutSec3Label: "আমাদের লক্ষ্য",
-    aboutSec3Desc: "ছোট Business Website থেকে শুরু করে সম্পূর্ণ <span class=\"about-highlight\">E-commerce Platform</span>, Web Application এবং Custom Digital Solution পর্যন্ত দ্রুত, নির্ভরযোগ্য ও মানসম্মত Digital Platform তৈরি করা।",
+    aboutSec3Title: "আমাদের লক্ষ্য",
+    aboutSec3Desc: "ছোট Business Website থেকে শুরু করে সম্পূর্ণ <span class=\"about-highlight\">E-commerce Platform</span>, <span class=\"about-highlight\">Web Application</span> এবং <span class=\"about-highlight\">Custom Digital Solution</span> পর্যন্ত দ্রুত, নির্ভরযোগ্য ও মানসম্মত Digital Platform তৈরি করা।",
 
     aboutSec4Label: "আমাদের নীতি",
+    aboutSec4Title: "আমাদের নীতি",
     aboutSec4Desc: "আমি Positive, Professional এবং Business-oriented Website ও Digital Platform তৈরিতে কাজ করি। আমি <span class=\"about-highlight-danger\">Gambling বা Betting Website</span> তৈরি করি না।",
 
     /* Services Section */
