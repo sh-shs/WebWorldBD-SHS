@@ -1920,7 +1920,19 @@ p {
 /* --------------------------------------------------------------------------
    15. Responsive Breakpoints & Mobile Drawer
    -------------------------------------------------------------------------- */
-@media (max-width: 1024px) {
+
+/* Standard Container Centering Rule Across All Viewports */
+.container {
+  width: 100%;
+  max-width: var(--container-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+/* Tablet & Smaller Screens (max-width: 1023px) */
+@media (max-width: 1023px) {
   :root {
     --header-height: 72px;
   }
@@ -1928,22 +1940,7 @@ p {
   h1, .h1 { font-size: 2.5rem; }
   h2, .h2 { font-size: 2rem; }
 
-  .hero-grid, .about-grid, .contact-grid {
-    grid-template-columns: 1fr;
-    gap: 3rem;
-  }
-
-  .footer-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .smartphone-mockup {
-    right: 10px;
-    width: 150px;
-    height: 270px;
-  }
-
-  /* Top bar on tablet & mobile: Logo + Theme + Lang + Mobile Toggle only */
+  /* Top bar actions on tablet & mobile */
   .header-actions .btn-primary {
     display: none;
   }
@@ -2067,7 +2064,7 @@ p {
   }
 
   .nav-link::after {
-    display: none; /* Hide desktop underline style in drawer */
+    display: none;
   }
 
   /* Drawer Bottom CTAs */
@@ -2086,7 +2083,84 @@ p {
   }
 }
 
-@media (max-width: 768px) {
+/* Tablet Specific Layout Reflow (600px - 1023px) */
+@media (min-width: 600px) and (max-width: 1023px) {
+  /* Hero Section Reflow: Balanced 2-column layout on upper tablet, centered proportions */
+  .hero-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .hero-subtitle {
+    max-width: 100%;
+  }
+
+  .hero-stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  .smartphone-mockup {
+    right: 5px;
+    bottom: -15px;
+    width: 140px;
+    height: 250px;
+  }
+
+  /* About & Contact Grids */
+  .about-grid {
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 2rem;
+  }
+
+  .contact-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  /* Services Grid & Projects Grid Reflow to 2 Columns */
+  .services-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .projects-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .process-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.5rem;
+  }
+}
+
+/* Smaller Tablet / Mid-Width Adjustments (600px - 767px) */
+@media (min-width: 600px) and (max-width: 767px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+}
+
+/* Mobile Screens (<600px) */
+@media (max-width: 599px) {
   :root {
     --header-height: 70px;
     --card-padding-desktop: 1.25rem;
@@ -2101,6 +2175,11 @@ p {
     padding-bottom: var(--section-padding-mobile);
   }
 
+  .hero-grid, .about-grid, .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
   .about-section, .services-section, .tech-section,
   .projects-section, .process-section, .faq-section,
   .contact-section {
@@ -2110,6 +2189,10 @@ p {
   .hero-stats {
     grid-template-columns: 1fr;
     gap: 0.85rem;
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr;
   }
 
   .projects-grid {
@@ -2153,6 +2236,6 @@ p {
   }
 
   .smartphone-mockup {
-    display: none; /* Hide floating secondary smartphone mockup on extra-small mobile screens to keep code-window clear */
+    display: none;
   }
 }
