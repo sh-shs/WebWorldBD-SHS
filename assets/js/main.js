@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initBackToTop();
   initContactForm();
   initAuthTabs();
+  initScrollAnimations();
 
   // Dynamic Content Rendering
   if (document.getElementById('services-grid')) renderServices();
@@ -97,7 +98,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
           el.placeholder = translations[lang][key];
         } else {
-          el.textContent = translations[lang][key];
+          const val = translations[lang][key];
+          if (val.includes('<') && val.includes('>')) {
+            el.innerHTML = val;
+          } else {
+            el.textContent = val;
+          }
         }
       }
     });
@@ -973,6 +979,25 @@ document.addEventListener('DOMContentLoaded', () => {
         </a>
       </div>
     `;
+  }
+
+  /* --------------------------------------------------------------------------
+     7c. Viewport Entrance Scroll Animations
+     -------------------------------------------------------------------------- */
+  function initScrollAnimations() {
+    const animatedElements = document.querySelectorAll('.animate-on-scroll');
+    if (animatedElements.length === 0) return;
+
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    animatedElements.forEach(el => observer.observe(el));
   }
 
   /* --------------------------------------------------------------------------
