@@ -115,6 +115,13 @@ const translations = {
     formMessagePlaceholder: "Tell me about your project goals, features needed, budget, or timeline...",
     formSubmitBtn: "Send Project Inquiry",
 
+    /* Mobile Bottom Navigation */
+    mobileNavHome: "Home",
+    mobileNavServices: "Services",
+    mobileNavStartProject: "Start Project",
+    mobileNavLivePreview: "Live Preview",
+    mobileNavAccount: "Account",
+
     /* Footer */
     footerDesc: "SHAFAET HOSSEN SARIP — WebWorldBD. Building powerful digital experiences, high-converting websites, and modern apps with zero compromise on quality and ethics.",
     quickLinksTitle: "Quick Links",
@@ -233,6 +240,13 @@ const translations = {
     formMessageLabel: "প্রজেক্টের বিবরণ / মেসেজ",
     formMessagePlaceholder: "আপনার প্রজেক্টের চাহিদা, বাজেট ও সময়সীমা সম্পর্কে লিখুন...",
     formSubmitBtn: "মেসেজ পাঠান",
+
+    /* Mobile Bottom Navigation */
+    mobileNavHome: "হোম",
+    mobileNavServices: "সার্ভিস",
+    mobileNavStartProject: "প্রজেক্ট শুরু করুন",
+    mobileNavLivePreview: "লাইভ প্রিভিউ",
+    mobileNavAccount: "অ্যাকাউন্ট",
 
     /* Footer */
     footerDesc: "শাফায়াত হোসেন সারিপ — WebWorldBD। গুণমান ও নীতিতে কোনো আপস না করে তৈরি করি শক্তিশালী ওয়েবসাইট ও মোবাইল অ্যাপ।",

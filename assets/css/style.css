@@ -1370,8 +1370,132 @@ p {
 }
 
 /* --------------------------------------------------------------------------
-   13. Floating Action Controls (WhatsApp & Back-To-Top)
+   13. Mobile Bottom Navigation Bar & Floating Action Controls
    -------------------------------------------------------------------------- */
+.mobile-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-bottom: calc(82px + env(safe-area-inset-bottom));
+  }
+
+  .mobile-bottom-nav {
+    position: fixed;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    left: 12px;
+    right: 12px;
+    height: 64px;
+    background: var(--bg-card);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-full);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    z-index: 10000;
+    padding: 0 6px;
+  }
+
+  [data-theme="light"] .mobile-bottom-nav {
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+    border-color: rgba(15, 23, 42, 0.12);
+  }
+
+  .mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    height: 100%;
+    color: var(--text-muted);
+    text-decoration: none;
+    position: relative;
+    transition: transform 0.15s ease, color 0.2s ease;
+  }
+
+  .mobile-nav-item:active {
+    transform: scale(0.92);
+  }
+
+  .mobile-nav-icon {
+    font-size: 1.15rem;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+
+  .mobile-nav-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    margin-top: 3px;
+    white-space: nowrap;
+    transition: color 0.2s ease;
+    text-align: center;
+  }
+
+  /* Active state for regular items */
+  .mobile-nav-item.active .mobile-nav-icon,
+  .mobile-nav-item.active .mobile-nav-label {
+    color: var(--accent-blue);
+    font-weight: 700;
+  }
+
+  .mobile-nav-item.active .mobile-nav-icon {
+    transform: translateY(-1px);
+  }
+
+  /* Center Floating Action Button (FAB) */
+  .mobile-fab-item {
+    position: relative;
+    overflow: visible;
+  }
+
+  .mobile-fab-btn {
+    position: absolute;
+    top: -24px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #38BDF8 0%, #818CF8 50%, #C084FC 100%);
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    box-shadow: 0 8px 22px rgba(56, 189, 248, 0.5), 0 0 15px rgba(129, 140, 248, 0.4);
+    border: 3px solid var(--bg-dark);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  [data-theme="light"] .mobile-fab-btn {
+    border-color: #F8FAFC;
+  }
+
+  .mobile-fab-item:active .mobile-fab-btn {
+    transform: scale(0.92);
+    box-shadow: 0 4px 14px rgba(56, 189, 248, 0.4);
+  }
+
+  .mobile-fab-label {
+    margin-top: 26px;
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .mobile-fab-item.active .mobile-fab-label {
+    color: var(--accent-blue);
+  }
+}
+
 .floating-whatsapp {
   position: fixed;
   bottom: 24px;
@@ -1387,7 +1511,7 @@ p {
   font-size: 1.8rem;
   box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
   z-index: 9999;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, bottom 0.3s ease;
 }
 
 .floating-whatsapp:hover {
@@ -1596,13 +1720,16 @@ p {
   }
 
   .back-to-top {
-    right: 20px;
-    bottom: 88px;
+    right: 16px;
+    bottom: calc(90px + env(safe-area-inset-bottom));
   }
 
   .floating-whatsapp {
-    bottom: 20px;
-    right: 20px;
+    bottom: calc(90px + env(safe-area-inset-bottom));
+    right: 16px;
+    width: 48px;
+    height: 48px;
+    font-size: 1.5rem;
   }
 }
 

@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCounters();
   initAccordion();
   initMobileMenu();
+  initMobileBottomNav();
   initBackToTop();
   initContactForm();
 
@@ -170,6 +171,67 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     }
+  }
+
+  /* --------------------------------------------------------------------------
+     3b. Mobile Bottom Navigation Active State & Scroll Spy
+     -------------------------------------------------------------------------- */
+  function initMobileBottomNav() {
+    const mobileNav = document.getElementById('mobile-bottom-nav');
+    if (!mobileNav) return;
+
+    const navItems = mobileNav.querySelectorAll('.mobile-nav-item');
+
+    function setActiveTab(navName) {
+      navItems.forEach(item => {
+        if (item.dataset.nav === navName) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
+        }
+      });
+    }
+
+    // ScrollSpy logic for homepage sections
+    const sections = ['home', 'services', 'contact'];
+    const sectionElements = sections.map(id => document.getElementById(id)).filter(Boolean);
+
+    if (sectionElements.length > 0) {
+      window.addEventListener('scroll', () => {
+        let currentSection = 'home';
+        const scrollPosition = window.scrollY + 200;
+
+        sectionElements.forEach(section => {
+          if (scrollPosition >= section.offsetTop) {
+            currentSection = section.id;
+          }
+        });
+
+        if (currentSection === 'contact') {
+          setActiveTab('fab');
+        } else if (currentSection === 'services') {
+          setActiveTab('services');
+        } else {
+          setActiveTab('home');
+        }
+      });
+    }
+
+    // Tap click handling for smooth scrolling and active class update
+    navItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        const href = item.getAttribute('href');
+        if (href && href.startsWith('#')) {
+          e.preventDefault();
+          const targetEl = document.querySelector(href);
+          if (targetEl) {
+            targetEl.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+        navItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+      });
+    });
   }
 
   /* --------------------------------------------------------------------------
