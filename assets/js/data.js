@@ -1193,7 +1193,7 @@ const portfolioData = {
       role_en: "Coaching Center Director",
       role_bn: "কোচিং সেন্টার পরিচালক",
       text_en: "Shafaet created an excellent educational web portal for our institute. Honest developer, delivered on time without any hassle.",
-      text_bn: "শাফাএত সাহেব আমাদের ইনস্টিটিউটের জন্য চমৎকার ওয়েবসাইট বানিয়ে দিয়েছেন। সৎ ও নির্দিষ্ট সময়ে কাজ সম্পন্ন করেন।"
+      text_bn: "সাফায়েত হোসেন ছারিফ আমাদের ইনস্টিটিউটের জন্য চমৎকার ওয়েবসাইট বানিয়ে দিয়েছেন। সৎ ও নির্দিষ্ট সময়ে কাজ সম্পন্ন করেন।"
     },
     {
       name_en: "Rakibul Islam",
