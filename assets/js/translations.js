@@ -44,7 +44,9 @@ const translations = {
     cardRevisionPolicy: "Revision Policy",
     cardMobileOptimization: "Mobile Optimization",
     btnStartProjectNow: "Start Project Now",
-    serviceStartingFrom: "Starting from:",
+    btnBackToServices: "Back to Services",
+    btnTelegram: "Telegram",
+    btnFiverr: "Fiverr",
 
     /* Hero Section */
     heroBadge: "Available for Freelance & Contract Projects",
@@ -234,7 +236,9 @@ const translations = {
     cardRevisionPolicy: "রিভিশন পলিসি",
     cardMobileOptimization: "মোবাইল অপটিমাইজেশন",
     btnStartProjectNow: "প্রজেক্ট শুরু করুন",
-    serviceStartingFrom: "শুরু হচ্ছে:",
+    btnBackToServices: "সার্ভিস তালিকায় ফিরে যান",
+    btnTelegram: "টেলিগ্রাম",
+    btnFiverr: "ফাইভার",
 
     /* Hero Section */
     heroBadge: "ফ্রিল্যান্স ও কন্ট্রাক্ট প্রজেক্টের জন্য প্রস্তুত",
