@@ -819,7 +819,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const titleText = currentLang === 'bn' ? service.title_bn : service.title_en;
     const descText = currentLang === 'bn' ? service.desc_bn : service.desc_en;
-    const priceText = currentLang === 'bn' ? service.price_bn : service.price_en;
     const overviewText = currentLang === 'bn' ? service.overview_bn : service.overview_en;
     const includesList = currentLang === 'bn' ? service.includes_bn : service.includes_en;
     const featuresList = currentLang === 'bn' ? service.features_bn : service.features_en;
@@ -833,18 +832,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const homeLink = getHomeUrl();
 
     container.innerHTML = `
-      <!-- Breadcrumb Navigation -->
-      <nav style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--text-muted); flex-wrap: wrap;">
-        <a href="${homeLink}" style="color: var(--text-muted); text-decoration: none;" hover="color: var(--accent-blue);">
-          <i class="fas fa-home"></i> ${translations[currentLang].breadcrumbHome}
+      <!-- Top Navigation & Breadcrumb -->
+      <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+        <a href="${servicesLink}" class="btn btn-secondary" style="padding: 0.45rem 0.9rem; font-size: 0.85rem; border-radius: var(--radius-full);">
+          <i class="fas fa-arrow-left"></i> ${translations[currentLang].btnBackToServices}
         </a>
-        <span>/</span>
-        <a href="${servicesLink}" style="color: var(--text-muted); text-decoration: none;">
-          ${translations[currentLang].breadcrumbServices}
-        </a>
-        <span>/</span>
-        <span style="color: var(--accent-blue); font-weight: 600;">${titleText}</span>
-      </nav>
+        <nav style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--text-muted); flex-wrap: wrap;">
+          <a href="${homeLink}" style="color: var(--text-muted); text-decoration: none;">
+            <i class="fas fa-home"></i> ${translations[currentLang].breadcrumbHome}
+          </a>
+          <span>/</span>
+          <a href="${servicesLink}" style="color: var(--text-muted); text-decoration: none;">
+            ${translations[currentLang].breadcrumbServices}
+          </a>
+          <span>/</span>
+          <span style="color: var(--accent-blue); font-weight: 600;">${titleText}</span>
+        </nav>
+      </div>
 
       <!-- Hero Card -->
       <div class="glass-card" style="padding: 2.5rem; margin-bottom: 2.5rem; border-color: rgba(56, 189, 248, 0.3);">
@@ -957,14 +961,25 @@ document.addEventListener('DOMContentLoaded', () => {
       <!-- Bottom Start Project CTA Banner -->
       <div class="glass-card" style="padding: 2.75rem; text-align: center; border-color: rgba(56, 189, 248, 0.4); background: linear-gradient(135deg, rgba(15,23,42,0.85) 0%, rgba(30,41,59,0.85) 100%);">
         <h3 style="font-size: 1.85rem; margin-bottom: 0.75rem; font-weight: 800;">
-          ${currentLang === 'bn' ? `আপনার ${title_bn} প্রজেক্ট শুরু করতে প্রস্তুত?` : `Ready to start your ${title_en} project?`}
+          ${currentLang === 'bn' ? `আপনার ${service.title_bn} প্রজেক্ট শুরু করতে প্রস্তুত?` : `Ready to start your ${service.title_en} project?`}
         </h3>
         <p style="color: var(--text-muted); max-width: 620px; margin: 0 auto 1.75rem; font-size: 1.05rem;">
-          ${currentLang === 'bn' ? 'আমাদের সাথে যোগাযোগ করে আজই আপনার কাস্টম প্রজেক্টের ফ্রি কোটেশন বা কনসালটেন্সি নিন।' : 'Contact WebWorldBD today for a free project consultation and custom quote.'}
+          ${currentLang === 'bn' ? 'আমাদের সাথে সরাসরি হোয়াটসঅ্যাপ, টেলিগ্রাম বা ফাইভারের মাধ্যমে যোগাযোগ করুন।' : 'Get in touch directly via WhatsApp, Telegram, or Fiverr to discuss your project.'}
         </p>
-        <a href="${contactLink}" class="btn btn-primary" style="padding: 0.85rem 2.2rem; font-size: 1.05rem;">
-          <i class="fas fa-paper-plane"></i> ${translations[currentLang].btnStartProjectNow}
-        </a>
+        <div style="display: flex; gap: 0.85rem; justify-content: center; flex-wrap: wrap;">
+          <a href="${contactLink}" class="btn btn-primary" style="padding: 0.85rem 1.8rem; font-size: 1rem;">
+            <i class="fas fa-paper-plane"></i> ${translations[currentLang].btnStartProjectNow}
+          </a>
+          <a href="https://wa.me/8801342697743" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp" style="padding: 0.85rem 1.5rem; font-size: 1rem;">
+            <i class="fab fa-whatsapp"></i> ${translations[currentLang].btnWhatsAppNav}
+          </a>
+          <a href="${portfolioData.profile.telegram}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 0.85rem 1.5rem; font-size: 1rem;">
+            <i class="fab fa-telegram"></i> ${translations[currentLang].btnTelegram}
+          </a>
+          <a href="${portfolioData.profile.fiverrWebGig || portfolioData.profile.fiverrProfile}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 0.85rem 1.5rem; font-size: 1rem; border-color: #1dbf73; color: #1dbf73;">
+            <i class="fas fa-store"></i> ${translations[currentLang].btnFiverr}
+          </a>
+        </div>
       </div>
     `;
   }
