@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebWorldBD | SHAFAET HOSSEN SARIP — Web & App Developer</title>
+  <meta name="description" content="SHAFAET HOSSEN SARIP - WebWorldBD. Professional Web & App Developer from Kushtia, Bangladesh building high-converting E-commerce, Web Apps, AI tools, and Custom Digital Solutions.">
+
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <!-- Particle Background Canvas -->
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- Navigation Header -->
+  <header class="header">
+    <div class="container header-container">
+      <a href="index.html" class="logo-brand">
+        <img src="assets/images/logo.jpg" alt="WebWorldBD Logo">
+        <span>WebWorld<span style="color:var(--accent-blue);">BD</span></span>
+      </a>
+
+      <nav class="nav-menu" id="nav-menu">
+        <a href="#home" class="nav-link active" data-i18n="navHome">Home</a>
+        <a href="#about" class="nav-link" data-i18n="navAbout">About Me</a>
+        <a href="#services" class="nav-link" data-i18n="navServices">Services</a>
+        <a href="#projects" class="nav-link" data-i18n="navProjects">Projects</a>
+        <a href="#process" class="nav-link" data-i18n="navProcess">Process</a>
+        <a href="#contact" class="nav-link" data-i18n="navContact">Contact</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="toggle-btn" id="theme-toggle-btn" title="Toggle Theme">
+          <i class="fas fa-sun"></i>
+        </button>
+        <button class="lang-switch-btn" id="lang-switch-btn">
+          <i class="fas fa-globe"></i> BN
+        </button>
+        <a href="#contact" class="btn btn-primary" data-i18n="btnHireMe">Hire Me</a>
+        <div class="mobile-toggle" id="mobile-toggle">
+          <i class="fas fa-bars"></i>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero" id="home">
+    <div class="container hero-grid">
+      <div class="hero-content">
+        <span class="badge-pill">
+          <i class="fas fa-sparkles"></i> <span data-i18n="heroBadge">Available for Freelance & Contract Projects</span>
+        </span>
+        <h1>
+          <span data-i18n="heroHeadingPrefix">Building Ideas Into</span><br>
+          <span class="text-gradient" data-i18n="heroHeadingGradient">Powerful Digital Experiences.</span>
+        </h1>
+        <p class="hero-subtitle" data-i18n="heroSubtitle">
+          Hi! I am Shafaet Hossen Sarip. I build fast, ultra-responsive, high-converting websites, web applications, and mobile apps tailored for your business success.
+        </p>
+
+        <div class="hero-cta-group">
+          <a href="#projects" class="btn btn-primary" data-i18n="btnViewProjects">View All Projects <i class="fas fa-arrow-right"></i></a>
+          <a href="#contact" class="btn btn-whatsapp" target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-whatsapp"></i> WhatsApp Me
+          </a>
+        </div>
+
+        <div class="hero-stats">
+          <div class="stat-item">
+            <h3 class="counter" data-target="25" data-suffix="+">0+</h3>
+            <p data-i18n="statCompleted">Projects Completed</p>
+          </div>
+          <div class="stat-item">
+            <h3 class="counter" data-target="18" data-suffix="+">0+</h3>
+            <p data-i18n="statClients">Satisfied Clients</p>
+          </div>
+          <div class="stat-item">
+            <h3 class="counter" data-target="100" data-suffix="%">0%</h3>
+            <p data-i18n="statSatisfaction">Satisfaction Rate</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Visuals (Browser & Smartphone Mockups) -->
+      <div class="hero-visual">
+        <div class="code-window">
+          <div class="code-header">
+            <div class="window-dots">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+            </div>
+            <span class="window-title">WebWorldBD — main.js</span>
+          </div>
+          <div class="code-body">
+            <div class="code-line"><span class="keyword">const</span> developer = {</div>
+            <div class="code-line">&nbsp;&nbsp;name: <span class="string">"SHAFAET HOSSEN SARIP"</span>,</div>
+            <div class="code-line">&nbsp;&nbsp;brand: <span class="string">"WebWorldBD"</span>,</div>
+            <div class="code-line">&nbsp;&nbsp;location: <span class="string">"Kushtia, Bangladesh"</span>,</div>
+            <div class="code-line">&nbsp;&nbsp;skills: [<span class="string">"HTML5/CSS3"</span>, <span class="string">"JavaScript"</span>, <span class="string">"AI Tools"</span>],</div>
+            <div class="code-line">&nbsp;&nbsp;policy: <span class="string">"Positive & Business Sites Only"</span>,</div>
+            <div class="code-line">&nbsp;&nbsp;build: <span class="function">function</span>() {</div>
+            <div class="code-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="string">"🚀 High Performance Digital Solution"</span>;</div>
+            <div class="code-line">&nbsp;&nbsp;}</div>
+            <div class="code-line">};</div>
+            <div class="code-line"><span class="comment">// Output: Ready to scale your business!</span></div>
+          </div>
+        </div>
+
+        <!-- Floating Smartphone Mockup -->
+        <div class="smartphone-mockup">
+          <div class="phone-screen">
+            <div class="phone-notch"></div>
+            <div class="phone-card">
+              <div class="phone-avatar"></div>
+              <div class="phone-lines">
+                <div class="phone-line" style="width: 80%;"></div>
+                <div class="phone-line" style="width: 50%;"></div>
+              </div>
+            </div>
+            <div class="phone-card" style="height: 80px; flex-direction: column; justify-content: center; gap: 6px;">
+              <div style="font-size: 0.65rem; color: #38BDF8; font-weight: bold;">WebWorldBD Mobile App</div>
+              <div style="font-size: 0.55rem; color: #94A3B8;">Smooth 60FPS UI Response</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Me Section -->
+  <section class="about-section" id="about">
+    <div class="container about-grid">
+      <div class="glass-card about-image-card">
+        <img src="assets/images/logo.jpg" alt="SHAFAET HOSSEN SARIP Profile" class="about-avatar">
+        <h3 style="font-size: 1.4rem; margin-bottom: 0.2rem;">SHAFAET HOSSEN SARIP</h3>
+        <p style="color: var(--accent-blue); font-weight: 600; margin-bottom: 1rem;">Founder & Lead Developer @ WebWorldBD</p>
+        <div class="about-info-badge">
+          <i class="fas fa-map-marker-alt"></i> Kushtia, Khulna, Bangladesh
+        </div>
+      </div>
+
+      <div class="about-content">
+        <span class="badge-pill" data-i18n="aboutBadge">Who I Am</span>
+        <h2 style="font-size: 2.25rem; font-weight: 800; margin: 0.75rem 0 1.25rem;" data-i18n="aboutHeading">
+          Passionate Developer Driven by Integrity & Innovation
+        </h2>
+
+        <div style="margin-bottom: 1.5rem;">
+          <h4 style="color: var(--accent-blue); margin-bottom: 0.3rem;" data-i18n="aboutEduTitle">Education & Background</h4>
+          <p data-i18n="aboutEduDesc">
+            Student at Kushtia Government Polytechnic Institute, Department of Electronics Technology. Combining electronic logic with modern software engineering.
+          </p>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <h4 style="color: var(--accent-blue); margin-bottom: 0.3rem;" data-i18n="aboutExpTitle">Web Development Expertise</h4>
+          <p data-i18n="aboutExpDesc">
+            Over 1 year of practical web & app development experience building E-commerce stores, AI tools, SaaS apps, and personal brand showcases.
+          </p>
+        </div>
+
+        <!-- Ethical Policy Box -->
+        <div class="ethical-policy-box">
+          <i class="fas fa-shield-exclamation"></i>
+          <div>
+            <h4 data-i18n="ethicalTitle">Strict Ethical Commitment Policy</h4>
+            <p data-i18n="ethicalDesc">
+              WebWorldBD strictly builds positive, business-oriented, and legal platforms only. Absolutely NO Gambling, Betting, Adult, or illegal websites are accepted.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services & Pricing Section -->
+  <section class="services-section" id="services">
+    <div class="container">
+      <div class="section-title">
+        <span class="badge-pill" data-i18n="servicesBadge">Pricing & Services</span>
+        <h2 data-i18n="servicesHeading">Affordable High-Performance Web Packages</h2>
+        <p data-i18n="servicesSub">Transparent starting prices for custom web solutions designed to scale your business.</p>
+      </div>
+
+      <!-- Services Grid (Rendered Dynamically from data.js) -->
+      <div class="services-grid" id="services-grid"></div>
+
+      <!-- Specialized Capabilities Badges -->
+      <div class="capabilities-wrapper">
+        <h3 class="capabilities-title" data-i18n="specialCapabilitiesTitle">Specialized Development Capabilities</h3>
+        <div class="capabilities-tags" id="capabilities-grid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tech Stack Showcase -->
+  <section class="tech-section">
+    <div class="container">
+      <div class="section-title">
+        <span class="badge-pill" data-i18n="techBadge">Tech Stack</span>
+        <h2 data-i18n="techHeading">Technologies & Frameworks I Master</h2>
+      </div>
+
+      <div class="tech-grid">
+        <div class="glass-card tech-card"><i class="fab fa-html5"></i><span>HTML5</span></div>
+        <div class="glass-card tech-card"><i class="fab fa-css3-alt"></i><span>CSS3 / Flex</span></div>
+        <div class="glass-card tech-card"><i class="fab fa-js-square"></i><span>JavaScript</span></div>
+        <div class="glass-card tech-card"><i class="fab fa-react"></i><span>React.js</span></div>
+        <div class="glass-card tech-card"><i class="fab fa-node-js"></i><span>Node.js</span></div>
+        <div class="glass-card tech-card"><i class="fab fa-python"></i><span>Python</span></div>
+        <div class="glass-card tech-card"><i class="fas fa-robot"></i><span>AI API Integrations</span></div>
+        <div class="glass-card tech-card"><i class="fab fa-android"></i><span>Android App Dev</span></div>
+        <div class="glass-card tech-card"><i class="fas fa-database"></i><span>MongoDB / MySQL</span></div>
+        <div class="glass-card tech-card"><i class="fab fa-git-alt"></i><span>Git & Cloudflare</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Projects Section -->
+  <section class="projects-section" id="projects">
+    <div class="container">
+      <div class="section-title">
+        <span class="badge-pill" data-i18n="projectsBadge">Featured Work</span>
+        <h2 data-i18n="projectsHeading">Recent Works & Digital Solutions</h2>
+      </div>
+
+      <!-- Filter Pills -->
+      <div class="project-filters">
+        <button class="filter-btn active" data-filter="all" data-i18n="filterAll">All Projects</button>
+        <button class="filter-btn" data-filter="ecommerce" data-i18n="filterEcommerce">E-Commerce</button>
+        <button class="filter-btn" data-filter="ai-edu" data-i18n="filterAiEdu">AI & Education</button>
+        <button class="filter-btn" data-filter="creative" data-i18n="filterCreative">Creative & Art</button>
+      </div>
+
+      <!-- Search Bar -->
+      <div style="max-width: 500px; margin: 0 auto 2.5rem; position: relative;">
+        <input type="text" id="project-search-input" class="form-control" style="padding-left: 2.75rem;" placeholder="Search projects by name, technology..." data-i18n="searchPlaceholder">
+        <i class="fas fa-search" style="position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+      </div>
+
+      <!-- Projects Grid (Rendered Dynamically) -->
+      <div class="projects-grid" id="projects-grid"></div>
+
+      <div style="text-align: center; margin-top: 3rem;">
+        <a href="projects.html" class="btn btn-primary" data-i18n="btnViewProjects">View All Projects Showcase <i class="fas fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Work With Me -->
+  <section class="about-section">
+    <div class="container">
+      <div class="section-title">
+        <span class="badge-pill" data-i18n="whyBadge">Why Choose Me</span>
+        <h2 data-i18n="whyHeading">Why Businesses Trust WebWorldBD</h2>
+      </div>
+
+      <div class="process-grid">
+        <div class="glass-card process-card">
+          <i class="fas fa-shield-alt" style="font-size: 2rem; color: var(--accent-blue); margin-bottom: 1rem;"></i>
+          <h3 data-i18n="why1Title">100% Ethical & Clean Code</h3>
+          <p data-i18n="why1Desc">Handcrafted, lightweight code built strictly following industry best practices and high security standards.</p>
+        </div>
+        <div class="glass-card process-card">
+          <i class="fas fa-bolt" style="font-size: 2rem; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
+          <h3 data-i18n="why2Title">Fast Turnaround & Support</h3>
+          <p data-i18n="why2Desc">On-time delivery with complimentary post-launch technical support to keep your site running smooth.</p>
+        </div>
+        <div class="glass-card process-card">
+          <i class="fas fa-mobile-alt" style="font-size: 2rem; color: var(--accent-emerald); margin-bottom: 1rem;"></i>
+          <h3 data-i18n="why3Title">Mobile-First Glass UI</h3>
+          <p data-i18n="why3Desc">Modern, luxury dark/light aesthetics that look stunning on smartphones, tablets, and desktop displays.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Work Process Section -->
+  <section class="process-section" id="process">
+    <div class="container">
+      <div class="section-title">
+        <span class="badge-pill" data-i18n="processBadge">How I Work</span>
+        <h2 data-i18n="processHeading">Simple & Seamless Development Process</h2>
+      </div>
+
+      <div class="process-grid">
+        <div class="glass-card process-card">
+          <span class="process-step">01</span>
+          <h3 data-i18n="step1Title">1. Discovery & Strategy</h3>
+          <p data-i18n="step1Desc">We discuss your vision, targets, features, and content requirements.</p>
+        </div>
+        <div class="glass-card process-card">
+          <span class="process-step">02</span>
+          <h3 data-i18n="step2Title">2. UI Design & Mockup</h3>
+          <p data-i18n="step2Desc">Crafting modern glassmorphic visual mockups for your approval.</p>
+        </div>
+        <div class="glass-card process-card">
+          <span class="process-step">03</span>
+          <h3 data-i18n="step3Title">3. Pure Frontend/Backend Code</h3>
+          <p data-i18n="step3Desc">Building clean, optimized, fully responsive code with precision.</p>
+        </div>
+        <div class="glass-card process-card">
+          <span class="process-step">04</span>
+          <h3 data-i18n="step4Title">4. Testing & Deployment</h3>
+          <p data-i18n="step4Desc">Rigorous testing across browsers and launching live on ultra-fast servers.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="about-section">
+    <div class="container">
+      <div class="section-title">
+        <span class="badge-pill" data-i18n="testiBadge">Testimonials</span>
+        <h2 data-i18n="testiHeading">What Clients Say About My Work</h2>
+      </div>
+
+      <div class="process-grid" id="testimonials-grid"></div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <div class="container">
+      <div class="section-title">
+        <span class="badge-pill" data-i18n="faqBadge">Got Questions?</span>
+        <h2 data-i18n="faqHeading">Frequently Asked Questions</h2>
+      </div>
+
+      <div class="faq-container" id="faq-accordion"></div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="contact-section" id="contact">
+    <div class="container">
+      <div class="contact-grid">
+        <div>
+          <span class="badge-pill" data-i18n="contactBadge">Get In Touch</span>
+          <h2 style="font-size: 2.25rem; font-weight: 800; margin: 0.75rem 0 1rem;" data-i18n="contactHeading">Let's Build Something Great Together!</h2>
+          <p style="color: var(--text-muted); margin-bottom: 2rem;" data-i18n="contactSub">
+            Ready to take your business online or start a new project? Contact me today for a free consultation.
+          </p>
+
+          <div class="contact-info-list">
+            <div class="contact-info-item">
+              <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+              <div class="contact-text">
+                <h4 data-i18n="emailLabel">Email Support</h4>
+                <a href="mailto:saripofficialsupport@gmail.com">saripofficialsupport@gmail.com</a>
+              </div>
+            </div>
+
+            <div class="contact-info-item">
+              <div class="contact-icon"><i class="fab fa-whatsapp"></i></div>
+              <div class="contact-text">
+                <h4 data-i18n="whatsappLabel">WhatsApp / Direct Call</h4>
+                <a href="https://wa.me/8801342697743" target="_blank" rel="noopener noreferrer">+8801342697743</a>
+              </div>
+            </div>
+
+            <div class="contact-info-item">
+              <div class="contact-icon"><i class="fas fa-phone-alt"></i></div>
+              <div class="contact-text">
+                <h4 data-i18n="hotlineLabel">Support Hotline</h4>
+                <a href="tel:+8809658183506">+8809658183506</a>
+              </div>
+            </div>
+
+            <div class="contact-info-item">
+              <div class="contact-icon"><i class="fab fa-telegram-plane"></i></div>
+              <div class="contact-text">
+                <h4 data-i18n="telegramLabel">Telegram Support</h4>
+                <a href="https://t.me/saripsupportBD" target="_blank" rel="noopener noreferrer">@saripsupportBD</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Social Links -->
+          <div style="margin-bottom: 2rem;">
+            <h4 style="font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.75rem;" data-i18n="socialLabel">Social Networks</h4>
+            <div class="social-links">
+              <a href="https://www.facebook.com/share/1HydyFmRfe/" target="_blank" rel="noopener noreferrer" class="social-btn"><i class="fab fa-facebook-f"></i></a>
+              <a href="https://www.tiktok.com/@webworldbd" target="_blank" rel="noopener noreferrer" class="social-btn"><i class="fab fa-tiktok"></i></a>
+              <a href="https://t.me/saripsupportBD" target="_blank" rel="noopener noreferrer" class="social-btn"><i class="fab fa-telegram"></i></a>
+            </div>
+          </div>
+
+          <!-- Fiverr Links Group -->
+          <div>
+            <h4 style="font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.75rem;" data-i18n="fiverrLabel">Hire Me On Fiverr</h4>
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+              <a href="https://www.fiverr.com/s/0DbA3ok" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1rem;" data-i18n="fiverrProfileBtn">Fiverr Profile</a>
+              <a href="https://www.fiverr.com/s/8xzaXEp" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1rem;" data-i18n="fiverrWebGigBtn">Web Dev Gig</a>
+              <a href="https://www.fiverr.com/s/vbvDpkL" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1rem;" data-i18n="fiverrAppGigBtn">App Dev Gig</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="glass-card contact-form">
+          <div class="form-group">
+            <label for="form-name" data-i18n="formNameLabel">Your Full Name</label>
+            <input type="text" id="form-name" class="form-control" placeholder="e.g. Tanvir Rahman" required data-i18n="formNamePlaceholder">
+          </div>
+
+          <div class="form-group">
+            <label for="form-email" data-i18n="formEmailLabel">Your Email Address</label>
+            <input type="email" id="form-email" class="form-control" placeholder="e.g. tanvir@example.com" required data-i18n="formEmailPlaceholder">
+          </div>
+
+          <div class="form-group">
+            <label for="form-service" data-i18n="formServiceLabel">Select Required Service</label>
+            <select id="form-service" class="form-control" style="background: rgba(15, 23, 42, 0.8);">
+              <option value="Business Website">Business Website (৳15,000+)</option>
+              <option value="E-commerce Website">E-commerce Website (৳20,000+)</option>
+              <option value="Portfolio Website">Portfolio Website (৳10,000+)</option>
+              <option value="Web App / SaaS">Web App / SaaS (৳22,000+)</option>
+              <option value="Android App Development">Android App Development</option>
+              <option value="AI Website">AI Website / Tools (৳14,000+)</option>
+              <option value="Custom Quote">Custom Quote / Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="form-message" data-i18n="formMessageLabel">Project Details / Message</label>
+            <textarea id="form-message" rows="5" class="form-control" placeholder="Tell me about your project goals, features needed, budget, or timeline..." required data-i18n="formMessagePlaceholder"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%;" data-i18n="formSubmitBtn">
+            Send Project Inquiry <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="logo-brand">
+            <img src="assets/images/logo.jpg" alt="WebWorldBD Logo">
+            <span>WebWorld<span style="color:var(--accent-blue);">BD</span></span>
+          </a>
+          <p data-i18n="footerDesc">
+            SHAFAET HOSSEN SARIP — WebWorldBD. Building powerful digital experiences, high-converting websites, and modern apps with zero compromise on quality and ethics.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="footer-title" data-i18n="quickLinksTitle">Quick Links</h4>
+          <div class="footer-links">
+            <a href="#home" data-i18n="navHome">Home</a>
+            <a href="#about" data-i18n="navAbout">About Me</a>
+            <a href="#services" data-i18n="navServices">Services</a>
+            <a href="#projects" data-i18n="navProjects">Projects</a>
+            <a href="#contact" data-i18n="navContact">Contact</a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-title" data-i18n="servicesListTitle">Popular Services</h4>
+          <div class="footer-links">
+            <a href="#services">Business Website</a>
+            <a href="#services">E-commerce Website</a>
+            <a href="#services">Portfolio Website</a>
+            <a href="#services">Web App / SaaS</a>
+            <a href="#services">AI Website & Tools</a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-title" data-i18n="contactTitle">Contact Info</h4>
+          <div class="footer-links">
+            <span>Kushtia, Bangladesh</span>
+            <a href="mailto:saripofficialsupport@gmail.com">saripofficialsupport@gmail.com</a>
+            <a href="https://wa.me/8801342697743" target="_blank" rel="noopener noreferrer">+8801342697743</a>
+            <a href="tel:+8809658183506">+8809658183506</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p data-i18n="copyrightText">© 2025 WebWorldBD. Created with passion by SHAFAET HOSSEN SARIP. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating WhatsApp Button -->
+  <a href="https://wa.me/8801342697743" target="_blank" rel="noopener noreferrer" class="floating-whatsapp" title="Chat on WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+
+  <!-- Back to Top Button -->
+  <button class="back-to-top" id="back-to-top" title="Back to top">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+
+  <!-- Application Scripts -->
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/translations.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
