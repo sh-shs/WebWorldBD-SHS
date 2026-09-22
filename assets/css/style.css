@@ -537,7 +537,7 @@ p {
 }
 
 /* --------------------------------------------------------------------------
-   5. Hero Section & Premium Glass Mockups
+   5. Hero Section & Profile Centered Design
    -------------------------------------------------------------------------- */
 .hero {
   padding-top: calc(var(--header-height) + 3.5rem);
@@ -562,13 +562,51 @@ p {
   width: 100%;
 }
 
-.hero-content .badge-pill {
-  margin: 0 auto 0.75rem;
+/* Hero Centered Profile Avatar */
+.hero-avatar-wrapper {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  padding: 8px;
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 2px solid var(--border-glow);
+  box-shadow: var(--glow-blue), var(--shadow-card);
+  margin: 0 auto 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
 }
 
-.hero-content h1 {
-  margin: 1.25rem 0 1rem;
+.hero-avatar-wrapper:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 35px rgba(56, 189, 248, 0.5), var(--shadow-hover);
+}
+
+.hero-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+/* Hero Main Introductory Text */
+.hero-intro-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-main);
+  max-width: 680px;
+  line-height: 1.8;
   text-align: center;
+  margin: 0 auto 2.25rem;
+}
+
+body.lang-bn .hero-intro-text {
+  font-family: var(--font-bangla);
+  font-size: 1.3rem;
+  line-height: 1.85;
 }
 
 .hero-subtitle {
