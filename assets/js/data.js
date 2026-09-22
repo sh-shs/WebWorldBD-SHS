@@ -42,6 +42,7 @@ const portfolioData = {
   services: [
     {
       id: "business",
+      featured: true,
       title_en: "Business Website",
       title_bn: "বিজনেস ওয়েবসাইট",
       price_en: "৳15,000+",
@@ -51,6 +52,7 @@ const portfolioData = {
     },
     {
       id: "ecommerce",
+      featured: true,
       title_en: "E-commerce Website",
       title_bn: "ই-কমার্স ওয়েবসাইট",
       price_en: "৳20,000+",
@@ -60,6 +62,7 @@ const portfolioData = {
     },
     {
       id: "portfolio",
+      featured: true,
       title_en: "Portfolio Website",
       title_bn: "পোর্টফোলিও ওয়েবসাইট",
       price_en: "৳10,000+",
@@ -105,6 +108,7 @@ const portfolioData = {
     },
     {
       id: "webapp-saas",
+      featured: true,
       title_en: "Web App / SaaS",
       title_bn: "ওয়েব অ্যাপ / SaaS",
       price_en: "৳22,000+",
@@ -150,6 +154,7 @@ const portfolioData = {
     },
     {
       id: "landing-page",
+      featured: true,
       title_en: "Landing Page",
       title_bn: "ল্যান্ডিং পেজ",
       price_en: "৳8,000+",
@@ -168,6 +173,7 @@ const portfolioData = {
     },
     {
       id: "ai-website",
+      featured: true,
       title_en: "AI Website / Tools",
       title_bn: "এআই ওয়েবসাইট / টুলস",
       price_en: "৳14,000+",
