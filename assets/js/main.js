@@ -22,7 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initMobileMenu();
   initMobileBottomNav();
   initBackToTop();
-  initContactForm();
   initAuthTabs();
   initScrollAnimations();
 
@@ -1017,29 +1016,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     btn.addEventListener('click', () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  }
-
-  function initContactForm() {
-    const form = document.getElementById('contact-form');
-    if (!form) return;
-
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = document.getElementById('form-name')?.value;
-      const contact = document.getElementById('form-contact')?.value || document.getElementById('form-email')?.value;
-      const message = document.getElementById('form-message')?.value;
-
-      if (!name || !contact || !message) {
-        alert(currentLang === 'bn' ? 'অনুগ্রহ করে সকল তথ্য পূরণ করুন।' : 'Please fill in all required fields.');
-        return;
-      }
-
-      alert(currentLang === 'bn'
-        ? 'ধন্যবাদ! আপনার প্রজেক্ট ইনকোয়ারিটি সফলভাবে পাঠানো হয়েছে। আমরা শীঘ্রই যোগাযোগ করব।'
-        : 'Thank you! Your project inquiry has been sent successfully. I will get back to you shortly.');
-
-      form.reset();
     });
   }
 
