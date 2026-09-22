@@ -13,9 +13,11 @@ const translations = {
     navAbout: "About Me",
     navServices: "Services",
     navProjects: "Projects",
+    navTestimonials: "Testimonials",
     navProcess: "Process",
     navContact: "Contact",
     btnHireMe: "Hire Me",
+    btnRequestNow: "Request Now",
     btnGetQuote: "Get Free Quote",
     btnDownloadCV: "Download CV",
     btnViewProjects: "View All Projects",
@@ -61,9 +63,9 @@ const translations = {
     ethicalDesc: "WebWorldBD strictly builds positive, business-oriented, and legal platforms only. Absolutely NO Gambling, Betting, Adult, or illegal websites are accepted.",
 
     /* Services Section */
-    servicesBadge: "Pricing & Services",
-    servicesHeading: "Affordable High-Performance Web Packages",
-    servicesSub: "Transparent starting prices for custom web solutions designed to scale your business.",
+    servicesBadge: "Service & Pricing",
+    servicesHeading: "Premium Web Services at Affordable Prices",
+    servicesSub: "Custom web solutions at smart pricing to expand your business.",
     startingFrom: "Starting from",
     specialCapabilitiesTitle: "Specialized Development Capabilities",
 
@@ -176,9 +178,11 @@ const translations = {
     navAbout: "আমার সম্পর্কে",
     navServices: "সার্ভিসসমূহ",
     navProjects: "প্রজেক্টসমূহ",
+    navTestimonials: "কাস্টমারবানী",
     navProcess: "কার্যপ্রণালী",
     navContact: "যোগাযোগ",
     btnHireMe: "হায়ার করুন",
+    btnRequestNow: "রিকোয়েস্ট করুন",
     btnGetQuote: "ফ্রি কোট পান",
     btnDownloadCV: "সিভি ডাউনলোড",
     btnViewProjects: "সকল প্রজেক্ট দেখুন",
@@ -225,8 +229,8 @@ const translations = {
 
     /* Services Section */
     servicesBadge: "সার্ভিস ও প্রাইসিং",
-    servicesHeading: "সাশ্রয়ী মূল্যে প্রিমিয়াম ওয়েব সার্ভিসেস",
-    servicesSub: "আপনার ব্যবসার পরিধি বাড়াতে স্বচ্ছ প্রারম্ভিক মূল্যে কাস্টম ওয়েব সলিউশন।",
+    servicesHeading: "সাশ্রয়ী মূল্যে প্রিমিয়াম ওয়েব সার্ভিসেস",
+    servicesSub: "আপনার ব্যবসার পরিধি বাড়াতে স্মার্ট প্রাইসিং মূল্যে কাস্টম ওয়েব সলিউশন।",
     startingFrom: "শুরু মাত্র",
     specialCapabilitiesTitle: "বিশেষ ডেভেলপমেন্ট দক্ষতাসমূহ",
 
