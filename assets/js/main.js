@@ -136,7 +136,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const navMenu = document.getElementById('nav-menu');
 
     if (mobileToggle && navMenu) {
-      mobileToggle.addEventListener('click', () => {
+      mobileToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
         navMenu.classList.toggle('active');
         const icon = mobileToggle.querySelector('i');
         if (icon) {
@@ -155,6 +156,18 @@ document.addEventListener('DOMContentLoaded', () => {
             icon.classList.remove('fa-times');
           }
         });
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', (e) => {
+        if (navMenu.classList.contains('active') && !navMenu.contains(e.target) && !mobileToggle.contains(e.target)) {
+          navMenu.classList.remove('active');
+          const icon = mobileToggle.querySelector('i');
+          if (icon) {
+            icon.classList.add('fa-bars');
+            icon.classList.remove('fa-times');
+          }
+        }
       });
     }
   }
@@ -245,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
           obs.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.5 });
+    }, { threshold: 0.2 });
 
     counterEls.forEach(el => observer.observe(el));
   }
