@@ -367,10 +367,10 @@ p {
   width: auto;
   max-width: 140px;
   object-fit: contain;
-  padding: 2px 6px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-glass);
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: none;
 }
 
 .nav-menu {
