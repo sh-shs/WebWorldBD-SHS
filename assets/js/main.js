@@ -310,7 +310,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('services-grid');
     if (!container) return;
 
-    container.innerHTML = portfolioData.services.map(s => `
+    let servicesToRender = portfolioData.services;
+    if (container.dataset.limit) {
+      const limit = parseInt(container.dataset.limit, 10);
+      servicesToRender = servicesToRender.filter(s => s.featured).slice(0, limit);
+    }
+
+    container.innerHTML = servicesToRender.map(s => `
       <div class="glass-card service-card">
         <div>
           <div class="service-icon"><i class="fas fa-laptop-code"></i></div>
