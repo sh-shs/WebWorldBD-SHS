@@ -1623,6 +1623,13 @@ body.lang-bn .about-block-desc {
   flex-shrink: 0;
 }
 
+.contact-icon svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: currentColor;
+  display: block;
+}
+
 .contact-text h4 {
   font-size: 0.8rem;
   color: var(--text-muted);
