@@ -324,7 +324,7 @@ const translations = {
     labelPassword: "পাসওয়ার্ড",
     labelConfirmPassword: "পাসওয়ার্ড নিশ্চিত করুন",
     btnLoginSubmit: "পোর্টালে লগইন করুন",
-    btnRegisterSubmit: "অ্যাকেউন্ট তৈরি করুন",
+    btnRegisterSubmit: "অ্যাকাউন্ট তৈরি করুন",
     authNote: "নোট: ফায়ারবেস অথেন্টিকেশন সিস্টেম পরবর্তী ধাপে যুক্ত করা হবে। বর্তমানে এটি ইউআই প্রিভিউ হিসেবে সচল রয়েছে।",
 
     /* Mobile Bottom Navigation */

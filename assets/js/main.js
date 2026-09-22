@@ -1019,42 +1019,91 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* --------------------------------------------------------------------------
-     9. Client Account Auth Tabs Switcher
+     9. Client Account Auth Tabs Switcher & Interactivity
      -------------------------------------------------------------------------- */
   function initAuthTabs() {
+    const authCardContainer = document.getElementById('auth-card-container');
     const loginTabBtn = document.getElementById('tab-btn-login');
     const regTabBtn = document.getElementById('tab-btn-register');
     const loginForm = document.getElementById('login-form');
     const regForm = document.getElementById('register-form');
 
-    if (!loginTabBtn || !regTabBtn || !loginForm || !regForm) return;
+    if (!authCardContainer || !loginTabBtn || !regTabBtn || !loginForm || !regForm) return;
 
-    loginTabBtn.addEventListener('click', () => {
-      loginTabBtn.classList.add('active');
-      regTabBtn.classList.remove('active');
-      loginForm.style.display = 'block';
-      regForm.style.display = 'none';
+    function switchAuthTab(targetTab) {
+      if (targetTab === 'login') {
+        authCardContainer.setAttribute('data-active-tab', 'login');
+        loginTabBtn.classList.add('active');
+        regTabBtn.classList.remove('active');
+        loginForm.style.display = 'flex';
+        regForm.style.display = 'none';
+      } else {
+        authCardContainer.setAttribute('data-active-tab', 'register');
+        regTabBtn.classList.add('active');
+        loginTabBtn.classList.remove('active');
+        regForm.style.display = 'flex';
+        loginForm.style.display = 'none';
+      }
+    }
+
+    loginTabBtn.addEventListener('click', () => switchAuthTab('login'));
+    regTabBtn.addEventListener('click', () => switchAuthTab('register'));
+
+    // Show / Hide Password Eye Toggle
+    const passwordToggleBtns = document.querySelectorAll('.password-toggle-btn');
+    passwordToggleBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const input = btn.previousElementSibling;
+        if (!input) return;
+        const icon = btn.querySelector('i');
+
+        if (input.type === 'password') {
+          input.type = 'text';
+          if (icon) {
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+          }
+        } else {
+          input.type = 'password';
+          if (icon) {
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+          }
+        }
+      });
     });
 
-    regTabBtn.addEventListener('click', () => {
-      regTabBtn.classList.add('active');
-      loginTabBtn.classList.remove('active');
-      regForm.style.display = 'block';
-      loginForm.style.display = 'none';
-    });
+    // Form Submit Handlers with Spinner Loading Effect
+    function handleFormSubmit(form, submitBtn) {
+      if (!form || !submitBtn) return;
 
-    loginForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      alert(currentLang === 'bn'
-        ? 'ক্লায়েন্ট পোর্টাল বর্তমানে ইউআই প্রিভিউ মোডে রয়েছে। ফায়ারবেস অথেন্টিকেশন সংযোজন শীঘ্রই আসছে।'
-        : 'Client Portal is currently in UI preview mode. Firebase Authentication integration coming soon!');
-    });
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
 
-    regForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      alert(currentLang === 'bn'
-        ? 'ক্লায়েন্ট পোর্টাল বর্তমানে ইউআই প্রিভিউ মোডে রয়েছে। ফায়ারবেস অথেন্টিকেশন সংযোজন শীঘ্রই আসছে।'
-        : 'Client Portal is currently in UI preview mode. Firebase Authentication integration coming soon!');
-    });
+        // Trigger loading state
+        submitBtn.classList.add('loading');
+        const btnText = submitBtn.querySelector('.btn-text');
+        const btnIcon = submitBtn.querySelector('.btn-icon');
+        const originalText = btnText ? btnText.textContent : '';
+
+        if (btnText) {
+          btnText.innerHTML = `<span class="btn-spinner"></span>${currentLang === 'bn' ? 'প্রসেসিং হচ্ছে...' : 'Processing...'}`;
+        }
+        if (btnIcon) btnIcon.style.display = 'none';
+
+        setTimeout(() => {
+          submitBtn.classList.remove('loading');
+          if (btnText) btnText.textContent = originalText;
+          if (btnIcon) btnIcon.style.display = 'inline-block';
+
+          alert(currentLang === 'bn'
+            ? 'ক্লায়েন্ট পোর্টাল বর্তমানে ইউআই প্রিভিউ মোডে রয়েছে। ফায়ারবেস অথেন্টিকেশন সংযোজন শীঘ্রই আসছে।'
+            : 'Client Portal is currently in UI preview mode. Firebase Authentication integration coming soon!');
+        }, 1200);
+      });
+    }
+
+    handleFormSubmit(loginForm, document.getElementById('login-submit-btn'));
+    handleFormSubmit(regForm, document.getElementById('reg-submit-btn'));
   }
 });
