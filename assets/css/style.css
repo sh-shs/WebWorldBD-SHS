@@ -547,10 +547,11 @@ p {
 }
 
 .hero-grid {
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 3.5rem;
+  display: flex;
+  justify-content: center;
   align-items: center;
+  max-width: 850px;
+  margin: 0 auto;
 }
 
 .hero-content {
@@ -558,6 +559,7 @@ p {
   flex-direction: column;
   align-items: center;
   text-align: center;
+  width: 100%;
 }
 
 .hero-content .badge-pill {
@@ -638,139 +640,6 @@ p {
   font-weight: 600;
 }
 
-/* Visual Code Window & Smartphone Mockup */
-.hero-visual {
-  position: relative;
-}
-
-.code-window {
-  background: #0B1120;
-  border-radius: 16px;
-  border: 1px solid var(--border-glass);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
-  overflow: hidden;
-  position: relative;
-  z-index: 1;
-}
-
-[data-theme="light"] .code-window {
-  background: #0F172A;
-  color: #F8FAFC;
-  border-color: rgba(14, 165, 233, 0.25);
-}
-
-.code-header {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 0.75rem 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.window-dots {
-  display: flex;
-  gap: 6px;
-}
-
-.dot {
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-}
-.dot.red { background: #FF5F56; }
-.dot.yellow { background: #FFBD2E; }
-.dot.green { background: #27C93F; }
-
-.window-title {
-  font-size: 0.8rem;
-  color: #94A3B8;
-  font-family: monospace;
-}
-
-.code-body {
-  padding: 1.25rem;
-  font-family: 'Fira Code', Consolas, monospace;
-  font-size: 0.85rem;
-  line-height: 1.7;
-  color: #E2E8F0;
-  overflow-x: auto;
-}
-
-.code-line .keyword { color: #F472B6; }
-.code-line .string { color: #34D399; }
-.code-line .function { color: #60A5FA; }
-.code-line .comment { color: #64748B; font-style: italic; }
-
-.smartphone-mockup {
-  position: absolute;
-  bottom: -25px;
-  right: -20px;
-  width: 170px;
-  height: 310px;
-  background: #000;
-  border-radius: 28px;
-  border: 4px solid #334155;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-  z-index: 2;
-  overflow: hidden;
-  padding: 8px;
-  animation: floatPhone 6s ease-in-out infinite;
-}
-
-@keyframes floatPhone {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-12px) rotate(2deg); }
-}
-
-.phone-screen {
-  background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%);
-  width: 100%;
-  height: 100%;
-  border-radius: 20px;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.phone-notch {
-  width: 50px;
-  height: 10px;
-  background: #334155;
-  border-radius: 5px;
-  margin: 0 auto 6px;
-}
-
-.phone-card {
-  background: rgba(255, 255, 255, 0.1);
-  height: 45px;
-  border-radius: 8px;
-  padding: 6px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.phone-avatar {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: var(--accent-blue);
-}
-
-.phone-lines {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.phone-line {
-  height: 5px;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 3px;
-}
 
 /* --------------------------------------------------------------------------
    6. About Section & Profile Card
@@ -2169,13 +2038,7 @@ p {
 
 /* Tablet Specific Layout Reflow (600px - 1023px) */
 @media (min-width: 600px) and (max-width: 1023px) {
-  /* Hero Section Reflow: Balanced 2-column layout on upper tablet, centered proportions */
-  .hero-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    align-items: center;
-  }
-
+  /* Hero Section Reflow */
   .hero-subtitle {
     max-width: 100%;
   }
@@ -2183,13 +2046,6 @@ p {
   .hero-stats {
     grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
-  }
-
-  .smartphone-mockup {
-    right: 5px;
-    bottom: -15px;
-    width: 140px;
-    height: 250px;
   }
 
   /* About & Contact Grids */
@@ -2317,9 +2173,5 @@ p {
 
   .hero-cta-group .btn {
     width: 100%;
-  }
-
-  .smartphone-mockup {
-    display: none;
   }
 }
