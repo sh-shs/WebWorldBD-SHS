@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Details | WebWorldBD — SHAFAET HOSSEN SARIP</title>
-  <meta name="description" content="View detailed project case study, key features, technology stack, and live project link built by WebWorldBD.">
+  <title>Client Account & Dashboard | WebWorldBD — SHAFAET HOSSEN SARIP</title>
+  <meta name="description" content="Client account login and registration portal for WebWorldBD projects. Track project milestones, manage invoices, and request technical support.">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="assets/images/logo.png">
@@ -35,7 +35,7 @@
         <a href="index.html" class="nav-link" data-i18n="navHome">Home</a>
         <a href="index.html#about" class="nav-link" data-i18n="navAbout">About Me</a>
         <a href="services.html" class="nav-link" data-i18n="navServices">Services</a>
-        <a href="projects.html" class="nav-link active" data-i18n="navProjects">Projects</a>
+        <a href="projects.html" class="nav-link" data-i18n="navProjects">Projects</a>
         <a href="index.html#process" class="nav-link" data-i18n="navProcess">Process</a>
         <a href="contact.html" class="nav-link" data-i18n="navContact">Contact</a>
         <a href="contact.html" class="btn btn-primary mobile-hire-btn" data-i18n="btnHireMe">Hire Me</a>
@@ -56,18 +56,73 @@
     </div>
   </header>
 
-  <!-- Project Detail Main Section -->
-  <section class="about-section" style="padding-top: calc(var(--header-height) + 2rem);">
-    <div class="container">
-      <!-- Back Navigation Button -->
-      <div style="margin-bottom: 2rem;">
-        <a href="projects.html" class="btn btn-secondary" style="font-size: 0.9rem;">
-          <i class="fas fa-arrow-left"></i> Back to All Projects
-        </a>
+  <!-- Client Account Section -->
+  <section class="about-section" style="padding-top: calc(var(--header-height) + 3rem); min-height: calc(100vh - 120px);">
+    <div class="container" style="max-width: 650px; margin: 0 auto;">
+      <div class="section-title">
+        <span class="badge-pill" data-i18n="accountBadge">Client Portal</span>
+        <h2 data-i18n="accountHeading">Client Account Dashboard</h2>
+        <p data-i18n="accountSub">Log in or register to track project progress, request support, and manage invoices.</p>
       </div>
 
-      <!-- Dynamic Content Injection Container -->
-      <div id="project-detail-content"></div>
+      <!-- Auth Form Container -->
+      <div class="glass-card" style="padding: 2.5rem; position: relative;">
+        <!-- Auth Tabs -->
+        <div class="project-filters" style="margin-bottom: 2rem;">
+          <button class="filter-btn active" id="tab-btn-login" data-auth-tab="login" data-i18n="tabLogin">Login</button>
+          <button class="filter-btn" id="tab-btn-register" data-auth-tab="register" data-i18n="tabRegister">Register</button>
+        </div>
+
+        <!-- Login Form -->
+        <form id="login-form">
+          <div class="form-group">
+            <label for="login-email" data-i18n="formEmailLabel">Your Email Address</label>
+            <input type="email" id="login-email" class="form-control" placeholder="e.g. tanvir@example.com" required data-i18n="formEmailPlaceholder">
+          </div>
+
+          <div class="form-group">
+            <label for="login-password" data-i18n="labelPassword">Password</label>
+            <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;" data-i18n="btnLoginSubmit">
+            Log In to Portal <i class="fas fa-sign-in-alt"></i>
+          </button>
+        </form>
+
+        <!-- Register Form (Hidden by Default) -->
+        <form id="register-form" style="display: none;">
+          <div class="form-group">
+            <label for="reg-name" data-i18n="formNameLabel">Your Full Name</label>
+            <input type="text" id="reg-name" class="form-control" placeholder="e.g. Tanvir Rahman" required data-i18n="formNamePlaceholder">
+          </div>
+
+          <div class="form-group">
+            <label for="reg-email" data-i18n="formEmailLabel">Your Email Address</label>
+            <input type="email" id="reg-email" class="form-control" placeholder="e.g. tanvir@example.com" required data-i18n="formEmailPlaceholder">
+          </div>
+
+          <div class="form-group">
+            <label for="reg-password" data-i18n="labelPassword">Password</label>
+            <input type="password" id="reg-password" class="form-control" placeholder="••••••••" required>
+          </div>
+
+          <div class="form-group">
+            <label for="reg-confirm-password" data-i18n="labelConfirmPassword">Confirm Password</label>
+            <input type="password" id="reg-confirm-password" class="form-control" placeholder="••••••••" required>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;" data-i18n="btnRegisterSubmit">
+            Create Account <i class="fas fa-user-plus"></i>
+          </button>
+        </form>
+
+        <!-- Firebase Notice Banner -->
+        <div style="margin-top: 2rem; padding: 1rem; background: rgba(56, 189, 248, 0.1); border-left: 3px solid var(--accent-blue); border-radius: 8px; font-size: 0.85rem; color: var(--text-muted);">
+          <i class="fas fa-info-circle" style="color: var(--accent-blue); margin-right: 6px;"></i>
+          <span data-i18n="authNote">Note: Firebase Authentication integration is in progress. Current forms serve as client UI preview.</span>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -140,17 +195,17 @@
       </div>
       <span class="mobile-nav-label mobile-fab-label" data-i18n="mobileNavStartProject">প্রজেক্ট শুরু করুন</span>
     </a>
-    <a href="projects.html" class="mobile-nav-item active" data-nav="projects">
+    <a href="projects.html" class="mobile-nav-item" data-nav="projects">
       <div class="mobile-nav-icon"><i class="fas fa-desktop"></i></div>
       <span class="mobile-nav-label" data-i18n="mobileNavLivePreview">লাইভ প্রিভিউ</span>
     </a>
-    <a href="account.html" class="mobile-nav-item" data-nav="account">
+    <a href="account.html" class="mobile-nav-item active" data-nav="account">
       <div class="mobile-nav-icon"><i class="fas fa-user"></i></div>
       <span class="mobile-nav-label" data-i18n="mobileNavAccount">অ্যাকাউন্ট</span>
     </a>
   </nav>
 
-  <!-- Floating Buttons -->
+  <!-- Floating WhatsApp & Back to Top Buttons -->
   <a href="https://wa.me/8801342697743" target="_blank" rel="noopener noreferrer" class="floating-whatsapp" title="Chat on WhatsApp">
     <i class="fab fa-whatsapp"></i>
   </a>

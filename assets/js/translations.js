@@ -105,15 +105,35 @@ const translations = {
     fiverrWebGigBtn: "Web Development Gig",
     fiverrAppGigBtn: "App Development Gig",
 
-    /* Form Fields */
+    /* Form Fields & Project Request */
     formNameLabel: "Your Full Name",
     formNamePlaceholder: "e.g. Tanvir Rahman",
+    formContactLabel: "Email Address or Phone Number",
+    formContactPlaceholder: "e.g. tanvir@example.com or 01700000000",
     formEmailLabel: "Your Email Address",
     formEmailPlaceholder: "e.g. tanvir@example.com",
-    formServiceLabel: "Select Required Service",
-    formMessageLabel: "Project Details / Message",
-    formMessagePlaceholder: "Tell me about your project goals, features needed, budget, or timeline...",
+    formServiceLabel: "Select Required Project Type",
+    formBudgetLabel: "Estimated Budget Range",
+    formBudgetSelect: "Select Budget Range",
+    formBudget1: "৳10,000 - ৳20,000 (Basic Site)",
+    formBudget2: "৳20,000 - ৳50,000 (Standard E-commerce / Web App)",
+    formBudget3: "৳50,000 - ৳100,000+ (Custom Enterprise Solution)",
+    formBudget4: "Flexible / To be discussed",
+    formMessageLabel: "Project Details / Description",
+    formMessagePlaceholder: "Tell me about your project goals, required features, or target launch date...",
     formSubmitBtn: "Send Project Inquiry",
+
+    /* Account / Client Portal Page */
+    accountBadge: "Client Portal",
+    accountHeading: "Client Account Dashboard",
+    accountSub: "Log in or register to track project progress, request support, and manage invoices.",
+    tabLogin: "Login",
+    tabRegister: "Register",
+    labelPassword: "Password",
+    labelConfirmPassword: "Confirm Password",
+    btnLoginSubmit: "Log In to Portal",
+    btnRegisterSubmit: "Create Account",
+    authNote: "Note: Firebase Authentication integration is in progress. Current forms serve as client UI preview.",
 
     /* Mobile Bottom Navigation */
     mobileNavHome: "Home",
@@ -231,15 +251,35 @@ const translations = {
     fiverrWebGigBtn: "ওয়েব ডেভেলপমেন্ট গিগ",
     fiverrAppGigBtn: "অ্যাপ ডেভেলপমেন্ট গিগ",
 
-    /* Form Fields */
+    /* Form Fields & Project Request */
     formNameLabel: "আপনার পূর্ণ নাম",
     formNamePlaceholder: "যেমন: তানভীর রহমান",
+    formContactLabel: "ইমেইল ঠিকানা অথবা মোবাইল নম্বর",
+    formContactPlaceholder: "যেমন: tanvir@example.com অথবা 01700000000",
     formEmailLabel: "আপনার ইমেইল ঠিকানা",
     formEmailPlaceholder: "যেমন: tanvir@example.com",
-    formServiceLabel: "প্রয়োজনীয় সার্ভিস নির্বাচন করুন",
-    formMessageLabel: "প্রজেক্টের বিবরণ / মেসেজ",
-    formMessagePlaceholder: "আপনার প্রজেক্টের চাহিদা, বাজেট ও সময়সীমা সম্পর্কে লিখুন...",
-    formSubmitBtn: "মেসেজ পাঠান",
+    formServiceLabel: "প্রজেক্টের ক্যাটাগরি নির্বাচন করুন",
+    formBudgetLabel: "আনুমানিক বাজেট রেঞ্জ",
+    formBudgetSelect: "বাজেট রেঞ্জ নির্বাচন করুন",
+    formBudget1: "১০,০০০ - ২০,০০০ টাকা (সাধারণ ওয়েবসাইট)",
+    formBudget2: "২০,০০০ - ৫০,০০০ টাকা (ই-কমার্স / কাস্টম ওয়েব অ্যাপ)",
+    formBudget3: "৫০,০০০ - ১,০০,০০০+ টাকা (এন্টারপ্রাইজ সলিউশন)",
+    formBudget4: "আলোচনা সাপেক্ষে",
+    formMessageLabel: "প্রজেক্টের বিস্তারিত বিবরণ",
+    formMessagePlaceholder: "আপনার প্রজেক্টের লক্ষ্য, প্রয়োজনীয় ফিচার বা সময়সীমা লিখুন...",
+    formSubmitBtn: "প্রজেক্ট ইনকোয়ারি পাঠান",
+
+    /* Account / Client Portal Page */
+    accountBadge: "ক্লায়েন্ট পোর্টাল",
+    accountHeading: "ক্লায়েন্ট অ্যাকাউন্ট ড্যাশবোর্ড",
+    accountSub: "প্রজেক্টের অগ্রগতি ট্র্যাক করতে, সাপোর্ট পেতে ও ইনভয়েস দেখতে লগইন বা রেজিস্ট্রেশন করুন।",
+    tabLogin: "লগইন",
+    tabRegister: "রেজিস্ট্রেশন",
+    labelPassword: "পাসওয়ার্ড",
+    labelConfirmPassword: "পাসওয়ার্ড নিশ্চিত করুন",
+    btnLoginSubmit: "পোর্টালে লগইন করুন",
+    btnRegisterSubmit: "অ্যাকেউন্ট তৈরি করুন",
+    authNote: "নোট: ফায়ারবেস অথেন্টিকেশন সিস্টেম পরবর্তী ধাপে যুক্ত করা হবে। বর্তমানে এটি ইউআই প্রিভিউ হিসেবে সচল রয়েছে।",
 
     /* Mobile Bottom Navigation */
     mobileNavHome: "হোম",
