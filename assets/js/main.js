@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initMobileBottomNav();
   initBackToTop();
   initContactForm();
+  initAuthTabs();
 
   // Dynamic Content Rendering
   if (document.getElementById('services-grid')) renderServices();
@@ -174,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* --------------------------------------------------------------------------
-     3b. Mobile Bottom Navigation Active State & Scroll Spy
+     3b. Mobile Bottom Navigation Active Route Highlighting
      -------------------------------------------------------------------------- */
   function initMobileBottomNav() {
     const mobileNav = document.getElementById('mobile-bottom-nav');
@@ -182,9 +183,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const navItems = mobileNav.querySelectorAll('.mobile-nav-item');
 
-    function setActiveTab(navName) {
+    function updateActiveBottomNav() {
+      const currentPath = window.location.pathname.toLowerCase();
+      let activeNavKey = 'home';
+
+      if (currentPath.endsWith('services.html')) {
+        activeNavKey = 'services';
+      } else if (currentPath.endsWith('contact.html')) {
+        activeNavKey = 'fab';
+      } else if (currentPath.endsWith('projects.html') || currentPath.endsWith('project-details.html')) {
+        activeNavKey = 'projects';
+      } else if (currentPath.endsWith('account.html')) {
+        activeNavKey = 'account';
+      } else {
+        // Defaults to homepage index.html
+        activeNavKey = 'home';
+      }
+
       navItems.forEach(item => {
-        if (item.dataset.nav === navName) {
+        if (item.dataset.nav === activeNavKey) {
           item.classList.add('active');
         } else {
           item.classList.remove('active');
@@ -192,46 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // ScrollSpy logic for homepage sections
-    const sections = ['home', 'services', 'contact'];
-    const sectionElements = sections.map(id => document.getElementById(id)).filter(Boolean);
-
-    if (sectionElements.length > 0) {
-      window.addEventListener('scroll', () => {
-        let currentSection = 'home';
-        const scrollPosition = window.scrollY + 200;
-
-        sectionElements.forEach(section => {
-          if (scrollPosition >= section.offsetTop) {
-            currentSection = section.id;
-          }
-        });
-
-        if (currentSection === 'contact') {
-          setActiveTab('fab');
-        } else if (currentSection === 'services') {
-          setActiveTab('services');
-        } else {
-          setActiveTab('home');
-        }
-      });
-    }
-
-    // Tap click handling for smooth scrolling and active class update
-    navItems.forEach(item => {
-      item.addEventListener('click', (e) => {
-        const href = item.getAttribute('href');
-        if (href && href.startsWith('#')) {
-          e.preventDefault();
-          const targetEl = document.querySelector(href);
-          if (targetEl) {
-            targetEl.scrollIntoView({ behavior: 'smooth' });
-          }
-        }
-        navItems.forEach(i => i.classList.remove('active'));
-        item.classList.add('active');
-      });
-    });
+    updateActiveBottomNav();
   }
 
   /* --------------------------------------------------------------------------
@@ -735,19 +713,59 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const name = document.getElementById('form-name')?.value;
-      const email = document.getElementById('form-email')?.value;
+      const contact = document.getElementById('form-contact')?.value || document.getElementById('form-email')?.value;
       const message = document.getElementById('form-message')?.value;
 
-      if (!name || !email || !message) {
+      if (!name || !contact || !message) {
         alert(currentLang === 'bn' ? 'অনুগ্রহ করে সকল তথ্য পূরণ করুন।' : 'Please fill in all required fields.');
         return;
       }
 
       alert(currentLang === 'bn'
-        ? 'ধন্যবাদ! আপনার মেসেজটি সফলভাবে পাঠানো হয়েছে। আমরা শীঘ্রই যোগাযোগ করব।'
-        : 'Thank you! Your message has been sent successfully. I will get back to you shortly.');
+        ? 'ধন্যবাদ! আপনার প্রজেক্ট ইনকোয়ারিটি সফলভাবে পাঠানো হয়েছে। আমরা শীঘ্রই যোগাযোগ করব।'
+        : 'Thank you! Your project inquiry has been sent successfully. I will get back to you shortly.');
 
       form.reset();
+    });
+  }
+
+  /* --------------------------------------------------------------------------
+     9. Client Account Auth Tabs Switcher
+     -------------------------------------------------------------------------- */
+  function initAuthTabs() {
+    const loginTabBtn = document.getElementById('tab-btn-login');
+    const regTabBtn = document.getElementById('tab-btn-register');
+    const loginForm = document.getElementById('login-form');
+    const regForm = document.getElementById('register-form');
+
+    if (!loginTabBtn || !regTabBtn || !loginForm || !regForm) return;
+
+    loginTabBtn.addEventListener('click', () => {
+      loginTabBtn.classList.add('active');
+      regTabBtn.classList.remove('active');
+      loginForm.style.display = 'block';
+      regForm.style.display = 'none';
+    });
+
+    regTabBtn.addEventListener('click', () => {
+      regTabBtn.classList.add('active');
+      loginTabBtn.classList.remove('active');
+      regForm.style.display = 'block';
+      loginForm.style.display = 'none';
+    });
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert(currentLang === 'bn'
+        ? 'ক্লায়েন্ট পোর্টাল বর্তমানে ইউআই প্রিভিউ মোডে রয়েছে। ফায়ারবেস অথেন্টিকেশন সংযোজন শীঘ্রই আসছে।'
+        : 'Client Portal is currently in UI preview mode. Firebase Authentication integration coming soon!');
+    });
+
+    regForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert(currentLang === 'bn'
+        ? 'ক্লায়েন্ট পোর্টাল বর্তমানে ইউআই প্রিভিউ মোডে রয়েছে। ফায়ারবেস অথেন্টিকেশন সংযোজন শীঘ্রই আসছে।'
+        : 'Client Portal is currently in UI preview mode. Firebase Authentication integration coming soon!');
     });
   }
 });

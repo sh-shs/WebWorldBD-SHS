@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Details | WebWorldBD — SHAFAET HOSSEN SARIP</title>
-  <meta name="description" content="View detailed project case study, key features, technology stack, and live project link built by WebWorldBD.">
+  <title>Our Services & Pricing | WebWorldBD — SHAFAET HOSSEN SARIP</title>
+  <meta name="description" content="Explore custom web development services and packages by WebWorldBD. From E-commerce stores, Business sites, Web Apps, to AI tools with transparent pricing.">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="assets/images/logo.png">
@@ -34,8 +34,8 @@
       <nav class="nav-menu" id="nav-menu">
         <a href="index.html" class="nav-link" data-i18n="navHome">Home</a>
         <a href="index.html#about" class="nav-link" data-i18n="navAbout">About Me</a>
-        <a href="services.html" class="nav-link" data-i18n="navServices">Services</a>
-        <a href="projects.html" class="nav-link active" data-i18n="navProjects">Projects</a>
+        <a href="services.html" class="nav-link active" data-i18n="navServices">Services</a>
+        <a href="projects.html" class="nav-link" data-i18n="navProjects">Projects</a>
         <a href="index.html#process" class="nav-link" data-i18n="navProcess">Process</a>
         <a href="contact.html" class="nav-link" data-i18n="navContact">Contact</a>
         <a href="contact.html" class="btn btn-primary mobile-hire-btn" data-i18n="btnHireMe">Hire Me</a>
@@ -56,18 +56,34 @@
     </div>
   </header>
 
-  <!-- Project Detail Main Section -->
-  <section class="about-section" style="padding-top: calc(var(--header-height) + 2rem);">
+  <!-- Services Hero Section -->
+  <section class="services-section" style="padding-top: calc(var(--header-height) + 3rem);">
     <div class="container">
-      <!-- Back Navigation Button -->
-      <div style="margin-bottom: 2rem;">
-        <a href="projects.html" class="btn btn-secondary" style="font-size: 0.9rem;">
-          <i class="fas fa-arrow-left"></i> Back to All Projects
-        </a>
+      <div class="section-title">
+        <span class="badge-pill" data-i18n="servicesBadge">Pricing & Services</span>
+        <h2 data-i18n="servicesHeading">Affordable High-Performance Web Packages</h2>
+        <p data-i18n="servicesSub">Transparent starting prices for custom web solutions designed to scale your business.</p>
       </div>
 
-      <!-- Dynamic Content Injection Container -->
-      <div id="project-detail-content"></div>
+      <!-- Services Grid (Rendered Dynamically from data.js) -->
+      <div class="services-grid" id="services-grid"></div>
+
+      <!-- Specialized Capabilities Badges -->
+      <div class="capabilities-wrapper">
+        <h3 class="capabilities-title" data-i18n="specialCapabilitiesTitle">Specialized Development Capabilities</h3>
+        <div class="capabilities-tags" id="capabilities-grid"></div>
+      </div>
+
+      <!-- CTA Banner -->
+      <div class="glass-card" style="margin-top: 3.5rem; padding: 2.5rem; text-align: center; border-color: rgba(56, 189, 248, 0.3);">
+        <h3 style="font-size: 1.75rem; margin-bottom: 0.75rem; font-weight: 700;" data-i18n="contactHeading">Let's Build Something Great Together!</h3>
+        <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 1.5rem;" data-i18n="contactSub">
+          Ready to take your business online or start a new project? Contact me today for a free consultation.
+        </p>
+        <a href="contact.html" class="btn btn-primary" style="padding: 0.75rem 2rem; font-size: 1rem;">
+          <i class="fas fa-rocket"></i> <span data-i18n="mobileNavStartProject">Start Project</span>
+        </a>
+      </div>
     </div>
   </section>
 
@@ -130,7 +146,7 @@
       <div class="mobile-nav-icon"><i class="fas fa-house"></i></div>
       <span class="mobile-nav-label" data-i18n="mobileNavHome">হোম</span>
     </a>
-    <a href="services.html" class="mobile-nav-item" data-nav="services">
+    <a href="services.html" class="mobile-nav-item active" data-nav="services">
       <div class="mobile-nav-icon"><i class="fas fa-layer-group"></i></div>
       <span class="mobile-nav-label" data-i18n="mobileNavServices">সার্ভিস</span>
     </a>
@@ -140,7 +156,7 @@
       </div>
       <span class="mobile-nav-label mobile-fab-label" data-i18n="mobileNavStartProject">প্রজেক্ট শুরু করুন</span>
     </a>
-    <a href="projects.html" class="mobile-nav-item active" data-nav="projects">
+    <a href="projects.html" class="mobile-nav-item" data-nav="projects">
       <div class="mobile-nav-icon"><i class="fas fa-desktop"></i></div>
       <span class="mobile-nav-label" data-i18n="mobileNavLivePreview">লাইভ প্রিভিউ</span>
     </a>
@@ -150,7 +166,7 @@
     </a>
   </nav>
 
-  <!-- Floating Buttons -->
+  <!-- Floating WhatsApp & Back to Top Buttons -->
   <a href="https://wa.me/8801342697743" target="_blank" rel="noopener noreferrer" class="floating-whatsapp" title="Chat on WhatsApp">
     <i class="fab fa-whatsapp"></i>
   </a>
