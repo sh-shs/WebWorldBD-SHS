@@ -33,8 +33,8 @@ const portfolioData = {
   },
 
   stats: {
-    projectsCompleted: 25,
-    happyClients: 18,
+    projectsCompleted: 108,
+    happyClients: 86,
     yearsExperience: "1+",
     satisfactionRate: "100%"
   },
