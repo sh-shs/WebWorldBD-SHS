@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initMobileBottomNav();
   initBackToTop();
   initAuthTabs();
+  initFirebaseAuthObserver();
   initScrollAnimations();
 
   // Dynamic Content Rendering
@@ -1200,15 +1201,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (logoutBtn) {
       logoutBtn.addEventListener('click', () => {
-        if (userDashView) userDashView.style.display = 'none';
-        const infoNotice = document.getElementById('auth-info-notice');
-        if (infoNotice) infoNotice.style.display = 'flex';
-        switchAuthTab('register');
-        showAlert(currentLang === 'bn' ? 'সফলভাবে লগআউট করা হয়েছে।' : 'Logged out successfully.', 'info');
+        if (window.auth) {
+          window.auth.signOut().then(() => {
+            if (userDashView) userDashView.style.display = 'none';
+            const infoNotice = document.getElementById('auth-info-notice');
+            if (infoNotice) infoNotice.style.display = 'flex';
+            switchAuthTab('register');
+            showAlert(currentLang === 'bn' ? 'সফলভাবে লগআউট করা হয়েছে।' : 'Logged out successfully.', 'info');
+          });
+        } else {
+          if (userDashView) userDashView.style.display = 'none';
+          const infoNotice = document.getElementById('auth-info-notice');
+          if (infoNotice) infoNotice.style.display = 'flex';
+          switchAuthTab('register');
+          showAlert(currentLang === 'bn' ? 'সফলভাবে লগআউট করা হয়েছে।' : 'Logged out successfully.', 'info');
+        }
       });
     }
 
-    // LOGIN FORM SUBMISSION
+    // Helper: Map Firebase error codes to localized error messages
+    function getFirebaseErrorMessage(errorCode) {
+      switch (errorCode) {
+        case 'auth/email-already-in-use':
+          return translations[currentLang].errEmailInUse;
+        case 'auth/weak-password':
+          return translations[currentLang].errWeakPassword;
+        case 'auth/user-not-found':
+          return translations[currentLang].errUserNotFound;
+        case 'auth/wrong-password':
+        case 'auth/invalid-credential':
+          return translations[currentLang].errWrongPassword;
+        case 'auth/popup-closed-by-user':
+          return translations[currentLang].errPopupClosed;
+        case 'auth/invalid-email':
+          return translations[currentLang].errEmailRequired;
+        default:
+          return translations[currentLang].errAuthDefault;
+      }
+    }
+
+    // LOGIN FORM SUBMISSION (Firebase Auth)
     loginForm.addEventListener('submit', (e) => {
       e.preventDefault();
       clearFieldErrors();
@@ -1234,7 +1266,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (hasError) return;
 
-      // Simulate Authentication API Call
       submitBtn.classList.add('loading');
       const btnText = submitBtn.querySelector('.btn-text');
       const btnIcon = submitBtn.querySelector('.btn-icon');
@@ -1245,20 +1276,29 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (btnIcon) btnIcon.style.display = 'none';
 
-      setTimeout(() => {
+      if (window.auth) {
+        window.auth.signInWithEmailAndPassword(email, password)
+          .then((userCredential) => {
+            submitBtn.classList.remove('loading');
+            if (btnText) btnText.textContent = originalText;
+            if (btnIcon) btnIcon.style.display = 'inline-block';
+            showAlert(translations[currentLang].msgLoginSuccess, 'success');
+          })
+          .catch((error) => {
+            submitBtn.classList.remove('loading');
+            if (btnText) btnText.textContent = originalText;
+            if (btnIcon) btnIcon.style.display = 'inline-block';
+            showAlert(getFirebaseErrorMessage(error.code), 'error');
+          });
+      } else {
         submitBtn.classList.remove('loading');
         if (btnText) btnText.textContent = originalText;
         if (btnIcon) btnIcon.style.display = 'inline-block';
-
-        renderUserDashboard({
-          name: email.split('@')[0].toUpperCase(),
-          email: email
-        });
-        showAlert(translations[currentLang].msgLoginSuccess, 'success');
-      }, 1000);
+        showAlert(translations[currentLang].errAuthDefault, 'error');
+      }
     });
 
-    // REGISTER FORM SUBMISSION
+    // REGISTER FORM SUBMISSION (Firebase Auth + Firestore)
     regForm.addEventListener('submit', (e) => {
       e.preventDefault();
       clearFieldErrors();
@@ -1308,20 +1348,44 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (btnIcon) btnIcon.style.display = 'none';
 
-      setTimeout(() => {
+      if (window.auth) {
+        window.auth.createUserWithEmailAndPassword(email, password)
+          .then((userCredential) => {
+            const user = userCredential.user;
+            return user.updateProfile({
+              displayName: name
+            }).then(() => {
+              if (window.db) {
+                return window.db.collection('users').doc(user.uid).set({
+                  uid: user.uid,
+                  name: name,
+                  email: email,
+                  createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+              }
+            });
+          })
+          .then(() => {
+            submitBtn.classList.remove('loading');
+            if (btnText) btnText.textContent = originalText;
+            if (btnIcon) btnIcon.style.display = 'inline-block';
+            showAlert(translations[currentLang].msgRegisterSuccess, 'success');
+          })
+          .catch((error) => {
+            submitBtn.classList.remove('loading');
+            if (btnText) btnText.textContent = originalText;
+            if (btnIcon) btnIcon.style.display = 'inline-block';
+            showAlert(getFirebaseErrorMessage(error.code), 'error');
+          });
+      } else {
         submitBtn.classList.remove('loading');
         if (btnText) btnText.textContent = originalText;
         if (btnIcon) btnIcon.style.display = 'inline-block';
-
-        renderUserDashboard({
-          name: name,
-          email: email
-        });
-        showAlert(translations[currentLang].msgRegisterSuccess, 'success');
-      }, 1200);
+        showAlert(translations[currentLang].errAuthDefault, 'error');
+      }
     });
 
-    // FORGOT PASSWORD SUBMISSION
+    // FORGOT PASSWORD SUBMISSION (Firebase Auth)
     if (forgotForm) {
       forgotForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -1346,86 +1410,59 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (btnIcon) btnIcon.style.display = 'none';
 
-        setTimeout(() => {
+        if (window.auth) {
+          window.auth.sendPasswordResetEmail(email)
+            .then(() => {
+              submitBtn.classList.remove('loading');
+              if (btnText) btnText.textContent = originalText;
+              if (btnIcon) btnIcon.style.display = 'inline-block';
+              switchAuthTab('login');
+              showAlert(translations[currentLang].msgResetSuccess, 'success');
+            })
+            .catch((error) => {
+              submitBtn.classList.remove('loading');
+              if (btnText) btnText.textContent = originalText;
+              if (btnIcon) btnIcon.style.display = 'inline-block';
+              showAlert(getFirebaseErrorMessage(error.code), 'error');
+            });
+        } else {
           submitBtn.classList.remove('loading');
           if (btnText) btnText.textContent = originalText;
           if (btnIcon) btnIcon.style.display = 'inline-block';
-
-          switchAuthTab('login');
-          showAlert(translations[currentLang].msgResetSuccess, 'success');
-        }, 1000);
+          showAlert(translations[currentLang].errAuthDefault, 'error');
+        }
       });
     }
 
-    /* OFFICIAL GOOGLE IDENTITY SERVICES (GIS) INTEGRATION */
+    /* FIREBASE GOOGLE SIGN-IN INTEGRATION */
     function initGoogleAuth() {
       const customLoginBtn = document.getElementById('custom-google-login-btn');
       const customRegBtn = document.getElementById('custom-google-reg-btn');
 
-      // Google OAuth Client ID config (fallback to meta/env or standard WebWorldBD Client ID)
-      const googleClientId = window.GOOGLE_CLIENT_ID || '1088492040292-previewclientid.apps.googleusercontent.com';
-
-      function handleCredentialResponse(response) {
-        if (!response || !response.credential) {
-          showAlert('Google Authentication failed. Please try again.', 'error');
-          return;
-        }
-
-        // Parse JWT Token payload
-        try {
-          const base64Url = response.credential.split('.')[1];
-          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-          const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
-          const payload = JSON.parse(jsonPayload);
-
-          renderUserDashboard({
-            name: payload.name || payload.email.split('@')[0],
-            email: payload.email,
-            picture: payload.picture
-          });
-          showAlert(translations[currentLang].msgGoogleAuthSuccess, 'success');
-        } catch (err) {
-          renderUserDashboard({
-            name: 'Google User',
-            email: 'google.user@example.com'
-          });
-          showAlert(translations[currentLang].msgGoogleAuthSuccess, 'success');
-        }
-      }
-
       function triggerGoogleSignIn() {
-        if (window.google && window.google.accounts && window.google.accounts.id) {
-          window.google.accounts.id.initialize({
-            client_id: googleClientId,
-            callback: handleCredentialResponse,
-            auto_select: false
-          });
-
-          window.google.accounts.id.prompt((notification) => {
-            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-              // Fallback to standard GIS button render or popup
-              const gisContainer = document.getElementById('gis-render-login');
-              if (gisContainer) {
-                gisContainer.style.display = 'flex';
-                window.google.accounts.id.renderButton(gisContainer, {
-                  theme: 'outline',
-                  size: 'large',
-                  width: '100%',
-                  text: 'continue_with'
-                });
+        if (window.auth && typeof firebase !== 'undefined') {
+          const provider = new firebase.auth.GoogleAuthProvider();
+          window.auth.signInWithPopup(provider)
+            .then((result) => {
+              const user = result.user;
+              if (window.db) {
+                window.db.collection('users').doc(user.uid).set({
+                  uid: user.uid,
+                  name: user.displayName || user.email.split('@')[0],
+                  email: user.email,
+                  photoURL: user.photoURL,
+                  lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
               }
-            }
-          });
-        } else {
-          // Graceful fallback if GIS script fails to load or is blocked
-          showAlert(currentLang === 'bn' ? 'Google সাইন-ইন প্রস্তুত হচ্ছে...' : 'Initializing Google Sign-In...', 'info');
-          setTimeout(() => {
-            renderUserDashboard({
-              name: 'Google User',
-              email: 'google.user@example.com'
+              showAlert(translations[currentLang].msgGoogleAuthSuccess, 'success');
+            })
+            .catch((error) => {
+              if (error.code !== 'auth/popup-closed-by-user') {
+                showAlert(getFirebaseErrorMessage(error.code), 'error');
+              }
             });
-            showAlert(translations[currentLang].msgGoogleAuthSuccess, 'success');
-          }, 800);
+        } else {
+          showAlert(translations[currentLang].errAuthDefault, 'error');
         }
       }
 
@@ -1434,6 +1471,73 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     initGoogleAuth();
+  }
+
+  /* --------------------------------------------------------------------------
+     9b. Global Firebase Auth State Observer & Nav Updates
+     -------------------------------------------------------------------------- */
+  function initFirebaseAuthObserver() {
+    if (!window.auth) return;
+
+    window.auth.onAuthStateChanged((user) => {
+      const accountNavSpans = document.querySelectorAll('[data-i18n="navAccount"]');
+      const mobileNavSpans = document.querySelectorAll('[data-i18n="mobileNavAccount"]');
+
+      if (user) {
+        const userName = user.displayName || user.email.split('@')[0];
+
+        accountNavSpans.forEach(span => {
+          span.textContent = userName;
+        });
+        mobileNavSpans.forEach(span => {
+          span.textContent = userName;
+        });
+
+        // If on account.html with auth dashboard view present
+        const userDashView = document.getElementById('dashboard-user-view');
+        if (userDashView) {
+          const nameEl = document.getElementById('user-display-name');
+          const emailEl = document.getElementById('user-display-email');
+          const avatarEl = document.getElementById('user-avatar-img');
+          const loginForm = document.getElementById('login-form');
+          const regForm = document.getElementById('register-form');
+          const forgotForm = document.getElementById('forgot-form');
+          const tabsWrapper = document.getElementById('auth-tabs-wrapper');
+          const infoNotice = document.getElementById('auth-info-notice');
+
+          if (nameEl) nameEl.textContent = userName;
+          if (emailEl) emailEl.textContent = user.email;
+          if (avatarEl && user.photoURL) avatarEl.src = user.photoURL;
+
+          if (loginForm) loginForm.style.display = 'none';
+          if (regForm) regForm.style.display = 'none';
+          if (forgotForm) forgotForm.style.display = 'none';
+          if (tabsWrapper) tabsWrapper.style.display = 'none';
+          if (infoNotice) infoNotice.style.display = 'none';
+
+          userDashView.style.display = 'block';
+        }
+      } else {
+        // Reset nav labels according to active language
+        accountNavSpans.forEach(span => {
+          span.textContent = translations[currentLang].navAccount;
+        });
+        mobileNavSpans.forEach(span => {
+          span.textContent = translations[currentLang].mobileNavAccount;
+        });
+
+        const userDashView = document.getElementById('dashboard-user-view');
+        if (userDashView) {
+          userDashView.style.display = 'none';
+          const infoNotice = document.getElementById('auth-info-notice');
+          if (infoNotice) infoNotice.style.display = 'flex';
+          const tabsWrapper = document.getElementById('auth-tabs-wrapper');
+          if (tabsWrapper) tabsWrapper.style.display = 'flex';
+          const regForm = document.getElementById('register-form');
+          if (regForm) regForm.style.display = 'flex';
+        }
+      }
+    });
   }
 
   /* --------------------------------------------------------------------------

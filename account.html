@@ -18,8 +18,11 @@
   <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="assets/css/style.css">
 
-  <!-- Official Google Identity Services SDK -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <!-- Firebase App & Auth Compat SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="assets/js/firebase-config.js"></script>
 </head>
 <body>
 
@@ -157,7 +160,6 @@
               </svg>
               <span data-i18n="continueWithGoogle">Continue with Google</span>
             </button>
-            <div id="gis-render-login" class="gis-render-box"></div>
           </div>
         </form>
 
@@ -226,7 +228,6 @@
               </svg>
               <span data-i18n="continueWithGoogle">Continue with Google</span>
             </button>
-            <div id="gis-render-register" class="gis-render-box"></div>
           </div>
         </form>
 
