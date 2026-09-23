@@ -48,6 +48,81 @@ const translations = {
     btnTelegram: "Telegram",
     btnFiverr: "Fiverr",
 
+    /* Settings Page Specific Translations */
+    settingsTitle: "System Settings",
+    settingsSub: "Manage your site preferences, account details, notifications, and privacy options.",
+    btnBackHome: "Back to Home",
+
+    /* 1. Appearance */
+    secAppearanceTitle: "Appearance",
+    labelThemeMode: "Theme Mode",
+    themeDark: "Dark Mode",
+    themeLight: "Light Mode",
+    themeSystem: "System Default",
+    labelLanguage: "Language",
+    langBn: "বাংলা (Bangla)",
+    langEn: "English",
+
+    /* 2. Account */
+    secAccountTitle: "Account",
+    accountLoggedOutTitle: "Not Logged In",
+    accountLoggedOutSub: "Sign in or register to access project tracking, invoice management, and profile features.",
+    btnLoginRegister: "Log In / Register",
+    btnEditProfile: "Edit Profile",
+    btnChangePassword: "Change Password",
+    btnLogOut: "Log Out",
+    btnDeleteAccount: "Delete Account",
+
+    /* Account Modals & Actions */
+    modalEditProfileTitle: "Edit Profile",
+    modalEditNameLabel: "Display Name",
+    modalEditPhotoLabel: "Profile Photo URL (optional)",
+    modalSaveBtn: "Save Changes",
+    modalCancelBtn: "Cancel",
+    modalChangePassTitle: "Change Password",
+    modalOldPassLabel: "Current Password",
+    modalNewPassLabel: "New Password",
+    modalConfirmNewPassLabel: "Confirm New Password",
+    modalUpdatePassBtn: "Update Password",
+    modalDeleteTitle: "Delete Account",
+    modalDeleteWarning: "Warning: This action is permanent and cannot be undone. All your project history and saved preferences associated with this account will be removed.",
+    modalConfirmPassLabel: "Enter your password to confirm deletion",
+    modalDeleteConfirmBtn: "Confirm & Delete Account",
+
+    /* Feedback & Alert Messages */
+    msgProfileUpdated: "Profile updated successfully!",
+    msgPasswordChanged: "Password changed successfully!",
+    msgAccountDeleted: "Your account has been deleted.",
+
+    /* 3. Notifications */
+    secNotificationsTitle: "Notifications",
+    notifProjectUpdates: "Project Update Notifications",
+    notifProjectUpdatesDesc: "Receive instant status alerts about your active web & app development projects.",
+    notifPromotions: "Promotional & News Emails",
+    notifPromotionsDesc: "Get updates on special discounts, newly launched web services, and tech articles.",
+
+    /* 4. Quick Links */
+    secQuickLinksTitle: "Quick Links",
+
+    /* 5. Support & Contact */
+    secSupportTitle: "Support & Contact",
+    btnWhatsAppMsg: "Message on WhatsApp",
+    btnEmailSupport: "Email Support",
+    btnRequestSupport: "Request Support",
+
+    /* 6. About */
+    secAboutTitle: "About",
+    appVersionLabel: "Version",
+    appBuildLabel: "Build",
+    linkOurEthics: "Our Ethics & Policy",
+
+    /* 7. Data & Privacy */
+    secPrivacyTitle: "Data & Privacy",
+    btnClearCache: "Clear Cache & Preferences",
+    clearCacheDesc: "Reset locally stored theme, language, and notification settings.",
+    msgCacheCleared: "Cache & local preferences cleared successfully!",
+    linkPrivacyPolicy: "Privacy Policy & Terms of Service",
+
     /* Hero Section */
     heroBadge: "Available for Freelance & Contract Projects",
     heroHeadingPrefix: "Building Ideas Into",
@@ -272,6 +347,81 @@ const translations = {
     btnBackToServices: "সার্ভিস তালিকায় ফিরে যান",
     btnTelegram: "টেলিগ্রাম",
     btnFiverr: "ফাইভার",
+
+    /* Settings Page Specific Translations */
+    settingsTitle: "সিস্টেম সেটিংস",
+    settingsSub: "আপনার পছন্দের থিম, ভাষা, নোটিফিকেশন, অ্যাকাউন্ট ও প্রাইভেসি সেটিংস পরিবর্তন করুন।",
+    btnBackHome: "হোমে ফিরে যান",
+
+    /* 1. Appearance */
+    secAppearanceTitle: "অ্যাপিয়ারেন্স",
+    labelThemeMode: "থিম মোড",
+    themeDark: "ডার্ক মোড",
+    themeLight: "লাইট মোড",
+    themeSystem: "সিস্টেম ডিফল্ট",
+    labelLanguage: "ভাষা",
+    langBn: "বাংলা (Bangla)",
+    langEn: "English",
+
+    /* 2. Account */
+    secAccountTitle: "অ্যাকাউন্ট",
+    accountLoggedOutTitle: "লগইন করা নেই",
+    accountLoggedOutSub: "প্রজেক্ট ট্র্যাকিং, ইনভয়েস ও প্রোফাইল সার্ভিস পেতে লগইন অথবা রেজিস্ট্রেশন করুন।",
+    btnLoginRegister: "লগইন / রেজিস্ট্রেশন করুন",
+    btnEditProfile: "প্রোফাইল সম্পাদনা করুন",
+    btnChangePassword: "পাসওয়ার্ড পরিবর্তন করুন",
+    btnLogOut: "লগ আউট",
+    btnDeleteAccount: "অ্যাকাউন্ট মুছুন",
+
+    /* Account Modals & Actions */
+    modalEditProfileTitle: "প্রোফাইল সম্পাদনা করুন",
+    modalEditNameLabel: "ডিসপ্লে নাম",
+    modalEditPhotoLabel: "প্রোফাইল ছবির লিংক (ঐচ্ছিক)",
+    modalSaveBtn: "পরিবর্তন সংরক্ষণ করুন",
+    modalCancelBtn: "বাতিল",
+    modalChangePassTitle: "পাসওয়ার্ড পরিবর্তন করুন",
+    modalOldPassLabel: "বর্তমান পাসওয়ার্ড",
+    modalNewPassLabel: "নতুন পাসওয়ার্ড",
+    modalConfirmNewPassLabel: "নতুন পাসওয়ার্ড নিশ্চিত করুন",
+    modalUpdatePassBtn: "পাসওয়ার্ড আপডেট করুন",
+    modalDeleteTitle: "অ্যাকাউন্ট মুছে ফেলুন",
+    modalDeleteWarning: "সতর্কতা: এই প্রক্রিয়াটি স্থায়ী এবং আর ফিরিয়ে আনা যাবে না। এই অ্যাকাউন্টের সাথে যুক্ত আপনার সমস্ত প্রজেক্ট হিস্ট্রি এবং সংরক্ষিত সেটিংস মুছে যাবে।",
+    modalConfirmPassLabel: "অ্যাকাউন্ট মুছতে পাসওয়ার্ড লিখুন",
+    modalDeleteConfirmBtn: "নিশ্চিত করুন ও অ্যাকাউন্ট মুছুন",
+
+    /* Feedback & Alert Messages */
+    msgProfileUpdated: "প্রোফাইল সফলভাবে আপডেট করা হয়েছে!",
+    msgPasswordChanged: "পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে!",
+    msgAccountDeleted: "আপনার অ্যাকাউন্ট মুছে ফেলা হয়েছে।",
+
+    /* 3. Notifications */
+    secNotificationsTitle: "নোটিফিকেশন",
+    notifProjectUpdates: "প্রজেক্ট আপডেট নোটিফিকেশন",
+    notifProjectUpdatesDesc: "আপনার রানিং ওয়েব ও অ্যাপ প্রজেক্টের লাইভ স্ট্যাটাস সম্পর্কিত আপডেট পান।",
+    notifPromotions: "প্রোমোশনাল ইমেইল",
+    notifPromotionsDesc: "বিশেষ ছাড়, নতুন সার্ভিস লঞ্চ এবং টেক আর্টিকেলের নোটিফিকেশন পান।",
+
+    /* 4. Quick Links */
+    secQuickLinksTitle: "দ্রুত লিংক",
+
+    /* 5. Support & Contact */
+    secSupportTitle: "সাপোর্ট ও যোগাযোগ",
+    btnWhatsAppMsg: "হোয়াটসঅ্যাপে মেসেজ করুন",
+    btnEmailSupport: "ইমেইল সাপোর্ট",
+    btnRequestSupport: "সাপোর্ট রিকোয়েস্ট করুন",
+
+    /* 6. About */
+    secAboutTitle: "সম্পর্কে",
+    appVersionLabel: "ভার্সন",
+    appBuildLabel: "বিল্ড",
+    linkOurEthics: "আমাদের নীতি",
+
+    /* 7. Data & Privacy */
+    secPrivacyTitle: "ডেটা ও প্রাইভেসি",
+    btnClearCache: "ক্যাশ পরিষ্কার করুন",
+    clearCacheDesc: "লোকালি সংরক্ষিত থিম, ভাষা এবং নোটিফিকেশন সেটিংস রিকভার বা রিসেট করুন।",
+    msgCacheCleared: "ক্যাশ ও লোকাল প্রিফারেন্স সফলভাবে পরিষ্কার করা হয়েছে!",
+    linkPrivacyPolicy: "প্রাইভেসি পলিসি ও টার্মস অব সার্ভিস",
 
     /* Hero Section */
     heroBadge: "ফ্রিল্যান্স ও কন্ট্রাক্ট প্রজেক্টের জন্য প্রস্তুত",
