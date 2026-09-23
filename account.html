@@ -91,7 +91,7 @@
       </div>
 
       <!-- Auth Form Card Container -->
-      <div class="auth-card-container" id="auth-card-container" data-active-tab="login">
+      <div class="auth-card-container" id="auth-card-container" data-active-tab="register">
         <!-- Inline Alert / Status Message Box -->
         <div class="auth-alert-box" id="auth-alert-box" style="display: none;" role="alert">
           <i class="fas fa-info-circle alert-icon"></i>
@@ -104,17 +104,17 @@
         <!-- Pill-Style Segmented Tab Switcher -->
         <div class="auth-tabs-wrapper" id="auth-tabs-wrapper">
           <div class="auth-tab-slider"></div>
-          <button type="button" class="auth-tab-btn active" id="tab-btn-login" data-auth-tab="login" data-i18n="tabLogin">Login</button>
-          <button type="button" class="auth-tab-btn" id="tab-btn-register" data-auth-tab="register" data-i18n="tabRegister">Register</button>
+          <button type="button" class="auth-tab-btn active" id="tab-btn-register" data-auth-tab="register" data-i18n="tabRegister">Register</button>
+          <button type="button" class="auth-tab-btn" id="tab-btn-login" data-auth-tab="login" data-i18n="tabLogin">Login</button>
         </div>
 
-        <!-- LOGIN FORM -->
-        <form id="login-form" class="auth-form" novalidate>
+        <!-- LOGIN FORM (Hidden by Default) -->
+        <form id="login-form" class="auth-form" style="display: none;" novalidate>
           <div class="form-group">
             <label for="login-email" data-i18n="formEmailLabel">Your Email Address</label>
             <div class="input-icon-wrapper">
               <i class="fas fa-envelope input-icon-left"></i>
-              <input type="email" id="login-email" class="form-control" placeholder="e.g. tanvir@example.com" required data-i18n="formEmailPlaceholder">
+              <input type="email" id="login-email" class="form-control" placeholder="Enter your email address" required data-i18n="formEmailPlaceholder">
             </div>
             <span class="field-error-msg" id="login-email-error"></span>
           </div>
@@ -165,13 +165,13 @@
           </div>
         </form>
 
-        <!-- REGISTER FORM (Hidden by Default) -->
-        <form id="register-form" class="auth-form" style="display: none;" novalidate>
+        <!-- REGISTER FORM -->
+        <form id="register-form" class="auth-form" novalidate>
           <div class="form-group">
             <label for="reg-name" data-i18n="formNameLabel">Your Full Name</label>
             <div class="input-icon-wrapper">
               <i class="fas fa-user input-icon-left"></i>
-              <input type="text" id="reg-name" class="form-control" placeholder="e.g. Tanvir Rahman" required data-i18n="formNamePlaceholder">
+              <input type="text" id="reg-name" class="form-control" placeholder="Enter your full name" required data-i18n="formNamePlaceholder">
             </div>
             <span class="field-error-msg" id="reg-name-error"></span>
           </div>
@@ -180,7 +180,7 @@
             <label for="reg-email" data-i18n="formEmailLabel">Your Email Address</label>
             <div class="input-icon-wrapper">
               <i class="fas fa-envelope input-icon-left"></i>
-              <input type="email" id="reg-email" class="form-control" placeholder="e.g. tanvir@example.com" required data-i18n="formEmailPlaceholder">
+              <input type="email" id="reg-email" class="form-control" placeholder="Enter your email address" required data-i18n="formEmailPlaceholder">
             </div>
             <span class="field-error-msg" id="reg-email-error"></span>
           </div>
@@ -245,7 +245,7 @@
             <label for="reset-email" data-i18n="formEmailLabel">Your Email Address</label>
             <div class="input-icon-wrapper">
               <i class="fas fa-envelope input-icon-left"></i>
-              <input type="email" id="reset-email" class="form-control" placeholder="e.g. tanvir@example.com" required data-i18n="formEmailPlaceholder">
+              <input type="email" id="reset-email" class="form-control" placeholder="Enter your email address" required data-i18n="formEmailPlaceholder">
             </div>
             <span class="field-error-msg" id="reset-email-error"></span>
           </div>

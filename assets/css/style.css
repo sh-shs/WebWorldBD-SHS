@@ -1859,7 +1859,7 @@ body.lang-bn .service-row-title {
   z-index: 1;
 }
 
-[data-active-tab="register"] .auth-tab-slider {
+[data-active-tab="login"] .auth-tab-slider {
   transform: translateX(100%);
 }
 

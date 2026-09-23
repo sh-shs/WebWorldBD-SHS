@@ -1177,7 +1177,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (userDashView) userDashView.style.display = 'none';
         const infoNotice = document.getElementById('auth-info-notice');
         if (infoNotice) infoNotice.style.display = 'flex';
-        switchAuthTab('login');
+        switchAuthTab('register');
         showAlert(currentLang === 'bn' ? 'সফলভাবে লগআউট করা হয়েছে।' : 'Logged out successfully.', 'info');
       });
     }

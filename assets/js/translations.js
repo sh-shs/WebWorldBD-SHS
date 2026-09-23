@@ -153,11 +153,11 @@ const translations = {
 
     /* Form Fields & Project Request */
     formNameLabel: "Your Full Name",
-    formNamePlaceholder: "e.g. Tanvir Rahman",
+    formNamePlaceholder: "Enter your full name",
     formContactLabel: "Email Address or Phone Number",
-    formContactPlaceholder: "e.g. tanvir@example.com or 01700000000",
+    formContactPlaceholder: "example@mail.com or 01700000000",
     formEmailLabel: "Your Email Address",
-    formEmailPlaceholder: "e.g. tanvir@example.com",
+    formEmailPlaceholder: "Enter your email address",
     formServiceLabel: "Select Required Project Type",
     formBudgetLabel: "Estimated Budget Range",
     formBudgetSelect: "Select Budget Range",
@@ -369,11 +369,11 @@ const translations = {
 
     /* Form Fields & Project Request */
     formNameLabel: "আপনার পূর্ণ নাম",
-    formNamePlaceholder: "যেমন: তানভীর রহমান",
+    formNamePlaceholder: "আপনার পূর্ণ নাম লিখুন",
     formContactLabel: "ইমেইল ঠিকানা অথবা মোবাইল নম্বর",
-    formContactPlaceholder: "যেমন: tanvir@example.com অথবা 01700000000",
+    formContactPlaceholder: "example@mail.com অথবা 01700000000",
     formEmailLabel: "আপনার ইমেইল ঠিকানা",
-    formEmailPlaceholder: "যেমন: tanvir@example.com",
+    formEmailPlaceholder: "আপনার ইমেইল ঠিকানা লিখুন",
     formServiceLabel: "প্রজেক্টের ক্যাটাগরি নির্বাচন করুন",
     formBudgetLabel: "আনুমানিক বাজেট রেঞ্জ",
     formBudgetSelect: "বাজেট রেঞ্জ নির্বাচন করুন",
