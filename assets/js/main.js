@@ -1201,13 +1201,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (logoutBtn) {
       logoutBtn.addEventListener('click', () => {
-        if (window.auth) {
-          window.auth.signOut().then(() => {
+        const mod = window.FirebaseModule;
+        if (mod && mod.auth && mod.signOut) {
+          mod.signOut(mod.auth).then(() => {
             if (userDashView) userDashView.style.display = 'none';
             const infoNotice = document.getElementById('auth-info-notice');
             if (infoNotice) infoNotice.style.display = 'flex';
             switchAuthTab('register');
             showAlert(currentLang === 'bn' ? 'সফলভাবে লগআউট করা হয়েছে।' : 'Logged out successfully.', 'info');
+          }).catch(err => {
+            showAlert(getFirebaseErrorMessage(err ? err.code : ''), 'error');
           });
         } else {
           if (userDashView) userDashView.style.display = 'none';
@@ -1276,8 +1279,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (btnIcon) btnIcon.style.display = 'none';
 
-      if (window.auth) {
-        window.auth.signInWithEmailAndPassword(email, password)
+      const mod = window.FirebaseModule;
+      if (mod && mod.auth && mod.signInWithEmailAndPassword) {
+        mod.signInWithEmailAndPassword(mod.auth, email, password)
           .then((userCredential) => {
             submitBtn.classList.remove('loading');
             if (btnText) btnText.textContent = originalText;
@@ -1298,7 +1302,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // REGISTER FORM SUBMISSION (Firebase Auth + Firestore)
+    // REGISTER FORM SUBMISSION (Firebase Auth)
     regForm.addEventListener('submit', (e) => {
       e.preventDefault();
       clearFieldErrors();
@@ -1348,22 +1352,16 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (btnIcon) btnIcon.style.display = 'none';
 
-      if (window.auth) {
-        window.auth.createUserWithEmailAndPassword(email, password)
+      const mod = window.FirebaseModule;
+      if (mod && mod.auth && mod.createUserWithEmailAndPassword) {
+        mod.createUserWithEmailAndPassword(mod.auth, email, password)
           .then((userCredential) => {
             const user = userCredential.user;
-            return user.updateProfile({
-              displayName: name
-            }).then(() => {
-              if (window.db) {
-                return window.db.collection('users').doc(user.uid).set({
-                  uid: user.uid,
-                  name: name,
-                  email: email,
-                  createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                }, { merge: true });
-              }
-            });
+            if (mod.updateProfile) {
+              return mod.updateProfile(user, {
+                displayName: name
+              });
+            }
           })
           .then(() => {
             submitBtn.classList.remove('loading');
@@ -1410,8 +1408,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (btnIcon) btnIcon.style.display = 'none';
 
-        if (window.auth) {
-          window.auth.sendPasswordResetEmail(email)
+        const mod = window.FirebaseModule;
+        if (mod && mod.auth && mod.sendPasswordResetEmail) {
+          mod.sendPasswordResetEmail(mod.auth, email)
             .then(() => {
               submitBtn.classList.remove('loading');
               if (btnText) btnText.textContent = originalText;
@@ -1440,25 +1439,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const customRegBtn = document.getElementById('custom-google-reg-btn');
 
       function triggerGoogleSignIn() {
-        if (window.auth && typeof firebase !== 'undefined') {
-          const provider = new firebase.auth.GoogleAuthProvider();
-          window.auth.signInWithPopup(provider)
+        const mod = window.FirebaseModule;
+        if (mod && mod.auth && mod.GoogleAuthProvider && mod.signInWithPopup) {
+          const provider = new mod.GoogleAuthProvider();
+          mod.signInWithPopup(mod.auth, provider)
             .then((result) => {
-              const user = result.user;
-              if (window.db) {
-                window.db.collection('users').doc(user.uid).set({
-                  uid: user.uid,
-                  name: user.displayName || user.email.split('@')[0],
-                  email: user.email,
-                  photoURL: user.photoURL,
-                  lastLogin: firebase.firestore.FieldValue.serverTimestamp()
-                }, { merge: true });
-              }
               showAlert(translations[currentLang].msgGoogleAuthSuccess, 'success');
             })
             .catch((error) => {
               if (error.code !== 'auth/popup-closed-by-user') {
                 showAlert(getFirebaseErrorMessage(error.code), 'error');
+              } else {
+                showAlert(translations[currentLang].errPopupClosed, 'error');
               }
             });
         } else {
@@ -1477,67 +1469,115 @@ document.addEventListener('DOMContentLoaded', () => {
      9b. Global Firebase Auth State Observer & Nav Updates
      -------------------------------------------------------------------------- */
   function initFirebaseAuthObserver() {
-    if (!window.auth) return;
+    const userDashView = document.getElementById('dashboard-user-view');
+    const authCardContainer = document.getElementById('auth-card-container');
+    const loginForm = document.getElementById('login-form');
+    const regForm = document.getElementById('register-form');
+    const forgotForm = document.getElementById('forgot-form');
+    const tabsWrapper = document.getElementById('auth-tabs-wrapper');
+    const infoNotice = document.getElementById('auth-info-notice');
 
-    window.auth.onAuthStateChanged((user) => {
-      const accountNavSpans = document.querySelectorAll('[data-i18n="navAccount"]');
-      const mobileNavSpans = document.querySelectorAll('[data-i18n="mobileNavAccount"]');
+    // Create or select loading overlay element on account page
+    let authLoader = document.getElementById('auth-loading-overlay');
+    if (!authLoader && authCardContainer) {
+      authLoader = document.createElement('div');
+      authLoader.id = 'auth-loading-overlay';
+      authLoader.style.cssText = 'text-align: center; padding: 2.5rem 1rem; font-size: 1.1rem; color: var(--accent-blue); font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.75rem;';
+      authLoader.innerHTML = `<span class="btn-spinner" style="width: 22px; height: 22px; border-width: 3px;"></span> <span>${currentLang === 'bn' ? 'লোড হচ্ছে...' : 'Loading...'}</span>`;
+      authCardContainer.insertBefore(authLoader, authCardContainer.firstChild);
 
-      if (user) {
-        const userName = user.displayName || user.email.split('@')[0];
+      // Hide active form / view during initial auth check
+      if (loginForm) loginForm.style.display = 'none';
+      if (regForm) regForm.style.display = 'none';
+      if (forgotForm) forgotForm.style.display = 'none';
+      if (tabsWrapper) tabsWrapper.style.display = 'none';
+      if (infoNotice) infoNotice.style.display = 'none';
+      if (userDashView) userDashView.style.display = 'none';
+    }
 
-        accountNavSpans.forEach(span => {
-          span.textContent = userName;
+    let checkAttempts = 0;
+    function checkFirebaseModule() {
+      const mod = window.FirebaseModule;
+      if (mod && mod.auth && mod.onAuthStateChanged) {
+        mod.onAuthStateChanged(mod.auth, (user) => {
+          if (authLoader) authLoader.style.display = 'none';
+
+          const accountNavSpans = document.querySelectorAll('[data-i18n="navAccount"]');
+          const mobileNavSpans = document.querySelectorAll('[data-i18n="mobileNavAccount"]');
+
+          if (user) {
+            const userName = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
+
+            accountNavSpans.forEach(span => {
+              span.textContent = userName;
+            });
+            mobileNavSpans.forEach(span => {
+              span.textContent = userName;
+            });
+
+            if (userDashView) {
+              const nameEl = document.getElementById('user-display-name');
+              const emailEl = document.getElementById('user-display-email');
+              const avatarEl = document.getElementById('user-avatar-img');
+
+              if (nameEl) nameEl.textContent = user.displayName || user.email || 'Client User';
+              if (emailEl) emailEl.textContent = user.email || '';
+              if (avatarEl) {
+                avatarEl.src = user.photoURL || 'profile.jpg';
+              }
+
+              if (loginForm) loginForm.style.display = 'none';
+              if (regForm) regForm.style.display = 'none';
+              if (forgotForm) forgotForm.style.display = 'none';
+              if (tabsWrapper) tabsWrapper.style.display = 'none';
+              if (infoNotice) infoNotice.style.display = 'none';
+
+              userDashView.style.display = 'block';
+            }
+          } else {
+            accountNavSpans.forEach(span => {
+              span.textContent = translations[currentLang].navAccount;
+            });
+            mobileNavSpans.forEach(span => {
+              span.textContent = translations[currentLang].mobileNavAccount;
+            });
+
+            if (userDashView) {
+              userDashView.style.display = 'none';
+              if (infoNotice) infoNotice.style.display = 'flex';
+              if (tabsWrapper) tabsWrapper.style.display = 'flex';
+
+              const activeTab = authCardContainer ? authCardContainer.getAttribute('data-active-tab') : 'register';
+              if (activeTab === 'login') {
+                if (loginForm) loginForm.style.display = 'flex';
+                if (regForm) regForm.style.display = 'none';
+              } else {
+                if (regForm) regForm.style.display = 'flex';
+                if (loginForm) loginForm.style.display = 'none';
+              }
+            }
+          }
         });
-        mobileNavSpans.forEach(span => {
-          span.textContent = userName;
-        });
-
-        // If on account.html with auth dashboard view present
-        const userDashView = document.getElementById('dashboard-user-view');
-        if (userDashView) {
-          const nameEl = document.getElementById('user-display-name');
-          const emailEl = document.getElementById('user-display-email');
-          const avatarEl = document.getElementById('user-avatar-img');
-          const loginForm = document.getElementById('login-form');
-          const regForm = document.getElementById('register-form');
-          const forgotForm = document.getElementById('forgot-form');
-          const tabsWrapper = document.getElementById('auth-tabs-wrapper');
-          const infoNotice = document.getElementById('auth-info-notice');
-
-          if (nameEl) nameEl.textContent = userName;
-          if (emailEl) emailEl.textContent = user.email;
-          if (avatarEl && user.photoURL) avatarEl.src = user.photoURL;
-
-          if (loginForm) loginForm.style.display = 'none';
-          if (regForm) regForm.style.display = 'none';
-          if (forgotForm) forgotForm.style.display = 'none';
-          if (tabsWrapper) tabsWrapper.style.display = 'none';
-          if (infoNotice) infoNotice.style.display = 'none';
-
-          userDashView.style.display = 'block';
-        }
       } else {
-        // Reset nav labels according to active language
-        accountNavSpans.forEach(span => {
-          span.textContent = translations[currentLang].navAccount;
-        });
-        mobileNavSpans.forEach(span => {
-          span.textContent = translations[currentLang].mobileNavAccount;
-        });
-
-        const userDashView = document.getElementById('dashboard-user-view');
-        if (userDashView) {
-          userDashView.style.display = 'none';
-          const infoNotice = document.getElementById('auth-info-notice');
+        checkAttempts++;
+        if (checkAttempts > 40) {
+          // Fallback if Firebase module fails to load (e.g. offline/no CDN access)
+          if (authLoader) authLoader.style.display = 'none';
           if (infoNotice) infoNotice.style.display = 'flex';
-          const tabsWrapper = document.getElementById('auth-tabs-wrapper');
           if (tabsWrapper) tabsWrapper.style.display = 'flex';
-          const regForm = document.getElementById('register-form');
-          if (regForm) regForm.style.display = 'flex';
+          const activeTab = authCardContainer ? authCardContainer.getAttribute('data-active-tab') : 'register';
+          if (activeTab === 'login') {
+            if (loginForm) loginForm.style.display = 'flex';
+          } else {
+            if (regForm) regForm.style.display = 'flex';
+          }
+          return;
         }
+        setTimeout(checkFirebaseModule, 50);
       }
-    });
+    }
+
+    checkFirebaseModule();
   }
 
   /* --------------------------------------------------------------------------

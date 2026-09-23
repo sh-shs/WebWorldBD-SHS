@@ -2,6 +2,19 @@
    WebWorldBD - Firebase Configuration & Initialization
    ========================================================================== */
 
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  onAuthStateChanged,
+  signOut,
+  updateProfile
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyCHSi0gYDulHe84PPNnSUNYbsNRTZjZMlc",
   authDomain: "movebox-9b766.firebaseapp.com",
@@ -12,11 +25,19 @@ const firebaseConfig = {
   measurementId: "G-JDP02VP7HD"
 };
 
-// Initialize Firebase App, Auth, and Firestore
-if (typeof firebase !== 'undefined') {
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
-  window.auth = firebase.auth();
-  window.db = firebase.firestore();
-}
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// Expose Firebase Auth services globally for application scripts
+window.FirebaseModule = {
+  app,
+  auth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  onAuthStateChanged,
+  signOut,
+  updateProfile
+};
