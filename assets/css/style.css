@@ -44,7 +44,7 @@
 
   /* Layout Standards */
   --header-height: 80px;
-  --container-width: 1200px;
+  --container-width: 1280px;
   --section-padding-desktop: 5.5rem;
   --section-padding-mobile: 3.5rem;
   --card-padding-desktop: 2rem;
@@ -380,7 +380,7 @@ p {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin: 0 0.5rem;
+  margin: 0 auto;
 }
 
 .nav-menu-header,
