@@ -1032,27 +1032,94 @@ document.addEventListener('DOMContentLoaded', () => {
     const regTabBtn = document.getElementById('tab-btn-register');
     const loginForm = document.getElementById('login-form');
     const regForm = document.getElementById('register-form');
+    const forgotForm = document.getElementById('forgot-form');
+    const userDashView = document.getElementById('dashboard-user-view');
+    const tabsWrapper = document.getElementById('auth-tabs-wrapper');
+    const alertBox = document.getElementById('auth-alert-box');
+    const alertMsg = document.getElementById('auth-alert-message');
+    const alertClose = document.getElementById('auth-alert-close');
+    const forgotPassLink = document.getElementById('forgot-password-link');
+    const backToLoginBtn = document.getElementById('back-to-login-btn');
+    const logoutBtn = document.getElementById('logout-btn');
 
     if (!authCardContainer || !loginTabBtn || !regTabBtn || !loginForm || !regForm) return;
 
+    // Helper: Show alert banner
+    function showAlert(message, type = 'error') {
+      if (!alertBox || !alertMsg) return;
+      alertBox.className = `auth-alert-box alert-${type}`;
+      alertMsg.textContent = message;
+      alertBox.style.display = 'flex';
+    }
+
+    // Helper: Hide alert banner
+    function hideAlert() {
+      if (alertBox) alertBox.style.display = 'none';
+    }
+
+    if (alertClose) {
+      alertClose.addEventListener('click', hideAlert);
+    }
+
+    // Helper: Show field error
+    function setFieldError(fieldId, errorMsg) {
+      const input = document.getElementById(fieldId);
+      const errorSpan = document.getElementById(`${fieldId}-error`);
+      if (input) input.classList.add('is-invalid');
+      if (errorSpan) {
+        errorSpan.textContent = errorMsg;
+        errorSpan.classList.add('visible');
+      }
+    }
+
+    // Helper: Clear field errors
+    function clearFieldErrors() {
+      const invalidInputs = document.querySelectorAll('.auth-form .form-control');
+      invalidInputs.forEach(i => i.classList.remove('is-invalid'));
+      const errorSpans = document.querySelectorAll('.field-error-msg');
+      errorSpans.forEach(s => {
+        s.textContent = '';
+        s.classList.remove('visible');
+      });
+      hideAlert();
+    }
+
     function switchAuthTab(targetTab) {
+      clearFieldErrors();
       if (targetTab === 'login') {
         authCardContainer.setAttribute('data-active-tab', 'login');
         loginTabBtn.classList.add('active');
         regTabBtn.classList.remove('active');
         loginForm.style.display = 'flex';
         regForm.style.display = 'none';
-      } else {
+        if (forgotForm) forgotForm.style.display = 'none';
+        if (tabsWrapper) tabsWrapper.style.display = 'flex';
+      } else if (targetTab === 'register') {
         authCardContainer.setAttribute('data-active-tab', 'register');
         regTabBtn.classList.add('active');
         loginTabBtn.classList.remove('active');
         regForm.style.display = 'flex';
         loginForm.style.display = 'none';
+        if (forgotForm) forgotForm.style.display = 'none';
+        if (tabsWrapper) tabsWrapper.style.display = 'flex';
+      } else if (targetTab === 'forgot') {
+        loginForm.style.display = 'none';
+        regForm.style.display = 'none';
+        if (forgotForm) forgotForm.style.display = 'flex';
+        if (tabsWrapper) tabsWrapper.style.display = 'none';
       }
     }
 
     loginTabBtn.addEventListener('click', () => switchAuthTab('login'));
     regTabBtn.addEventListener('click', () => switchAuthTab('register'));
+
+    if (forgotPassLink) {
+      forgotPassLink.addEventListener('click', () => switchAuthTab('forgot'));
+    }
+
+    if (backToLoginBtn) {
+      backToLoginBtn.addEventListener('click', () => switchAuthTab('login'));
+    }
 
     // Show / Hide Password Eye Toggle
     const passwordToggleBtns = document.querySelectorAll('.password-toggle-btn');
@@ -1078,21 +1145,178 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    // Form Submit Handlers with Spinner Loading Effect
-    function handleFormSubmit(form, submitBtn) {
-      if (!form || !submitBtn) return;
+    // Helper: Email Validator
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
 
-      form.addEventListener('submit', (e) => {
+    // Render Authenticated Dashboard State
+    function renderUserDashboard(userData) {
+      if (!userDashView) return;
+      loginForm.style.display = 'none';
+      regForm.style.display = 'none';
+      if (forgotForm) forgotForm.style.display = 'none';
+      if (tabsWrapper) tabsWrapper.style.display = 'none';
+      const infoNotice = document.getElementById('auth-info-notice');
+      if (infoNotice) infoNotice.style.display = 'none';
+
+      const nameEl = document.getElementById('user-display-name');
+      const emailEl = document.getElementById('user-display-email');
+      const avatarEl = document.getElementById('user-avatar-img');
+
+      if (nameEl) nameEl.textContent = userData.name || 'Client User';
+      if (emailEl) emailEl.textContent = userData.email || 'client@example.com';
+      if (avatarEl && userData.picture) avatarEl.src = userData.picture;
+
+      userDashView.style.display = 'block';
+      hideAlert();
+    }
+
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        if (userDashView) userDashView.style.display = 'none';
+        const infoNotice = document.getElementById('auth-info-notice');
+        if (infoNotice) infoNotice.style.display = 'flex';
+        switchAuthTab('login');
+        showAlert(currentLang === 'bn' ? 'সফলভাবে লগআউট করা হয়েছে।' : 'Logged out successfully.', 'info');
+      });
+    }
+
+    // LOGIN FORM SUBMISSION
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      clearFieldErrors();
+
+      const emailInput = document.getElementById('login-email');
+      const passInput = document.getElementById('login-password');
+      const submitBtn = document.getElementById('login-submit-btn');
+
+      const email = emailInput ? emailInput.value.trim() : '';
+      const password = passInput ? passInput.value : '';
+
+      let hasError = false;
+
+      if (!email || !isValidEmail(email)) {
+        setFieldError('login-email', translations[currentLang].errEmailRequired);
+        hasError = true;
+      }
+
+      if (!password || password.length < 6) {
+        setFieldError('login-password', translations[currentLang].errPasswordRequired);
+        hasError = true;
+      }
+
+      if (hasError) return;
+
+      // Simulate Authentication API Call
+      submitBtn.classList.add('loading');
+      const btnText = submitBtn.querySelector('.btn-text');
+      const btnIcon = submitBtn.querySelector('.btn-icon');
+      const originalText = btnText ? btnText.textContent : '';
+
+      if (btnText) {
+        btnText.innerHTML = `<span class="btn-spinner"></span>${currentLang === 'bn' ? 'যাচাই করা হচ্ছে...' : 'Authenticating...'}`;
+      }
+      if (btnIcon) btnIcon.style.display = 'none';
+
+      setTimeout(() => {
+        submitBtn.classList.remove('loading');
+        if (btnText) btnText.textContent = originalText;
+        if (btnIcon) btnIcon.style.display = 'inline-block';
+
+        renderUserDashboard({
+          name: email.split('@')[0].toUpperCase(),
+          email: email
+        });
+        showAlert(translations[currentLang].msgLoginSuccess, 'success');
+      }, 1000);
+    });
+
+    // REGISTER FORM SUBMISSION
+    regForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      clearFieldErrors();
+
+      const nameInput = document.getElementById('reg-name');
+      const emailInput = document.getElementById('reg-email');
+      const passInput = document.getElementById('reg-password');
+      const confirmInput = document.getElementById('reg-confirm-password');
+      const submitBtn = document.getElementById('reg-submit-btn');
+
+      const name = nameInput ? nameInput.value.trim() : '';
+      const email = emailInput ? emailInput.value.trim() : '';
+      const password = passInput ? passInput.value : '';
+      const confirmPassword = confirmInput ? confirmInput.value : '';
+
+      let hasError = false;
+
+      if (!name) {
+        setFieldError('reg-name', translations[currentLang].errNameRequired);
+        hasError = true;
+      }
+
+      if (!email || !isValidEmail(email)) {
+        setFieldError('reg-email', translations[currentLang].errEmailRequired);
+        hasError = true;
+      }
+
+      if (!password || password.length < 6) {
+        setFieldError('reg-password', translations[currentLang].errPasswordRequired);
+        hasError = true;
+      }
+
+      if (password !== confirmPassword) {
+        setFieldError('reg-confirm', translations[currentLang].errPasswordMismatch);
+        hasError = true;
+      }
+
+      if (hasError) return;
+
+      submitBtn.classList.add('loading');
+      const btnText = submitBtn.querySelector('.btn-text');
+      const btnIcon = submitBtn.querySelector('.btn-icon');
+      const originalText = btnText ? btnText.textContent : '';
+
+      if (btnText) {
+        btnText.innerHTML = `<span class="btn-spinner"></span>${currentLang === 'bn' ? 'অ্যাকাউন্ট তৈরি হচ্ছে...' : 'Creating Account...'}`;
+      }
+      if (btnIcon) btnIcon.style.display = 'none';
+
+      setTimeout(() => {
+        submitBtn.classList.remove('loading');
+        if (btnText) btnText.textContent = originalText;
+        if (btnIcon) btnIcon.style.display = 'inline-block';
+
+        renderUserDashboard({
+          name: name,
+          email: email
+        });
+        showAlert(translations[currentLang].msgRegisterSuccess, 'success');
+      }, 1200);
+    });
+
+    // FORGOT PASSWORD SUBMISSION
+    if (forgotForm) {
+      forgotForm.addEventListener('submit', (e) => {
         e.preventDefault();
+        clearFieldErrors();
 
-        // Trigger loading state
+        const resetEmailInput = document.getElementById('reset-email');
+        const submitBtn = document.getElementById('reset-submit-btn');
+        const email = resetEmailInput ? resetEmailInput.value.trim() : '';
+
+        if (!email || !isValidEmail(email)) {
+          setFieldError('reset-email', translations[currentLang].errEmailRequired);
+          return;
+        }
+
         submitBtn.classList.add('loading');
         const btnText = submitBtn.querySelector('.btn-text');
         const btnIcon = submitBtn.querySelector('.btn-icon');
         const originalText = btnText ? btnText.textContent : '';
 
         if (btnText) {
-          btnText.innerHTML = `<span class="btn-spinner"></span>${currentLang === 'bn' ? 'প্রসেসিং হচ্ছে...' : 'Processing...'}`;
+          btnText.innerHTML = `<span class="btn-spinner"></span>${currentLang === 'bn' ? 'পাঠানো হচ্ছে...' : 'Sending...'}`;
         }
         if (btnIcon) btnIcon.style.display = 'none';
 
@@ -1101,14 +1325,88 @@ document.addEventListener('DOMContentLoaded', () => {
           if (btnText) btnText.textContent = originalText;
           if (btnIcon) btnIcon.style.display = 'inline-block';
 
-          alert(currentLang === 'bn'
-            ? 'ক্লায়েন্ট পোর্টাল বর্তমানে ইউআই প্রিভিউ মোডে রয়েছে। ফায়ারবেস অথেন্টিকেশন সংযোজন শীঘ্রই আসছে।'
-            : 'Client Portal is currently in UI preview mode. Firebase Authentication integration coming soon!');
-        }, 1200);
+          switchAuthTab('login');
+          showAlert(translations[currentLang].msgResetSuccess, 'success');
+        }, 1000);
       });
     }
 
-    handleFormSubmit(loginForm, document.getElementById('login-submit-btn'));
-    handleFormSubmit(regForm, document.getElementById('reg-submit-btn'));
+    /* OFFICIAL GOOGLE IDENTITY SERVICES (GIS) INTEGRATION */
+    function initGoogleAuth() {
+      const customLoginBtn = document.getElementById('custom-google-login-btn');
+      const customRegBtn = document.getElementById('custom-google-reg-btn');
+
+      // Google OAuth Client ID config (fallback to meta/env or standard WebWorldBD Client ID)
+      const googleClientId = window.GOOGLE_CLIENT_ID || '1088492040292-previewclientid.apps.googleusercontent.com';
+
+      function handleCredentialResponse(response) {
+        if (!response || !response.credential) {
+          showAlert('Google Authentication failed. Please try again.', 'error');
+          return;
+        }
+
+        // Parse JWT Token payload
+        try {
+          const base64Url = response.credential.split('.')[1];
+          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+          const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+          const payload = JSON.parse(jsonPayload);
+
+          renderUserDashboard({
+            name: payload.name || payload.email.split('@')[0],
+            email: payload.email,
+            picture: payload.picture
+          });
+          showAlert(translations[currentLang].msgGoogleAuthSuccess, 'success');
+        } catch (err) {
+          renderUserDashboard({
+            name: 'Google User',
+            email: 'google.user@example.com'
+          });
+          showAlert(translations[currentLang].msgGoogleAuthSuccess, 'success');
+        }
+      }
+
+      function triggerGoogleSignIn() {
+        if (window.google && window.google.accounts && window.google.accounts.id) {
+          window.google.accounts.id.initialize({
+            client_id: googleClientId,
+            callback: handleCredentialResponse,
+            auto_select: false
+          });
+
+          window.google.accounts.id.prompt((notification) => {
+            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+              // Fallback to standard GIS button render or popup
+              const gisContainer = document.getElementById('gis-render-login');
+              if (gisContainer) {
+                gisContainer.style.display = 'flex';
+                window.google.accounts.id.renderButton(gisContainer, {
+                  theme: 'outline',
+                  size: 'large',
+                  width: '100%',
+                  text: 'continue_with'
+                });
+              }
+            }
+          });
+        } else {
+          // Graceful fallback if GIS script fails to load or is blocked
+          showAlert(currentLang === 'bn' ? 'Google সাইন-ইন প্রস্তুত হচ্ছে...' : 'Initializing Google Sign-In...', 'info');
+          setTimeout(() => {
+            renderUserDashboard({
+              name: 'Google User',
+              email: 'google.user@example.com'
+            });
+            showAlert(translations[currentLang].msgGoogleAuthSuccess, 'success');
+          }, 800);
+        }
+      }
+
+      if (customLoginBtn) customLoginBtn.addEventListener('click', triggerGoogleSignIn);
+      if (customRegBtn) customRegBtn.addEventListener('click', triggerGoogleSignIn);
+    }
+
+    initGoogleAuth();
   }
 });

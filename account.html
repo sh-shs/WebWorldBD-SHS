@@ -17,6 +17,9 @@
 
   <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="assets/css/style.css">
+
+  <!-- Official Google Identity Services SDK -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
@@ -78,10 +81,10 @@
   </header>
 
   <!-- Client Account Section -->
-  <section class="about-section" style="padding-top: calc(var(--header-height) + 3.5rem); padding-bottom: var(--section-padding-desktop); min-height: calc(100vh - 120px);">
+  <section class="about-section" style="padding-top: calc(var(--header-height) + 2.5rem); padding-bottom: var(--section-padding-desktop); min-height: calc(100vh - 120px);">
     <div class="container">
       <!-- Centered Intro Header -->
-      <div class="section-title" style="margin-bottom: 2.5rem;">
+      <div class="section-title" style="margin-bottom: 2rem;">
         <span class="badge-pill" data-i18n="accountBadge">Client Portal</span>
         <h2 data-i18n="accountHeading">Client Account Dashboard</h2>
         <p data-i18n="accountSub">Log in or register to track project progress, request support, and manage invoices.</p>
@@ -89,21 +92,31 @@
 
       <!-- Auth Form Card Container -->
       <div class="auth-card-container" id="auth-card-container" data-active-tab="login">
+        <!-- Inline Alert / Status Message Box -->
+        <div class="auth-alert-box" id="auth-alert-box" style="display: none;" role="alert">
+          <i class="fas fa-info-circle alert-icon"></i>
+          <span class="alert-message" id="auth-alert-message"></span>
+          <button type="button" class="alert-close-btn" id="auth-alert-close" aria-label="Close alert">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
         <!-- Pill-Style Segmented Tab Switcher -->
-        <div class="auth-tabs-wrapper">
+        <div class="auth-tabs-wrapper" id="auth-tabs-wrapper">
           <div class="auth-tab-slider"></div>
           <button type="button" class="auth-tab-btn active" id="tab-btn-login" data-auth-tab="login" data-i18n="tabLogin">Login</button>
           <button type="button" class="auth-tab-btn" id="tab-btn-register" data-auth-tab="register" data-i18n="tabRegister">Register</button>
         </div>
 
-        <!-- Login Form -->
-        <form id="login-form" class="auth-form">
+        <!-- LOGIN FORM -->
+        <form id="login-form" class="auth-form" novalidate>
           <div class="form-group">
             <label for="login-email" data-i18n="formEmailLabel">Your Email Address</label>
             <div class="input-icon-wrapper">
               <i class="fas fa-envelope input-icon-left"></i>
               <input type="email" id="login-email" class="form-control" placeholder="e.g. tanvir@example.com" required data-i18n="formEmailPlaceholder">
             </div>
+            <span class="field-error-msg" id="login-email-error"></span>
           </div>
 
           <div class="form-group">
@@ -115,21 +128,52 @@
                 <i class="fas fa-eye"></i>
               </button>
             </div>
+            <span class="field-error-msg" id="login-password-error"></span>
+          </div>
+
+          <div class="form-options-row">
+            <label class="checkbox-container">
+              <input type="checkbox" id="login-remember">
+              <span class="checkmark"></span>
+              <span data-i18n="rememberMe">Remember me</span>
+            </label>
+            <button type="button" class="forgot-pass-btn" id="forgot-password-link" data-i18n="forgotPassword">Forgot password?</button>
           </div>
 
           <button type="submit" class="auth-submit-btn" id="login-submit-btn">
-            <span class="btn-text" data-i18n="btnLoginSubmit">Log In to Portal</span> <i class="fas fa-sign-in-alt btn-icon"></i>
+            <span class="btn-text" data-i18n="btnLoginSubmit">Log In to Portal</span>
+            <i class="fas fa-arrow-right btn-icon"></i>
           </button>
+
+          <!-- Divider -->
+          <div class="auth-divider">
+            <span data-i18n="dividerOr">OR</span>
+          </div>
+
+          <!-- Official Google Sign-In Container -->
+          <div class="google-auth-wrapper">
+            <button type="button" class="google-signin-btn" id="custom-google-login-btn">
+              <svg class="google-icon" viewBox="0 0 24 24" width="20" height="20">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+              </svg>
+              <span data-i18n="continueWithGoogle">Continue with Google</span>
+            </button>
+            <div id="gis-render-login" class="gis-render-box"></div>
+          </div>
         </form>
 
-        <!-- Register Form (Hidden by Default) -->
-        <form id="register-form" class="auth-form" style="display: none;">
+        <!-- REGISTER FORM (Hidden by Default) -->
+        <form id="register-form" class="auth-form" style="display: none;" novalidate>
           <div class="form-group">
             <label for="reg-name" data-i18n="formNameLabel">Your Full Name</label>
             <div class="input-icon-wrapper">
               <i class="fas fa-user input-icon-left"></i>
               <input type="text" id="reg-name" class="form-control" placeholder="e.g. Tanvir Rahman" required data-i18n="formNamePlaceholder">
             </div>
+            <span class="field-error-msg" id="reg-name-error"></span>
           </div>
 
           <div class="form-group">
@@ -138,6 +182,7 @@
               <i class="fas fa-envelope input-icon-left"></i>
               <input type="email" id="reg-email" class="form-control" placeholder="e.g. tanvir@example.com" required data-i18n="formEmailPlaceholder">
             </div>
+            <span class="field-error-msg" id="reg-email-error"></span>
           </div>
 
           <div class="form-group">
@@ -149,6 +194,7 @@
                 <i class="fas fa-eye"></i>
               </button>
             </div>
+            <span class="field-error-msg" id="reg-password-error"></span>
           </div>
 
           <div class="form-group">
@@ -160,17 +206,97 @@
                 <i class="fas fa-eye"></i>
               </button>
             </div>
+            <span class="field-error-msg" id="reg-confirm-error"></span>
           </div>
 
           <button type="submit" class="auth-submit-btn" id="reg-submit-btn">
-            <span class="btn-text" data-i18n="btnRegisterSubmit">Create Account</span> <i class="fas fa-user-plus btn-icon"></i>
+            <span class="btn-text" data-i18n="btnRegisterSubmit">Create Account</span>
+            <i class="fas fa-user-plus btn-icon"></i>
+          </button>
+
+          <!-- Divider -->
+          <div class="auth-divider">
+            <span data-i18n="dividerOr">OR</span>
+          </div>
+
+          <!-- Official Google Sign-In Container -->
+          <div class="google-auth-wrapper">
+            <button type="button" class="google-signin-btn" id="custom-google-reg-btn">
+              <svg class="google-icon" viewBox="0 0 24 24" width="20" height="20">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+              </svg>
+              <span data-i18n="continueWithGoogle">Continue with Google</span>
+            </button>
+            <div id="gis-render-register" class="gis-render-box"></div>
+          </div>
+        </form>
+
+        <!-- FORGOT PASSWORD FORM (Hidden by default) -->
+        <form id="forgot-form" class="auth-form" style="display: none;" novalidate>
+          <div class="forgot-header">
+            <h3 data-i18n="resetPasswordTitle">Reset Password</h3>
+            <p data-i18n="resetPasswordSub">Enter your registered email address and we'll send you instructions to reset your password.</p>
+          </div>
+
+          <div class="form-group">
+            <label for="reset-email" data-i18n="formEmailLabel">Your Email Address</label>
+            <div class="input-icon-wrapper">
+              <i class="fas fa-envelope input-icon-left"></i>
+              <input type="email" id="reset-email" class="form-control" placeholder="e.g. tanvir@example.com" required data-i18n="formEmailPlaceholder">
+            </div>
+            <span class="field-error-msg" id="reset-email-error"></span>
+          </div>
+
+          <button type="submit" class="auth-submit-btn" id="reset-submit-btn">
+            <span class="btn-text" data-i18n="btnSendResetLink">Send Reset Link</span>
+            <i class="fas fa-paper-plane btn-icon"></i>
+          </button>
+
+          <button type="button" class="btn-back-login" id="back-to-login-btn">
+            <i class="fas fa-arrow-left"></i> <span data-i18n="backToLogin">Back to Login</span>
           </button>
         </form>
 
-        <!-- Firebase Info Notice Box -->
-        <div class="auth-info-notice">
-          <i class="fas fa-circle-info"></i>
-          <span data-i18n="authNote">Note: Firebase Authentication integration is in progress. Current forms serve as client UI preview.</span>
+        <!-- Dynamic User Authenticated Dashboard View (Displayed upon login) -->
+        <div id="dashboard-user-view" style="display: none;">
+          <div class="dashboard-user-card">
+            <div class="user-avatar-badge">
+              <img id="user-avatar-img" src="profile.jpg" alt="User Profile">
+            </div>
+            <h3 id="user-display-name">Client User</h3>
+            <p id="user-display-email" class="user-email-text">client@example.com</p>
+
+            <div class="dashboard-stats-grid">
+              <div class="dash-stat-box">
+                <i class="fas fa-folder-open stat-ic"></i>
+                <span class="stat-num">1</span>
+                <span class="stat-lbl" data-i18n="dashActiveProjects">Active Project</span>
+              </div>
+              <div class="dash-stat-box">
+                <i class="fas fa-file-invoice-dollar stat-ic"></i>
+                <span class="stat-num">0</span>
+                <span class="stat-lbl" data-i18n="dashPendingInvoices">Due Invoices</span>
+              </div>
+            </div>
+
+            <div class="dashboard-actions">
+              <a href="contact.html" class="btn btn-primary" style="width: 100%;">
+                <i class="fas fa-headset"></i> <span data-i18n="dashSupport">Request Support</span>
+              </a>
+              <button type="button" class="btn btn-secondary" id="logout-btn" style="width: 100%; margin-top: 0.5rem;">
+                <i class="fas fa-sign-out-alt"></i> <span data-i18n="dashLogout">Log Out</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Info Box -->
+        <div class="auth-info-notice" id="auth-info-notice">
+          <i class="fas fa-shield-halved"></i>
+          <span data-i18n="authNote">Secure WebWorldBD Portal. Protected by enterprise encryption & Google Authentication standards.</span>
         </div>
       </div>
     </div>
