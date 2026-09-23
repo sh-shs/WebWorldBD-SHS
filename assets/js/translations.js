@@ -222,7 +222,7 @@ const translations = {
   bn: {
     /* Brand & Nav */
     brandName: "WebWorldBD",
-    developerName: "সাফায়েত হোসেন শরীফ",
+    developerName: "সাফায়েত হোসেন ছারিফ",
     developerTitle: "ওয়েব ও অ্যাপ ডেভেলপার | ডিজিটাল সলিউশন ক্রিয়েটর",
     navHome: "হোম",
     navAbout: "আমার সম্পর্কে",
@@ -267,8 +267,8 @@ const translations = {
     heroBadge: "ফ্রিল্যান্স ও কন্ট্রাক্ট প্রজেক্টের জন্য প্রস্তুত",
     heroHeadingPrefix: "আইডিয়াকে রূপ দিই",
     heroHeadingGradient: "শক্তিশালী ডিজিটাল অভিজ্ঞতায়।",
-    heroSubtitle: "হ্যালো! আমি সাফায়েত হোসেন শরীফ। আপনার ব্যবসার সাফল্যের জন্য দ্রুতগতিসম্পন্ন, আল্ট্রা-রেসপনসিভ ওয়েবসাইট, ওয়েব অ্যাপ এবং মোবাইল অ্যাপ তৈরি করি।",
-    heroIntro: "হ্যালো! আমি সাফায়েত হোসেন শরীফ। আপনার ভাবনা থেকেই শুরু আমাদের কাজ। আপনার পছন্দ, প্রয়োজন ও আইডিয়াকে আমরা রূপ দিই আধুনিক ও আকর্ষণীয় ওয়েবসাইট, ওয়েব অ্যাপ এবং মোবাইল অ্যাপে। আপনার আইডিয়া, আমাদের প্রযুক্তি—একসাথে তৈরি করি আপনার কাঙ্ক্ষিত ওয়েবসাইট & ওয়েবসাইট অ্যাপ্লিকেশন।",
+    heroSubtitle: "হ্যালো! আমি সাফায়েত হোসেন ছারিফ। আপনার ব্যবসার সাফল্যের জন্য দ্রুতগতিসম্পন্ন, আল্ট্রা-রেসপনসিভ ওয়েবসাইট, ওয়েব অ্যাপ এবং মোবাইল অ্যাপ তৈরি করি।",
+    heroIntro: "হ্যালো! আমি সাফায়েত হোসেন ছারিফ। আপনার ভাবনা থেকেই শুরু আমাদের কাজ। আপনার পছন্দ, প্রয়োজন ও আইডিয়াকে আমরা রূপ দিই আধুনিক ও আকর্ষণীয় ওয়েবসাইট, ওয়েব অ্যাপ এবং মোবাইল অ্যাপে। আপনার আইডিয়া, আমাদের প্রযুক্তি—একসাথে তৈরি করি আপনার কাঙ্ক্ষিত ওয়েবসাইট & ওয়েবসাইট অ্যাপ্লিকেশন।",
     statCompleted: "সম্পন্ন প্রজেক্ট",
     statClients: "সন্তুষ্ট ক্লায়েন্ট",
     statExp: "বছরের অভিজ্ঞতা",
@@ -276,7 +276,7 @@ const translations = {
 
     /* About Section */
     aboutBadge: "আমার পরিচয়",
-    aboutMainHeading: "সাফায়েত হোসেন শরীফ",
+    aboutMainHeading: "সাফায়েত হোসেন ছারিফ",
     aboutSubtitle: "Web & App Developer | Digital Solutions Creator",
     aboutProfileTitle: "Founder & Lead Developer @ WebWorldBD",
     aboutProfileLocation: "কুষ্টিয়া, খুলনা, বাংলাদেশ",
@@ -285,7 +285,7 @@ const translations = {
 
     aboutSec1Label: "আমার পরিচয়",
     aboutSec1Title: "আমার পরিচয়",
-    aboutSec1Heading: "সাফায়েত হোসেন শরীফ",
+    aboutSec1Heading: "সাফায়েত হোসেন ছারিফ",
     aboutSec1Desc: "আমি কুষ্টিয়া, খুলনা, বাংলাদেশের একজন <span class=\"about-highlight\">Web & App Developer</span>। আমি কুষ্টিয়া সরকারি পলিটেকনিক ইনস্টিটিউটের <span class=\"about-highlight\">Electronics Technology</span> বিভাগের একজন শিক্ষার্থী এবং এক বছরেরও বেশি সময় ধরে <span class=\"about-highlight\">Web Development</span> নিয়ে কাজ করছি।",
 
     aboutSec2Label: "আমার দক্ষতা ও অভিজ্ঞতা",
@@ -428,10 +428,10 @@ const translations = {
     mobileNavAccount: "অ্যাকাউন্ট",
 
     /* Footer */
-    footerDesc: "সাফায়েত হোসেন শরীফ — WebWorldBD। গুণমান ও নীতিতে কোনো আপস না করে তৈরি করি শক্তিশালী ওয়েবসাইট ও মোবাইল অ্যাপ।",
+    footerDesc: "সাফায়েত হোসেন ছারিফ — WebWorldBD। গুণমান ও নীতিতে কোনো আপস না করে তৈরি করি শক্তিশালী ওয়েবসাইট ও মোবাইল অ্যাপ।",
     quickLinksTitle: "কুইক লিঙ্ক",
     servicesListTitle: "জনপ্রিয় সার্ভিসসমূহ",
     contactTitle: "যোগাযোগের ঠিকানা",
-    copyrightText: "© ২০২৬ WebWorldBD। সর্বস্বত্ব সংরক্ষিত সাফায়েত হোসেন শরীফ দ্বারা।"
+    copyrightText: "© ২০২৬ WebWorldBD। সর্বস্বত্ব সংরক্ষিত সাফায়েত হোসেন ছারিফ দ্বারা।"
   }
 };
