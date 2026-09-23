@@ -88,12 +88,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // Dynamic copyright text generator
     const dynamicCopyright = getDynamicCopyrightText(lang);
 
+    // Check auth state for account subtext if available
+    const isUserLoggedIn = window.currentUserState ? true : false;
+
     // Update text elements with data-i18n attribute
     const i18nElements = document.querySelectorAll('[data-i18n]');
     i18nElements.forEach(el => {
       const key = el.getAttribute('data-i18n');
       if (key === 'copyrightText') {
         el.textContent = dynamicCopyright;
+      } else if (key === 'accountSub') {
+        const subKey = isUserLoggedIn ? 'accountSubLoggedIn' : 'accountSub';
+        if (translations[lang] && translations[lang][subKey]) {
+          el.textContent = translations[lang][subKey];
+        }
       } else if (translations[lang] && translations[lang][key]) {
         if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
           el.placeholder = translations[lang][key];
@@ -1504,16 +1512,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
           const accountNavSpans = document.querySelectorAll('[data-i18n="navAccount"]');
           const mobileNavSpans = document.querySelectorAll('[data-i18n="mobileNavAccount"]');
+          const accountSubEl = document.querySelector('[data-i18n="accountSub"]');
 
           if (user) {
+            window.currentUserState = user;
             const userName = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
 
             accountNavSpans.forEach(span => {
               span.textContent = userName;
             });
             mobileNavSpans.forEach(span => {
-              span.textContent = userName;
+              span.textContent = translations[currentLang].mobileNavAccount;
             });
+
+            if (accountSubEl) {
+              accountSubEl.textContent = translations[currentLang].accountSubLoggedIn;
+            }
 
             if (userDashView) {
               const nameEl = document.getElementById('user-display-name');
@@ -1535,12 +1549,17 @@ document.addEventListener('DOMContentLoaded', () => {
               userDashView.style.display = 'block';
             }
           } else {
+            window.currentUserState = null;
             accountNavSpans.forEach(span => {
               span.textContent = translations[currentLang].navAccount;
             });
             mobileNavSpans.forEach(span => {
               span.textContent = translations[currentLang].mobileNavAccount;
             });
+
+            if (accountSubEl) {
+              accountSubEl.textContent = translations[currentLang].accountSub;
+            }
 
             if (userDashView) {
               userDashView.style.display = 'none';
