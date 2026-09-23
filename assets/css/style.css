@@ -2661,13 +2661,17 @@ body.lang-bn .service-row-title {
   .nav-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    background: rgba(13, 19, 34, 0.75);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     z-index: 10000;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  [data-theme="light"] .nav-backdrop {
+    background: rgba(15, 23, 42, 0.45);
   }
 
   .nav-backdrop.active {
@@ -2685,6 +2689,11 @@ body.lang-bn .service-row-title {
     transition: opacity 0.25s ease, visibility 0.25s ease;
   }
 
+  /* Elevate header z-index when menu is open so menu drawer sits above backdrop overlay */
+  body.menu-open .header {
+    z-index: 10002;
+  }
+
   /* Slide-in Mobile Drawer Navigation */
   .nav-menu {
     position: fixed;
@@ -2695,8 +2704,6 @@ body.lang-bn .service-row-title {
     height: 100vh;
     height: 100dvh;
     background: #0D1322;
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
     border-left: 1px solid var(--border-glass);
     box-shadow: -20px 0 40px rgba(0, 0, 0, 0.6);
     display: flex;
