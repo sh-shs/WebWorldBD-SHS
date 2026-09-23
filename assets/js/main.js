@@ -395,15 +395,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const counterEls = document.querySelectorAll('.counter');
     if (counterEls.length === 0) return;
 
+    if (!('IntersectionObserver' in window)) {
+      counterEls.forEach(el => {
+        const target = el.getAttribute('data-target') || '0';
+        const suffix = el.getAttribute('data-suffix') || '';
+        el.textContent = target + suffix;
+      });
+      return;
+    }
+
     const observer = new IntersectionObserver((entries, obs) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           const target = parseInt(entry.target.getAttribute('data-target') || '0', 10);
           const suffix = entry.target.getAttribute('data-suffix') || '';
+          if (isNaN(target) || target <= 0) return;
+
           let count = 0;
           const duration = 600;
           const stepTime = 20;
-          const increment = Math.ceil(target / (duration / stepTime));
+          const increment = Math.max(1, Math.ceil(target / (duration / stepTime)));
 
           const timer = setInterval(() => {
             count += increment;
@@ -418,7 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
           obs.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.2 });
+    }, { threshold: 0.1 });
 
     counterEls.forEach(el => observer.observe(el));
   }
