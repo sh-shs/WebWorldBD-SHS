@@ -2698,18 +2698,17 @@ body.lang-bn .service-row-title {
   .nav-menu {
     position: fixed;
     top: 0;
-    right: -100%;
-    width: 88%;
-    max-width: 340px;
+    right: -100vw;
+    width: 100vw;
+    max-width: 100%;
     height: 100vh;
     height: 100dvh;
     background: #0D1322;
-    border-left: 1px solid var(--border-glass);
+    border-left: none;
     box-shadow: -20px 0 40px rgba(0, 0, 0, 0.6);
     display: flex;
     flex-direction: column;
     padding: 1.25rem 1.25rem calc(24px + env(safe-area-inset-bottom));
-    gap: 1rem;
     transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
     opacity: 0;
     z-index: 10001;
@@ -2748,9 +2747,8 @@ body.lang-bn .service-row-title {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-    flex: 1 1 auto;
-    overflow-y: auto;
-    margin: 0.25rem 0;
+    flex: 0 0 auto;
+    margin-top: auto;
     padding-right: 2px;
   }
 
@@ -2802,13 +2800,24 @@ body.lang-bn .service-row-title {
     padding-top: 1rem;
     border-top: 1px solid var(--border-glass);
     flex-shrink: 0;
-    margin-top: auto;
+    margin-top: 1.5rem;
+    margin-bottom: auto;
   }
 
   .nav-cta-btn {
     width: 100%;
     font-size: 0.925rem;
     padding: 0.75rem 1rem;
+  }
+}
+
+/* Tablet Drawer Docked Style (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .nav-menu {
+    width: 100%;
+    max-width: 400px;
+    right: -100%;
+    border-left: 1px solid var(--border-glass);
   }
 }
 
