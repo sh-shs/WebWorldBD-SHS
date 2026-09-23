@@ -157,19 +157,31 @@ document.addEventListener('DOMContentLoaded', () => {
   function initMobileMenu() {
     const mobileToggle = document.getElementById('mobile-toggle');
     const navMenu = document.getElementById('nav-menu');
-    const navMenuClose = document.getElementById('nav-menu-close');
 
     if (!navMenu) return;
+
+    // Create or locate backdrop overlay element
+    let navBackdrop = document.getElementById('nav-backdrop');
+    if (!navBackdrop) {
+      navBackdrop = document.createElement('div');
+      navBackdrop.id = 'nav-backdrop';
+      navBackdrop.className = 'nav-backdrop';
+      document.body.appendChild(navBackdrop);
+    }
 
     function openMenu() {
       navMenu.classList.add('active');
       if (mobileToggle) mobileToggle.classList.add('active');
+      if (navBackdrop) navBackdrop.classList.add('active');
+      document.body.classList.add('menu-open');
       document.body.style.overflow = 'hidden';
     }
 
     function closeMenu() {
       navMenu.classList.remove('active');
       if (mobileToggle) mobileToggle.classList.remove('active');
+      if (navBackdrop) navBackdrop.classList.remove('active');
+      document.body.classList.remove('menu-open');
       document.body.style.overflow = '';
     }
 
@@ -184,8 +196,8 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    if (navMenuClose) {
-      navMenuClose.addEventListener('click', (e) => {
+    if (navBackdrop) {
+      navBackdrop.addEventListener('click', (e) => {
         e.stopPropagation();
         closeMenu();
       });
