@@ -32,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
     renderProjects('all', '');
     initProjectFiltersAndSearch();
   }
-  if (document.getElementById('testimonials-grid')) renderTestimonials();
   if (document.getElementById('faq-accordion')) renderFAQs();
   if (document.getElementById('project-detail-content')) initProjectDetailsPage();
   if (document.getElementById('service-detail-app')) initServiceDetailPage();
@@ -123,7 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const searchVal = document.getElementById('project-search-input')?.value || '';
       renderProjects(activeFilter, searchVal);
     }
-    if (document.getElementById('testimonials-grid')) renderTestimonials();
     if (document.getElementById('faq-accordion')) renderFAQs();
     if (document.getElementById('project-detail-content')) initProjectDetailsPage();
     if (document.getElementById('service-detail-app')) initServiceDetailPage();
@@ -218,8 +216,6 @@ document.addEventListener('DOMContentLoaded', () => {
             isActive = (navId === 'why');
           } else if (currentHash === '#process') {
             isActive = (navId === 'process');
-          } else if (currentHash === '#testimonials') {
-            isActive = (navId === 'testimonials');
           } else if (currentHash === '#faq') {
             isActive = (navId === 'faq');
           } else {
@@ -666,26 +662,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderProjects(activeFilter, e.target.value);
       });
     }
-  }
-
-  function renderTestimonials() {
-    const container = document.getElementById('testimonials-grid');
-    if (!container) return;
-
-    container.innerHTML = portfolioData.testimonials.map(t => `
-      <div class="glass-card" style="padding: 2rem;">
-        <div style="color: var(--accent-orange); margin-bottom: 1rem;">
-          <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-        </div>
-        <p style="color: var(--text-muted); font-style: italic; margin-bottom: 1.5rem; font-size: 0.95rem;">
-          "${currentLang === 'bn' ? t.text_bn : t.text_en}"
-        </p>
-        <div>
-          <h4 style="font-size: 1.05rem; font-weight: 700;">${currentLang === 'bn' ? t.name_bn : t.name_en}</h4>
-          <span style="font-size: 0.85rem; color: var(--accent-blue);">${currentLang === 'bn' ? t.role_bn : t.role_en}</span>
-        </div>
-      </div>
-    `).join('');
   }
 
   function renderFAQs() {
