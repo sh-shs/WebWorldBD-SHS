@@ -349,6 +349,9 @@ p {
   align-items: center;
   justify-content: space-between;
   height: 100%;
+  max-width: var(--container-width);
+  margin: 0 auto;
+  width: 100%;
 }
 
 .logo-brand {
@@ -428,7 +431,7 @@ p {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.65rem;
   flex-shrink: 0;
 }
 
@@ -2561,6 +2564,27 @@ body.lang-bn .service-row-title {
   margin-right: auto;
   padding-left: 1.5rem;
   padding-right: 1.5rem;
+}
+
+/* Large Desktop Nav Links Adjustment (1024px - 1180px) */
+@media (min-width: 1024px) and (max-width: 1180px) {
+  .nav-menu-links {
+    gap: 0.45rem;
+  }
+  .nav-link {
+    font-size: 0.8rem;
+  }
+  .header-actions {
+    gap: 0.45rem;
+  }
+  .header-actions .btn-primary {
+    padding: 0.55rem 1rem;
+    font-size: 0.85rem;
+  }
+  .lang-switch-btn {
+    padding: 0.4rem 0.65rem;
+    font-size: 0.8rem;
+  }
 }
 
 /* Tablet & Smaller Screens (max-width: 1023px) */
