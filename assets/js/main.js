@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('faq-accordion')) renderFAQs();
   if (document.getElementById('project-detail-content')) initProjectDetailsPage();
   if (document.getElementById('service-detail-app')) initServiceDetailPage();
+  if (document.getElementById('start-project-form')) initStartProjectForm();
 
   /* --------------------------------------------------------------------------
      2. Theme & Language Functions
@@ -769,6 +770,18 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </div>
     `;
+
+    const freeTextForm = document.getElementById('others-free-text-form');
+    if (freeTextForm) {
+      freeTextForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const textVal = document.getElementById('others-custom-text')?.value.trim() || '';
+        if (!textVal) return;
+        const waMessage = `*Custom Project Request — WebWorldBD*\n\n*Requirement Details:*\n${textVal}`;
+        const waUrl = `https://wa.me/8801342697743?text=${encodeURIComponent(waMessage)}`;
+        window.open(waUrl, '_blank', 'noopener,noreferrer');
+      });
+    }
   }
 
   /* --------------------------------------------------------------------------
@@ -803,7 +816,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const revisionsText = currentLang === 'bn' ? service.revisions_bn : service.revisions_en;
     const responsiveText = currentLang === 'bn' ? service.responsive_bn : service.responsive_en;
 
-    const contactLink = getContactUrl();
+    const isSubdir = window.location.pathname.includes('/services/');
+    const startProjectUrl = isSubdir ? '../start-project.html?service=others' : 'start-project.html?service=others';
+    const contactLink = service.id === 'others' ? startProjectUrl : getContactUrl();
     const servicesLink = getServicesPageUrl();
     const homeLink = getHomeUrl();
 
@@ -849,6 +864,29 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
       </div>
+
+      ${service.id === 'others' ? `
+      <!-- Free-text Custom Project Requirement Section -->
+      <div class="glass-card" style="padding: 2.25rem; margin-bottom: 2.5rem; border-color: rgba(56, 189, 248, 0.4);">
+        <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: var(--accent-blue); display: flex; align-items: center; gap: 0.6rem;">
+          <i class="fas fa-pen-to-square"></i> ${translations[currentLang].formCustomDescLabel}
+        </h2>
+        <p style="color: var(--text-muted); margin-bottom: 1.25rem;">
+          ${translations[currentLang].formCustomDescPlaceholder}
+        </p>
+        <form id="others-free-text-form" style="display: flex; flex-direction: column; gap: 1rem;">
+          <textarea id="others-custom-text" rows="4" class="form-control" style="width: 100%; padding: 0.85rem 1.1rem; border-radius: var(--radius-md); background: var(--bg-glass); border: 1px solid var(--border-glass); color: var(--text-main); font-family: inherit; font-size: 0.98rem;" placeholder="${translations[currentLang].formCustomDescPlaceholder}" required></textarea>
+          <div style="display: flex; gap: 0.85rem; flex-wrap: wrap;">
+            <button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">
+              <i class="fab fa-whatsapp"></i> ${currentLang === 'bn' ? 'হোয়াটসঅ্যাপে পাঠান' : 'Submit via WhatsApp'}
+            </button>
+            <a href="${startProjectUrl}" class="btn btn-secondary" style="padding: 0.75rem 1.5rem;">
+              <i class="fas fa-clipboard-list"></i> ${translations[currentLang].formSubmitBtn}
+            </a>
+          </div>
+        </form>
+      </div>
+      ` : ''}
 
       <!-- Service Overview ("সার্ভিস পরিচিতি") -->
       <div class="glass-card" style="padding: 2.25rem; margin-bottom: 2.5rem;">
@@ -1384,5 +1422,45 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     initGoogleAuth();
+  }
+
+  /* --------------------------------------------------------------------------
+     10. Custom Project Request Form Handlers
+     -------------------------------------------------------------------------- */
+  function initStartProjectForm() {
+    const form = document.getElementById('start-project-form');
+    if (!form) return;
+
+    // Check query params for pre-selected service
+    const urlParams = new URLSearchParams(window.location.search);
+    const serviceParam = urlParams.get('service');
+    const typeSelect = document.getElementById('project-req-type');
+
+    if (typeSelect && serviceParam) {
+      if (serviceParam === 'others') {
+        typeSelect.value = 'others';
+      } else if (typeSelect.querySelector(`option[value="${serviceParam}"]`)) {
+        typeSelect.value = serviceParam;
+      }
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('project-req-name')?.value.trim() || '';
+      const contact = document.getElementById('project-req-contact')?.value.trim() || '';
+      const type = typeSelect ? typeSelect.options[typeSelect.selectedIndex].text : 'Custom Project';
+      const budget = document.getElementById('project-req-budget')?.value || 'Flexible';
+      const desc = document.getElementById('project-req-desc')?.value.trim() || '';
+
+      const waMessage = `*New Custom Project Request — WebWorldBD*\n\n` +
+        `*Name:* ${name}\n` +
+        `*Contact:* ${contact}\n` +
+        `*Project Type:* ${type}\n` +
+        `*Budget:* ${budget}\n` +
+        `*Requirements:* ${desc}`;
+
+      const waUrl = `https://wa.me/8801342697743?text=${encodeURIComponent(waMessage)}`;
+      window.open(waUrl, '_blank', 'noopener,noreferrer');
+    });
   }
 });
