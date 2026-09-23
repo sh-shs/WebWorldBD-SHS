@@ -1043,6 +1043,72 @@ const portfolioData = {
       revisions_en: "Unlimited Free Revisions",
       responsive_bn: "১০০% মোবাইল ও ট্যাবলেট রেসপনসিভ",
       responsive_en: "100% Mobile & Tablet Responsive"
+    },
+    {
+      id: "others",
+      slug: "others",
+      featured: false,
+      icon: "fas fa-wand-magic-sparkles",
+      title_en: "Others (Custom Project)",
+      title_bn: "অন্যান্য (Others)",
+      price_en: "Custom Quote",
+      price_bn: "কাস্টম কোট",
+      desc_en: "Need something not listed in our services? Let us know, we will build a custom solution for you.",
+      desc_bn: "আপনার প্রয়োজন তালিকায় নেই? জানান, আমরা কাস্টম সলিউশন তৈরি করে দেব।",
+      overview_bn: "আপনার বিশেষ কোনো প্রজেক্ট বা আইডিয়া যদি আমাদের উল্লেখিত ১৫টি সার্ভিসের সাথে সরাসরি না মেলে, তবে চিন্তার কিছু নেই! আমরা আপনার চাহিদা অনুযায়ী সম্পূর্ণ কাস্টম ওয়েবসাইট, সিস্টেম বা ডিজিটাল সলিউশন তৈরি করে দিতে প্রস্তুত। আপনার প্রজেক্টের বিস্তারিত আমাদের জানান।",
+      overview_en: "If your unique project requirement or business idea does not match any of our listed standard services, don't worry! We design and develop tailor-made custom websites, web tools, and software platforms built around your exact specification.",
+      includes_bn: [
+        "সম্পূর্ণ কাস্টম রিকোয়ারমেন্ট অ্যানালাইসিস",
+        "কাস্টম ইউআই/ইউএক্স ডিজাইন ও প্রোটোটাইপিং",
+        "আপনার পছন্দমতো ফ্রন্টএন্ড ও ব্যাকএন্ড প্রযুক্তি",
+        "কাস্টম ডেটাবেজ ও ডেটা আর্কিটেকচার",
+        "থার্ড-পার্টি এপিআই ও পেমেন্ট গেটওয়ে ইন্টিগ্রেশন",
+        "১০০% মোবাইল ও ট্যাবলেট রেসপনসিভ ডিজাইন",
+        "আল্ট্রা-ফাস্ট লোডিং ও পারফরম্যান্স টিউনিং",
+        "এডভান্সড সিকিউরিটি ও ডাটা প্রোটেকশন",
+        "কাস্টম অ্যাডমিন কন্ট্রোল প্যানেল",
+        "প্রজেক্ট পরবর্তী ফ্লেক্সিবল মেইনটেনেন্স সাপোর্ট"
+      ],
+      includes_en: [
+        "Comprehensive custom requirement analysis",
+        "Custom UI/UX design & interactive prototyping",
+        "Choice of tailored frontend and backend technologies",
+        "Custom database architecture & schema design",
+        "Third-party API & custom gateway integrations",
+        "100% mobile & tablet responsive layout",
+        "Ultra-fast loading & performance tuning",
+        "Advanced security & data protection standards",
+        "Custom administrative control panel",
+        "Flexible post-launch maintenance & support"
+      ],
+      features_bn: [
+        { icon: "fas fa-lightbulb", title: "ইউনিক প্রজেক্ট সলিউশন", desc: "যে কোনো আনলিস্টেড আইডিয়া বা আইডিয়াল ফিচারকে বাস্তবে রূপান্তর।" },
+        { icon: "fas fa-cogs", title: "ফ্লেক্সিবল আর্কিটেকচার", desc: "আপনার ব্যবসার নির্দিষ্ট প্রয়োজন অনুযায়ী কাস্টম কোডিং ও টেকনোলজি স্ট্যাক।" },
+        { icon: "fas fa-headset", title: "ওয়ান-অন-ওয়ান কনসালটেশন", desc: "প্রজেক্টের শুরুতে বিস্তারিত ফ্রি কনসালটেশন ও বাজেট পরিকল্পনা।" }
+      ],
+      features_en: [
+        { icon: "fas fa-lightbulb", title: "Unique Project Solution", desc: "Transform any unlisted idea or complex feature requirement into reality." },
+        { icon: "fas fa-cogs", title: "Flexible Architecture", desc: "Tailored coding and tech stack built around your exact business logic." },
+        { icon: "fas fa-headset", title: "1-on-1 Consultation", desc: "Free initial requirement discussion and custom budget planning." }
+      ],
+      audience_bn: [
+        "আনলিস্টেড বা ইউনিক আইডিয়া উদ্যোক্তা",
+        "বিশেষায়িত ব্যবসা বা এন্টারপ্রাইজ",
+        "কাস্টম সফটওয়্যার ও টুলস গবেষক",
+        "যেকোনো ইউনিক প্রজেক্ট ব্যাকলগ"
+      ],
+      audience_en: [
+        "Founders with Unlisted or Unique Ideas",
+        "Specialized Businesses & Enterprises",
+        "Custom Tool & Software Researchers",
+        "Any Unique Web Project Requirement"
+      ],
+      delivery_bn: "আলোচনা সাপেক্ষে (৩-১৫ দিন)",
+      delivery_en: "Negotiable (3-15 Days)",
+      revisions_bn: "আনলিমিটেড ফ্রি রিভিশন",
+      revisions_en: "Unlimited Free Revisions",
+      responsive_bn: "১০০% মোবাইল ও ট্যাবলেট রেসপনসিভ",
+      responsive_en: "100% Mobile & Tablet Responsive"
     }
   ],
 
