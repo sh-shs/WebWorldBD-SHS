@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initAuthTabs();
   initFirebaseAuthObserver();
   initScrollAnimations();
+  initSettingsPage();
 
   // Dynamic Content Rendering
   if (document.getElementById('services-grid')) renderServices();
@@ -42,17 +43,39 @@ document.addEventListener('DOMContentLoaded', () => {
      2. Theme & Language Functions
      -------------------------------------------------------------------------- */
   function applyTheme(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('webworldbd_theme', theme);
     currentTheme = theme;
+    localStorage.setItem('webworldbd_theme', theme);
+
+    let effectiveTheme = theme;
+    if (theme === 'system') {
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      effectiveTheme = prefersDark ? 'dark' : 'light';
+    }
+
+    document.documentElement.setAttribute('data-theme', effectiveTheme);
 
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
     if (themeToggleBtn) {
-      themeToggleBtn.innerHTML = theme === 'dark'
+      themeToggleBtn.innerHTML = effectiveTheme === 'dark'
         ? '<i class="fas fa-sun"></i>'
         : '<i class="fas fa-moon"></i>';
-      themeToggleBtn.setAttribute('title', theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode');
+      themeToggleBtn.setAttribute('title', effectiveTheme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode');
     }
+
+    // Sync settings radio buttons if present
+    const themeRadios = document.querySelectorAll('input[name="theme-radio"]');
+    themeRadios.forEach(radio => {
+      radio.checked = (radio.value === theme);
+    });
+  }
+
+  // Listen to system color scheme changes if system preference is active
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+      if (currentTheme === 'system') {
+        applyTheme('system');
+      }
+    });
   }
 
   function initThemeToggle() {
@@ -124,6 +147,12 @@ document.addEventListener('DOMContentLoaded', () => {
         : '<i class="fas fa-globe"></i> EN';
     }
 
+    // Sync settings language radio buttons if present
+    const langRadios = document.querySelectorAll('input[name="lang-radio"]');
+    langRadios.forEach(radio => {
+      radio.checked = (radio.value === lang);
+    });
+
     // Re-render dynamic sections if present
     if (document.getElementById('services-grid')) renderServices();
     if (document.getElementById('capabilities-grid')) renderCapabilities();
@@ -169,7 +198,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!navMenu) return;
 
-    // Create or locate backdrop overlay element
     let navBackdrop = document.getElementById('nav-backdrop');
     if (!navBackdrop) {
       navBackdrop = document.createElement('div');
@@ -212,7 +240,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Highlight active link in drawer based on current URL
     function highlightActiveNavLink() {
       const currentPath = window.location.pathname.toLowerCase();
       const currentHash = window.location.hash.toLowerCase();
@@ -237,7 +264,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (currentPath.endsWith('contact.html')) {
           isActive = (navId === 'contact');
         } else {
-          // Home page index.html with or without section hashes
           if (currentHash === '#about') {
             isActive = (navId === 'about');
           } else {
@@ -256,14 +282,12 @@ document.addEventListener('DOMContentLoaded', () => {
     highlightActiveNavLink();
     window.addEventListener('hashchange', highlightActiveNavLink);
 
-    // Close menu when clicking links
     navMenu.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => {
         closeMenu();
       });
     });
 
-    // Close menu when clicking outside
     document.addEventListener('click', (e) => {
       if (navMenu.classList.contains('active') && !navMenu.contains(e.target) && (!mobileToggle || !mobileToggle.contains(e.target))) {
         closeMenu();
@@ -293,7 +317,6 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (currentPath.endsWith('account.html')) {
         activeNavKey = 'account';
       } else {
-        // Defaults to homepage index.html
         activeNavKey = 'home';
       }
 
@@ -353,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = currentTheme === 'dark'
+        ctx.fillStyle = (document.documentElement.getAttribute('data-theme') === 'dark')
           ? `rgba(56, 189, 248, ${p.alpha})`
           : `rgba(14, 165, 233, ${p.alpha})`;
         ctx.fill();
@@ -812,7 +835,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('service-detail-app');
     if (!container) return;
 
-    // Determine service slug from attribute or path
     const attrSlug = container.getAttribute('data-service-slug');
     let serviceSlug = attrSlug;
 
@@ -824,7 +846,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const service = portfolioData.services.find(s => s.slug === serviceSlug || s.id === serviceSlug) || portfolioData.services[0];
 
-    // Page Title Update
     document.title = `${currentLang === 'bn' ? service.title_bn : service.title_en} | WebWorldBD`;
 
     const titleText = currentLang === 'bn' ? service.title_bn : service.title_en;
@@ -844,7 +865,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const homeLink = getHomeUrl();
 
     container.innerHTML = `
-      <!-- Top Navigation & Breadcrumb -->
       <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
         <a href="${servicesLink}" class="btn btn-secondary" style="padding: 0.45rem 0.9rem; font-size: 0.85rem; border-radius: var(--radius-full);">
           <i class="fas fa-arrow-left"></i> ${translations[currentLang].btnBackToServices}
@@ -862,7 +882,6 @@ document.addEventListener('DOMContentLoaded', () => {
         </nav>
       </div>
 
-      <!-- Hero Card -->
       <div class="glass-card" style="padding: 2.5rem; margin-bottom: 2.5rem; border-color: rgba(56, 189, 248, 0.3);">
         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;">
           <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
@@ -887,7 +906,6 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
 
       ${service.id === 'others' ? `
-      <!-- Free-text Custom Project Requirement Section -->
       <div class="glass-card" style="padding: 2.25rem; margin-bottom: 2.5rem; border-color: rgba(56, 189, 248, 0.4);">
         <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: var(--accent-blue); display: flex; align-items: center; gap: 0.6rem;">
           <i class="fas fa-pen-to-square"></i> ${translations[currentLang].formCustomDescLabel}
@@ -909,7 +927,6 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
       ` : ''}
 
-      <!-- Service Overview ("সার্ভিস পরিচিতি") -->
       <div class="glass-card" style="padding: 2.25rem; margin-bottom: 2.5rem;">
         <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: var(--accent-blue); display: flex; align-items: center; gap: 0.6rem;">
           <i class="fas fa-info-circle"></i> ${translations[currentLang].sectionOverviewTitle}
@@ -919,7 +936,6 @@ document.addEventListener('DOMContentLoaded', () => {
         </p>
       </div>
 
-      <!-- What's Included ("যা যা পাচ্ছেন") - 3 Column Checklist Grid -->
       <div class="glass-card" style="padding: 2.25rem; margin-bottom: 2.5rem;">
         <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--accent-blue); display: flex; align-items: center; gap: 0.6rem;">
           <i class="fas fa-list-check"></i> ${translations[currentLang].sectionIncludesTitle}
@@ -934,7 +950,6 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </div>
 
-      <!-- Key Features ("প্রধান ফিচারসমূহ") - 2 to 3 Highlighted Cards -->
       <div style="margin-bottom: 2.5rem;">
         <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--accent-blue); display: flex; align-items: center; gap: 0.6rem;">
           <i class="fas fa-star"></i> ${translations[currentLang].sectionFeaturesTitle}
@@ -952,7 +967,6 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </div>
 
-      <!-- Target Audience ("কারা এই সার্ভিস নেবেন?") - 4 Bullet Chips -->
       <div class="glass-card" style="padding: 2.25rem; margin-bottom: 2.5rem;">
         <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--accent-blue); display: flex; align-items: center; gap: 0.6rem;">
           <i class="fas fa-bullseye"></i> ${translations[currentLang].sectionAudienceTitle}
@@ -967,7 +981,6 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </div>
 
-      <!-- Delivery & Support Info ("ডেলিভারি ও সাপোর্ট তথ্য") - 3 Info Cards -->
       <div style="margin-bottom: 3rem;">
         <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--accent-blue); display: flex; align-items: center; gap: 0.6rem;">
           <i class="fas fa-clock-rotate-left"></i> ${translations[currentLang].sectionDeliveryTitle}
@@ -993,7 +1006,6 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </div>
 
-      <!-- Bottom Start Project CTA Banner -->
       <div class="glass-card" style="padding: 2.75rem; text-align: center; border-color: rgba(56, 189, 248, 0.4); background: linear-gradient(135deg, rgba(15,23,42,0.85) 0%, rgba(30,41,59,0.85) 100%);">
         <h3 style="font-size: 1.85rem; margin-bottom: 0.75rem; font-weight: 800;">
           ${currentLang === 'bn' ? `আপনার ${service.title_bn} প্রজেক্ট শুরু করতে প্রস্তুত?` : `Ready to start your ${service.title_en} project?`}
@@ -1079,7 +1091,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!authCardContainer || !loginTabBtn || !regTabBtn || !loginForm || !regForm) return;
 
-    // Helper: Show alert banner
     function showAlert(message, type = 'error') {
       if (!alertBox || !alertMsg) return;
       alertBox.className = `auth-alert-box alert-${type}`;
@@ -1087,7 +1098,6 @@ document.addEventListener('DOMContentLoaded', () => {
       alertBox.style.display = 'flex';
     }
 
-    // Helper: Hide alert banner
     function hideAlert() {
       if (alertBox) alertBox.style.display = 'none';
     }
@@ -1096,7 +1106,6 @@ document.addEventListener('DOMContentLoaded', () => {
       alertClose.addEventListener('click', hideAlert);
     }
 
-    // Helper: Show field error
     function setFieldError(fieldId, errorMsg) {
       const input = document.getElementById(fieldId);
       const errorSpan = document.getElementById(`${fieldId}-error`);
@@ -1107,7 +1116,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Helper: Clear field errors
     function clearFieldErrors() {
       const invalidInputs = document.querySelectorAll('.auth-form .form-control');
       invalidInputs.forEach(i => i.classList.remove('is-invalid'));
@@ -1156,7 +1164,6 @@ document.addEventListener('DOMContentLoaded', () => {
       backToLoginBtn.addEventListener('click', () => switchAuthTab('login'));
     }
 
-    // Show / Hide Password Eye Toggle
     const passwordToggleBtns = document.querySelectorAll('.password-toggle-btn');
     passwordToggleBtns.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -1180,31 +1187,8 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    // Helper: Email Validator
     function isValidEmail(email) {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    }
-
-    // Render Authenticated Dashboard State
-    function renderUserDashboard(userData) {
-      if (!userDashView) return;
-      loginForm.style.display = 'none';
-      regForm.style.display = 'none';
-      if (forgotForm) forgotForm.style.display = 'none';
-      if (tabsWrapper) tabsWrapper.style.display = 'none';
-      const infoNotice = document.getElementById('auth-info-notice');
-      if (infoNotice) infoNotice.style.display = 'none';
-
-      const nameEl = document.getElementById('user-display-name');
-      const emailEl = document.getElementById('user-display-email');
-      const avatarEl = document.getElementById('user-avatar-img');
-
-      if (nameEl) nameEl.textContent = userData.name || 'Client User';
-      if (emailEl) emailEl.textContent = userData.email || 'client@example.com';
-      if (avatarEl && userData.picture) avatarEl.src = userData.picture;
-
-      userDashView.style.display = 'block';
-      hideAlert();
     }
 
     if (logoutBtn) {
@@ -1220,17 +1204,10 @@ document.addEventListener('DOMContentLoaded', () => {
           }).catch(err => {
             showAlert(getFirebaseErrorMessage(err ? err.code : ''), 'error');
           });
-        } else {
-          if (userDashView) userDashView.style.display = 'none';
-          const infoNotice = document.getElementById('auth-info-notice');
-          if (infoNotice) infoNotice.style.display = 'flex';
-          switchAuthTab('register');
-          showAlert(currentLang === 'bn' ? 'সফলভাবে লগআউট করা হয়েছে।' : 'Logged out successfully.', 'info');
         }
       });
     }
 
-    // Helper: Map Firebase error codes to localized error messages
     function getFirebaseErrorMessage(errorCode) {
       switch (errorCode) {
         case 'auth/email-already-in-use':
@@ -1251,7 +1228,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // LOGIN FORM SUBMISSION (Firebase Auth)
     loginForm.addEventListener('submit', (e) => {
       e.preventDefault();
       clearFieldErrors();
@@ -1290,7 +1266,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const mod = window.FirebaseModule;
       if (mod && mod.auth && mod.signInWithEmailAndPassword) {
         mod.signInWithEmailAndPassword(mod.auth, email, password)
-          .then((userCredential) => {
+          .then(() => {
             submitBtn.classList.remove('loading');
             if (btnText) btnText.textContent = originalText;
             if (btnIcon) btnIcon.style.display = 'inline-block';
@@ -1302,15 +1278,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (btnIcon) btnIcon.style.display = 'inline-block';
             showAlert(getFirebaseErrorMessage(error.code), 'error');
           });
-      } else {
-        submitBtn.classList.remove('loading');
-        if (btnText) btnText.textContent = originalText;
-        if (btnIcon) btnIcon.style.display = 'inline-block';
-        showAlert(translations[currentLang].errAuthDefault, 'error');
       }
     });
 
-    // REGISTER FORM SUBMISSION (Firebase Auth)
     regForm.addEventListener('submit', (e) => {
       e.preventDefault();
       clearFieldErrors();
@@ -1366,9 +1336,7 @@ document.addEventListener('DOMContentLoaded', () => {
           .then((userCredential) => {
             const user = userCredential.user;
             if (mod.updateProfile) {
-              return mod.updateProfile(user, {
-                displayName: name
-              });
+              return mod.updateProfile(user, { displayName: name });
             }
           })
           .then(() => {
@@ -1383,15 +1351,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (btnIcon) btnIcon.style.display = 'inline-block';
             showAlert(getFirebaseErrorMessage(error.code), 'error');
           });
-      } else {
-        submitBtn.classList.remove('loading');
-        if (btnText) btnText.textContent = originalText;
-        if (btnIcon) btnIcon.style.display = 'inline-block';
-        showAlert(translations[currentLang].errAuthDefault, 'error');
       }
     });
 
-    // FORGOT PASSWORD SUBMISSION (Firebase Auth)
     if (forgotForm) {
       forgotForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -1432,16 +1394,10 @@ document.addEventListener('DOMContentLoaded', () => {
               if (btnIcon) btnIcon.style.display = 'inline-block';
               showAlert(getFirebaseErrorMessage(error.code), 'error');
             });
-        } else {
-          submitBtn.classList.remove('loading');
-          if (btnText) btnText.textContent = originalText;
-          if (btnIcon) btnIcon.style.display = 'inline-block';
-          showAlert(translations[currentLang].errAuthDefault, 'error');
         }
       });
     }
 
-    /* FIREBASE GOOGLE SIGN-IN INTEGRATION */
     function initGoogleAuth() {
       const customLoginBtn = document.getElementById('custom-google-login-btn');
       const customRegBtn = document.getElementById('custom-google-reg-btn');
@@ -1451,7 +1407,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mod && mod.auth && mod.GoogleAuthProvider && mod.signInWithPopup) {
           const provider = new mod.GoogleAuthProvider();
           mod.signInWithPopup(mod.auth, provider)
-            .then((result) => {
+            .then(() => {
               showAlert(translations[currentLang].msgGoogleAuthSuccess, 'success');
             })
             .catch((error) => {
@@ -1461,8 +1417,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 showAlert(translations[currentLang].errPopupClosed, 'error');
               }
             });
-        } else {
-          showAlert(translations[currentLang].errAuthDefault, 'error');
         }
       }
 
@@ -1485,7 +1439,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabsWrapper = document.getElementById('auth-tabs-wrapper');
     const infoNotice = document.getElementById('auth-info-notice');
 
-    // Create or select loading overlay element on account page
     let authLoader = document.getElementById('auth-loading-overlay');
     if (!authLoader && authCardContainer) {
       authLoader = document.createElement('div');
@@ -1494,7 +1447,6 @@ document.addEventListener('DOMContentLoaded', () => {
       authLoader.innerHTML = `<span class="btn-spinner" style="width: 22px; height: 22px; border-width: 3px;"></span> <span>${currentLang === 'bn' ? 'লোড হচ্ছে...' : 'Loading...'}</span>`;
       authCardContainer.insertBefore(authLoader, authCardContainer.firstChild);
 
-      // Hide active form / view during initial auth check
       if (loginForm) loginForm.style.display = 'none';
       if (regForm) regForm.style.display = 'none';
       if (forgotForm) forgotForm.style.display = 'none';
@@ -1518,16 +1470,10 @@ document.addEventListener('DOMContentLoaded', () => {
             window.currentUserState = user;
             const userName = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
 
-            accountNavSpans.forEach(span => {
-              span.textContent = userName;
-            });
-            mobileNavSpans.forEach(span => {
-              span.textContent = translations[currentLang].mobileNavAccount;
-            });
+            accountNavSpans.forEach(span => { span.textContent = userName; });
+            mobileNavSpans.forEach(span => { span.textContent = translations[currentLang].mobileNavAccount; });
 
-            if (accountSubEl) {
-              accountSubEl.textContent = translations[currentLang].accountSubLoggedIn;
-            }
+            if (accountSubEl) accountSubEl.textContent = translations[currentLang].accountSubLoggedIn;
 
             if (userDashView) {
               const nameEl = document.getElementById('user-display-name');
@@ -1536,9 +1482,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
               if (nameEl) nameEl.textContent = user.displayName || user.email || 'Client User';
               if (emailEl) emailEl.textContent = user.email || '';
-              if (avatarEl) {
-                avatarEl.src = user.photoURL || 'profile.jpg';
-              }
+              if (avatarEl) avatarEl.src = user.photoURL || 'profile.jpg';
 
               if (loginForm) loginForm.style.display = 'none';
               if (regForm) regForm.style.display = 'none';
@@ -1548,18 +1492,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
               userDashView.style.display = 'block';
             }
+
+            // Sync Settings Page Account View
+            updateSettingsAccountView(user);
           } else {
             window.currentUserState = null;
-            accountNavSpans.forEach(span => {
-              span.textContent = translations[currentLang].navAccount;
-            });
-            mobileNavSpans.forEach(span => {
-              span.textContent = translations[currentLang].mobileNavAccount;
-            });
+            accountNavSpans.forEach(span => { span.textContent = translations[currentLang].navAccount; });
+            mobileNavSpans.forEach(span => { span.textContent = translations[currentLang].mobileNavAccount; });
 
-            if (accountSubEl) {
-              accountSubEl.textContent = translations[currentLang].accountSub;
-            }
+            if (accountSubEl) accountSubEl.textContent = translations[currentLang].accountSub;
 
             if (userDashView) {
               userDashView.style.display = 'none';
@@ -1575,21 +1516,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (loginForm) loginForm.style.display = 'none';
               }
             }
+
+            // Sync Settings Page Account View
+            updateSettingsAccountView(null);
           }
         });
       } else {
         checkAttempts++;
         if (checkAttempts > 40) {
-          // Fallback if Firebase module fails to load (e.g. offline/no CDN access)
           if (authLoader) authLoader.style.display = 'none';
           if (infoNotice) infoNotice.style.display = 'flex';
           if (tabsWrapper) tabsWrapper.style.display = 'flex';
-          const activeTab = authCardContainer ? authCardContainer.getAttribute('data-active-tab') : 'register';
-          if (activeTab === 'login') {
-            if (loginForm) loginForm.style.display = 'flex';
-          } else {
-            if (regForm) regForm.style.display = 'flex';
-          }
           return;
         }
         setTimeout(checkFirebaseModule, 50);
@@ -1599,6 +1536,30 @@ document.addEventListener('DOMContentLoaded', () => {
     checkFirebaseModule();
   }
 
+  /* Helper to update account view on settings.html */
+  function updateSettingsAccountView(user) {
+    const loggedInBox = document.getElementById('settings-account-logged-in');
+    const loggedOutBox = document.getElementById('settings-account-logged-out');
+
+    if (!loggedInBox || !loggedOutBox) return;
+
+    if (user) {
+      loggedOutBox.style.display = 'none';
+      loggedInBox.style.display = 'block';
+
+      const nameEl = document.getElementById('settings-user-name');
+      const emailEl = document.getElementById('settings-user-email');
+      const photoEl = document.getElementById('settings-user-photo');
+
+      if (nameEl) nameEl.textContent = user.displayName || 'Client User';
+      if (emailEl) emailEl.textContent = user.email || '';
+      if (photoEl) photoEl.src = user.photoURL || 'profile.jpg';
+    } else {
+      loggedInBox.style.display = 'none';
+      loggedOutBox.style.display = 'block';
+    }
+  }
+
   /* --------------------------------------------------------------------------
      10. Custom Project Request Form Handlers
      -------------------------------------------------------------------------- */
@@ -1606,7 +1567,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('start-project-form');
     if (!form) return;
 
-    // Check query params for pre-selected service
     const urlParams = new URLSearchParams(window.location.search);
     const serviceParam = urlParams.get('service');
     const typeSelect = document.getElementById('project-req-type');
@@ -1637,5 +1597,224 @@ document.addEventListener('DOMContentLoaded', () => {
       const waUrl = `https://wa.me/8801342697743?text=${encodeURIComponent(waMessage)}`;
       window.open(waUrl, '_blank', 'noopener,noreferrer');
     });
+  }
+
+  /* --------------------------------------------------------------------------
+     11. Dedicated Settings Page Logic
+     -------------------------------------------------------------------------- */
+  function initSettingsPage() {
+    if (!document.getElementById('card-appearance')) return;
+
+    // Appearance Theme Radios
+    const themeRadios = document.querySelectorAll('input[name="theme-radio"]');
+    themeRadios.forEach(radio => {
+      radio.checked = (radio.value === currentTheme);
+      radio.addEventListener('change', () => {
+        applyTheme(radio.value);
+      });
+    });
+
+    // Appearance Language Radios
+    const langRadios = document.querySelectorAll('input[name="lang-radio"]');
+    langRadios.forEach(radio => {
+      radio.checked = (radio.value === currentLang);
+      radio.addEventListener('change', () => {
+        applyLanguage(radio.value);
+      });
+    });
+
+    // Notifications Switches
+    const notifProjectSwitch = document.getElementById('notif-project-switch');
+    const notifPromoSwitch = document.getElementById('notif-promo-switch');
+
+    if (notifProjectSwitch) {
+      notifProjectSwitch.checked = localStorage.getItem('webworldbd_notif_project') !== 'false';
+      notifProjectSwitch.addEventListener('change', () => {
+        localStorage.setItem('webworldbd_notif_project', notifProjectSwitch.checked);
+      });
+    }
+
+    if (notifPromoSwitch) {
+      notifPromoSwitch.checked = localStorage.getItem('webworldbd_notif_promo') === 'true';
+      notifPromoSwitch.addEventListener('change', () => {
+        localStorage.setItem('webworldbd_notif_promo', notifPromoSwitch.checked);
+      });
+    }
+
+    // Clear Cache Button
+    const clearCacheBtn = document.getElementById('btn-clear-cache');
+    if (clearCacheBtn) {
+      clearCacheBtn.addEventListener('click', () => {
+        const confirmMsg = currentLang === 'bn'
+          ? 'আপনি কি নিশ্চিত যে আপনার লোকাল প্রেফারেন্স ও ক্যাশ পরিষ্কার করতে চান?'
+          : 'Are you sure you want to clear your local preferences and cache?';
+
+        if (confirm(confirmMsg)) {
+          localStorage.removeItem('webworldbd_theme');
+          localStorage.removeItem('webworldbd_lang');
+          localStorage.removeItem('webworldbd_notif_project');
+          localStorage.removeItem('webworldbd_notif_promo');
+
+          applyTheme('dark');
+          applyLanguage('en');
+
+          alert(translations[currentLang].msgCacheCleared || 'Cache cleared successfully!');
+        }
+      });
+    }
+
+    // Modal Triggers & Controls
+    const editProfileBtn = document.getElementById('btn-edit-profile');
+    const changePassBtn = document.getElementById('btn-change-password');
+    const deleteAccountBtn = document.getElementById('btn-delete-account');
+    const logoutSettingsBtn = document.getElementById('btn-logout-settings');
+
+    const editProfileModal = document.getElementById('modal-edit-profile');
+    const changePassModal = document.getElementById('modal-change-password');
+    const deleteAccountModal = document.getElementById('modal-delete-account');
+
+    function closeModal(modal) {
+      if (modal) modal.classList.remove('active');
+    }
+
+    document.querySelectorAll('.btn-modal-cancel').forEach(btn => {
+      btn.addEventListener('click', () => {
+        closeModal(editProfileModal);
+        closeModal(changePassModal);
+        closeModal(deleteAccountModal);
+      });
+    });
+
+    if (editProfileBtn) {
+      editProfileBtn.addEventListener('click', () => {
+        const user = window.currentUserState;
+        if (!user) return;
+        document.getElementById('edit-profile-name').value = user.displayName || '';
+        document.getElementById('edit-profile-photo').value = user.photoURL || '';
+        editProfileModal.classList.add('active');
+      });
+    }
+
+    if (changePassBtn) {
+      changePassBtn.addEventListener('click', () => {
+        changePassModal.classList.add('active');
+      });
+    }
+
+    if (deleteAccountBtn) {
+      deleteAccountBtn.addEventListener('click', () => {
+        deleteAccountModal.classList.add('active');
+      });
+    }
+
+    if (logoutSettingsBtn) {
+      logoutSettingsBtn.addEventListener('click', () => {
+        const mod = window.FirebaseModule;
+        if (mod && mod.auth && mod.signOut) {
+          mod.signOut(mod.auth).then(() => {
+            alert(currentLang === 'bn' ? 'সফলভাবে লগআউট করা হয়েছে।' : 'Logged out successfully.');
+          });
+        }
+      });
+    }
+
+    // Edit Profile Form Submit
+    const formEditProfile = document.getElementById('form-edit-profile');
+    if (formEditProfile) {
+      formEditProfile.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const mod = window.FirebaseModule;
+        const user = window.currentUserState;
+        if (!mod || !user || !mod.updateProfile) return;
+
+        const newName = document.getElementById('edit-profile-name').value.trim();
+        const newPhoto = document.getElementById('edit-profile-photo').value.trim();
+
+        mod.updateProfile(user, {
+          displayName: newName,
+          photoURL: newPhoto || null
+        }).then(() => {
+          closeModal(editProfileModal);
+          updateSettingsAccountView(user);
+          alert(translations[currentLang].msgProfileUpdated);
+        }).catch(err => {
+          alert(err.message);
+        });
+      });
+    }
+
+    // Change Password Form Submit
+    const formChangePassword = document.getElementById('form-change-password');
+    if (formChangePassword) {
+      formChangePassword.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const mod = window.FirebaseModule;
+        const user = window.currentUserState;
+        if (!mod || !user || !mod.updatePassword) return;
+
+        const oldPass = document.getElementById('change-pass-old').value;
+        const newPass = document.getElementById('change-pass-new').value;
+        const confirmPass = document.getElementById('change-pass-confirm').value;
+
+        if (newPass !== confirmPass) {
+          alert(translations[currentLang].errPasswordMismatch);
+          return;
+        }
+
+        if (mod.EmailAuthProvider && mod.reauthenticateWithCredential) {
+          const cred = mod.EmailAuthProvider.credential(user.email, oldPass);
+          mod.reauthenticateWithCredential(user, cred)
+            .then(() => mod.updatePassword(user, newPass))
+            .then(() => {
+              closeModal(changePassModal);
+              document.getElementById('change-pass-old').value = '';
+              document.getElementById('change-pass-new').value = '';
+              document.getElementById('change-pass-confirm').value = '';
+              alert(translations[currentLang].msgPasswordChanged);
+            })
+            .catch(err => {
+              alert(err.message || translations[currentLang].errWrongPassword);
+            });
+        } else {
+          mod.updatePassword(user, newPass)
+            .then(() => {
+              closeModal(changePassModal);
+              alert(translations[currentLang].msgPasswordChanged);
+            })
+            .catch(err => alert(err.message));
+        }
+      });
+    }
+
+    // Delete Account Form Submit
+    const formDeleteAccount = document.getElementById('form-delete-account');
+    if (formDeleteAccount) {
+      formDeleteAccount.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const mod = window.FirebaseModule;
+        const user = window.currentUserState;
+        if (!mod || !user || !mod.deleteUser) return;
+
+        const pass = document.getElementById('delete-pass-confirm').value;
+
+        if (mod.EmailAuthProvider && mod.reauthenticateWithCredential) {
+          const cred = mod.EmailAuthProvider.credential(user.email, pass);
+          mod.reauthenticateWithCredential(user, cred)
+            .then(() => mod.deleteUser(user))
+            .then(() => {
+              closeModal(deleteAccountModal);
+              alert(translations[currentLang].msgAccountDeleted);
+            })
+            .catch(err => alert(err.message || translations[currentLang].errWrongPassword));
+        } else {
+          mod.deleteUser(user)
+            .then(() => {
+              closeModal(deleteAccountModal);
+              alert(translations[currentLang].msgAccountDeleted);
+            })
+            .catch(err => alert(err.message));
+        }
+      });
+    }
   }
 });

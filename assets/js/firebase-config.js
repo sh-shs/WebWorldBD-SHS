@@ -12,7 +12,11 @@ import {
   sendPasswordResetEmail,
   onAuthStateChanged,
   signOut,
-  updateProfile
+  updateProfile,
+  updatePassword,
+  deleteUser,
+  EmailAuthProvider,
+  reauthenticateWithCredential
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -39,5 +43,9 @@ window.FirebaseModule = {
   sendPasswordResetEmail,
   onAuthStateChanged,
   signOut,
-  updateProfile
+  updateProfile,
+  updatePassword,
+  deleteUser,
+  EmailAuthProvider,
+  reauthenticateWithCredential
 };

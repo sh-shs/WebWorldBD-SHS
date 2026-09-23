@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings | WebWorldBD — SHAFAET HOSSEN SARIP</title>
+  <meta name="description" content="Manage site preferences, theme settings, language, account details, notifications, quick links, and privacy options on WebWorldBD.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/images/logo.png">
+
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <!-- Particle Background Canvas -->
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- Navigation Header -->
+  <header class="header">
+    <div class="container header-container">
+      <a href="index.html" class="logo-brand">
+        <img src="assets/images/logo.png" alt="WebWorldBD Logo">
+        <span>WebWorld<span style="color:var(--accent-blue);">BD</span></span>
+      </a>
+
+      <nav class="nav-menu" id="nav-menu">
+        <div class="nav-menu-header">
+          <span class="nav-menu-title">WebWorld<span style="color:var(--accent-blue);">BD</span></span>
+        </div>
+        <div class="nav-menu-links">
+          <a href="index.html" class="nav-link" data-nav-id="home"><i class="fas fa-house nav-icon"></i><span data-i18n="navHome">Home</span></a>
+          <a href="index.html#about" class="nav-link" data-nav-id="about"><i class="fas fa-user nav-icon"></i><span data-i18n="navAbout">About Me</span></a>
+          <a href="services.html" class="nav-link" data-nav-id="services"><i class="fas fa-layer-group nav-icon"></i><span data-i18n="navServices">Services</span></a>
+          <a href="projects.html" class="nav-link" data-nav-id="projects"><i class="fas fa-desktop nav-icon"></i><span data-i18n="navProjects">Projects</span></a>
+          <a href="why-choose-me.html" class="nav-link" data-nav-id="why"><i class="fas fa-shield-halved nav-icon"></i><span data-i18n="navWhy">Why Choose Me</span></a>
+          <a href="process.html" class="nav-link" data-nav-id="process"><i class="fas fa-list-check nav-icon"></i><span data-i18n="navProcess">Work Process</span></a>
+          <a href="faq.html" class="nav-link" data-nav-id="faq"><i class="fas fa-circle-question nav-icon"></i><span data-i18n="navFaq">FAQ</span></a>
+          <a href="account.html" class="nav-link" data-nav-id="account"><i class="fas fa-user-gear nav-icon"></i><span data-i18n="navAccount">Account</span></a>
+          <a href="contact.html" class="nav-link" data-nav-id="contact"><i class="fas fa-paper-plane nav-icon"></i><span data-i18n="navContact">Contact</span></a>
+        </div>
+        <div class="nav-menu-cta">
+          <a href="contact.html" class="btn btn-primary nav-cta-btn" data-i18n="btnRequestNow">Request Now</a>
+          <a href="https://wa.me/8801342697743" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp nav-cta-btn">
+            <i class="fab fa-whatsapp"></i> <span data-i18n="btnWhatsAppNav">WhatsApp</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="header-actions">
+        <button class="toggle-btn" id="theme-toggle-btn" title="Toggle Theme">
+          <i class="fas fa-sun"></i>
+        </button>
+        <button class="lang-switch-btn" id="lang-switch-btn">
+          <i class="fas fa-globe"></i> BN
+        </button>
+        <a href="contact.html" class="btn btn-primary" data-i18n="btnRequestNow">Request Now</a>
+        <a href="settings.html" class="toggle-btn settings-btn active" id="settings-btn" title="Settings" aria-label="Settings">
+          <i class="fas fa-gear"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Settings Main Container Section -->
+  <section class="settings-section" style="padding-top: calc(var(--header-height) + 2.5rem); padding-bottom: 5rem;">
+    <div class="container" style="max-width: 920px;">
+
+      <!-- Top Return Navigation Bar -->
+      <div style="margin-bottom: 1.75rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+        <a href="index.html" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem; border-radius: var(--radius-full);">
+          <i class="fas fa-arrow-left"></i> <span data-i18n="btnBackHome">Back to Home</span>
+        </a>
+        <span class="badge-pill">
+          <i class="fas fa-sliders"></i> WebWorldBD Preferences
+        </span>
+      </div>
+
+      <!-- Page Header Title -->
+      <div class="section-title" style="text-align: left; margin-bottom: 2.5rem;">
+        <h1 style="font-size: 2.2rem; font-weight: 800;" data-i18n="settingsTitle">System Settings</h1>
+        <p style="margin: 0.4rem 0 0 0; color: var(--text-muted);" data-i18n="settingsSub">Manage your site preferences, account details, notifications, and privacy options.</p>
+      </div>
+
+      <!-- Settings Cards Container Grid -->
+      <div class="settings-grid" style="display: flex; flex-direction: column; gap: 1.75rem;">
+
+        <!-- CARD 1: Appearance (অ্যাপিয়ারেন্স) -->
+        <div class="glass-card settings-card" id="card-appearance">
+          <div class="settings-card-header">
+            <div class="settings-card-icon icon-cyan">
+              <i class="fas fa-palette"></i>
+            </div>
+            <h2 class="settings-card-title" data-i18n="secAppearanceTitle">অ্যাপিয়ারেন্স</h2>
+          </div>
+
+          <div class="settings-option-group">
+            <label class="settings-group-label" data-i18n="labelThemeMode">Theme Mode</label>
+            <div class="segmented-control" id="theme-segmented-control">
+              <label class="segmented-option">
+                <input type="radio" name="theme-radio" value="light">
+                <span class="segmented-btn"><i class="fas fa-sun"></i> <span data-i18n="themeLight">Light</span></span>
+              </label>
+              <label class="segmented-option">
+                <input type="radio" name="theme-radio" value="dark">
+                <span class="segmented-btn"><i class="fas fa-moon"></i> <span data-i18n="themeDark">Dark</span></span>
+              </label>
+              <label class="segmented-option">
+                <input type="radio" name="theme-radio" value="system">
+                <span class="segmented-btn"><i class="fas fa-desktop"></i> <span data-i18n="themeSystem">System</span></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="settings-option-group" style="margin-top: 1.5rem;">
+            <label class="settings-group-label" data-i18n="labelLanguage">Language</label>
+            <div class="segmented-control" id="lang-segmented-control">
+              <label class="segmented-option">
+                <input type="radio" name="lang-radio" value="bn">
+                <span class="segmented-btn"><i class="fas fa-language"></i> <span data-i18n="langBn">বাংলা</span></span>
+              </label>
+              <label class="segmented-option">
+                <input type="radio" name="lang-radio" value="en">
+                <span class="segmented-btn"><i class="fas fa-globe"></i> <span data-i18n="langEn">English</span></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 2: Account (অ্যাকাউন্ট) -->
+        <div class="glass-card settings-card" id="card-account">
+          <div class="settings-card-header">
+            <div class="settings-card-icon icon-blue">
+              <i class="fas fa-user-gear"></i>
+            </div>
+            <h2 class="settings-card-title" data-i18n="secAccountTitle">অ্যাকাউন্ট</h2>
+          </div>
+
+          <!-- Logged Out View -->
+          <div id="settings-account-logged-out" style="display: none; text-align: center; padding: 1rem 0;">
+            <i class="fas fa-user-slash" style="font-size: 2.5rem; color: var(--text-dim); margin-bottom: 0.75rem;"></i>
+            <h3 style="font-size: 1.15rem; font-weight: 700;" data-i18n="accountLoggedOutTitle">Not Logged In</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.25rem;" data-i18n="accountLoggedOutSub">Sign in or register to access project tracking, invoice management, and profile features.</p>
+            <a href="account.html" class="btn btn-primary">
+              <i class="fas fa-right-to-bracket"></i> <span data-i18n="btnLoginRegister">Log In / Register</span>
+            </a>
+          </div>
+
+          <!-- Logged In View -->
+          <div id="settings-account-logged-in" style="display: none;">
+            <div class="settings-profile-summary">
+              <img id="settings-user-photo" src="profile.jpg" alt="User Profile Photo" class="settings-profile-avatar">
+              <div class="settings-profile-info">
+                <h3 id="settings-user-name">User Name</h3>
+                <p id="settings-user-email">user@example.com</p>
+                <span class="badge-pill" style="font-size: 0.75rem; padding: 0.2rem 0.6rem; margin-top: 0.25rem;">
+                  <i class="fas fa-shield-check"></i> Authenticated Client
+                </span>
+              </div>
+            </div>
+
+            <div class="settings-account-actions">
+              <button class="btn btn-secondary settings-action-btn" id="btn-edit-profile">
+                <i class="fas fa-user-pen"></i> <span data-i18n="btnEditProfile">Edit Profile</span>
+              </button>
+              <button class="btn btn-secondary settings-action-btn" id="btn-change-password">
+                <i class="fas fa-key"></i> <span data-i18n="btnChangePassword">Change Password</span>
+              </button>
+              <button class="btn btn-secondary settings-action-btn" id="btn-logout-settings">
+                <i class="fas fa-right-from-bracket"></i> <span data-i18n="btnLogOut">Log Out</span>
+              </button>
+              <button class="btn btn-danger-outline settings-action-btn" id="btn-delete-account">
+                <i class="fas fa-user-xmark"></i> <span data-i18n="btnDeleteAccount">Delete Account</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 3: Notifications (নোটিফিকেশন) -->
+        <div class="glass-card settings-card" id="card-notifications">
+          <div class="settings-card-header">
+            <div class="settings-card-icon icon-purple">
+              <i class="fas fa-bell"></i>
+            </div>
+            <h2 class="settings-card-title" data-i18n="secNotificationsTitle">নোটিফিকেশন</h2>
+          </div>
+
+          <div class="settings-toggle-row">
+            <div class="settings-toggle-info">
+              <h4 data-i18n="notifProjectUpdates">প্রজেক্ট আপডেট নোটিফিকেশন</h4>
+              <p data-i18n="notifProjectUpdatesDesc">Receive instant status alerts about your active web & app development projects.</p>
+            </div>
+            <label class="switch-toggle">
+              <input type="checkbox" id="notif-project-switch" checked>
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+
+          <div class="settings-toggle-row">
+            <div class="settings-toggle-info">
+              <h4 data-i18n="notifPromotions">প্রোমোশনাল ইমেইল</h4>
+              <p data-i18n="notifPromotionsDesc">Get updates on special discounts, newly launched web services, and tech articles.</p>
+            </div>
+            <label class="switch-toggle">
+              <input type="checkbox" id="notif-promo-switch">
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- CARD 4: Quick Links (দ্রুত লিংক) -->
+        <div class="glass-card settings-card" id="card-quick-links">
+          <div class="settings-card-header">
+            <div class="settings-card-icon icon-cyan">
+              <i class="fas fa-compass"></i>
+            </div>
+            <h2 class="settings-card-title" data-i18n="secQuickLinksTitle">দ্রুত লিংক</h2>
+          </div>
+
+          <div class="quick-links-grid">
+            <a href="index.html" class="quick-link-item">
+              <i class="fas fa-house"></i>
+              <span data-i18n="navHome">Home</span>
+            </a>
+            <a href="index.html#about" class="quick-link-item">
+              <i class="fas fa-user"></i>
+              <span data-i18n="navAbout">About Me</span>
+            </a>
+            <a href="services.html" class="quick-link-item">
+              <i class="fas fa-layer-group"></i>
+              <span data-i18n="navServices">Services</span>
+            </a>
+            <a href="projects.html" class="quick-link-item">
+              <i class="fas fa-desktop"></i>
+              <span data-i18n="navProjects">Projects</span>
+            </a>
+            <a href="why-choose-me.html" class="quick-link-item">
+              <i class="fas fa-shield-halved"></i>
+              <span data-i18n="navWhy">Why Choose Me</span>
+            </a>
+            <a href="process.html" class="quick-link-item">
+              <i class="fas fa-list-check"></i>
+              <span data-i18n="navProcess">Work Process</span>
+            </a>
+            <a href="faq.html" class="quick-link-item">
+              <i class="fas fa-circle-question"></i>
+              <span data-i18n="navFaq">FAQ</span>
+            </a>
+            <a href="contact.html" class="quick-link-item">
+              <i class="fas fa-paper-plane"></i>
+              <span data-i18n="navContact">Contact</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- CARD 5: Support & Contact (সাপোর্ট ও যোগাযোগ) -->
+        <div class="glass-card settings-card" id="card-support">
+          <div class="settings-card-header">
+            <div class="settings-card-icon icon-blue">
+              <i class="fas fa-headset"></i>
+            </div>
+            <h2 class="settings-card-title" data-i18n="secSupportTitle">সাপোর্ট ও যোগাযোগ</h2>
+          </div>
+
+          <div class="support-btns-row">
+            <a href="https://wa.me/8801342697743" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp flex-1">
+              <i class="fab fa-whatsapp"></i> <span data-i18n="btnWhatsAppMsg">Message on WhatsApp</span>
+            </a>
+            <a href="mailto:saripofficialsupport@gmail.com" class="btn btn-secondary flex-1">
+              <i class="fas fa-envelope"></i> <span data-i18n="btnEmailSupport">Email Support</span>
+            </a>
+            <a href="contact.html" class="btn btn-primary flex-1">
+              <i class="fas fa-paper-plane"></i> <span data-i18n="btnRequestSupport">Request Support</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- CARD 6: About (সম্পর্কে) -->
+        <div class="glass-card settings-card" id="card-about">
+          <div class="settings-card-header">
+            <div class="settings-card-icon icon-purple">
+              <i class="fas fa-circle-info"></i>
+            </div>
+            <h2 class="settings-card-title" data-i18n="secAboutTitle">সম্পর্কে</h2>
+          </div>
+
+          <div class="about-meta-list">
+            <div class="about-meta-item">
+              <span class="meta-label" data-i18n="brandName">WebWorldBD</span>
+              <span class="meta-val"><span data-i18n="appVersionLabel">Version</span> 2.4.0</span>
+            </div>
+            <div class="about-meta-item">
+              <span class="meta-label" data-i18n="developerName">SHAFAET HOSSEN SARIP</span>
+              <span class="meta-val"><span data-i18n="appBuildLabel">Build</span> 2026.03</span>
+            </div>
+            <div class="about-meta-item">
+              <a href="index.html#about" style="color: var(--accent-blue); font-weight: 600; text-decoration: underline;">
+                <i class="fas fa-shield-halved"></i> <span data-i18n="linkOurEthics">Our Ethics & Policy</span>
+              </a>
+            </div>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-dim); margin-top: 1rem;" data-i18n="copyrightText">© 2026 WebWorldBD. Created with passion by SHAFAET HOSSEN SARIP. All rights reserved.</p>
+        </div>
+
+        <!-- CARD 7: Data & Privacy (ডেটা ও প্রাইভেসি) -->
+        <div class="glass-card settings-card" id="card-privacy">
+          <div class="settings-card-header">
+            <div class="settings-card-icon icon-policy">
+              <i class="fas fa-lock"></i>
+            </div>
+            <h2 class="settings-card-title" data-i18n="secPrivacyTitle">ডেটা ও প্রাইভেসি</h2>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <div>
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.75rem;" data-i18n="clearCacheDesc">Reset locally stored theme, language, and notification settings.</p>
+              <button class="btn btn-secondary" id="btn-clear-cache">
+                <i class="fas fa-trash-can"></i> <span data-i18n="btnClearCache">Kear Cache & Preferences</span>
+              </button>
+            </div>
+
+            <div style="border-top: 1px solid var(--border-glass); padding-top: 1rem; margin-top: 0.5rem;">
+              <a href="faq.html" style="color: var(--accent-blue); font-weight: 600; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-file-contract"></i> <span data-i18n="linkPrivacyPolicy">Privacy Policy & Terms of Service</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- EDIT PROFILE MODAL -->
+  <div class="settings-modal-overlay" id="modal-edit-profile">
+    <div class="glass-card settings-modal-card">
+      <h3 data-i18n="modalEditProfileTitle">Edit Profile</h3>
+      <form id="form-edit-profile" style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+        <div class="form-group">
+          <label data-i18n="modalEditNameLabel">Display Name</label>
+          <input type="text" id="edit-profile-name" class="form-control" placeholder="Enter full name" required>
+        </div>
+        <div class="form-group">
+          <label data-i18n="modalEditPhotoLabel">Profile Photo URL (optional)</label>
+          <input type="url" id="edit-profile-photo" class="form-control" placeholder="https://example.com/photo.jpg">
+        </div>
+        <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 0.5rem;">
+          <button type="button" class="btn btn-secondary btn-modal-cancel" data-i18n="modalCancelBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" data-i18n="modalSaveBtn">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- CHANGE PASSWORD MODAL -->
+  <div class="settings-modal-overlay" id="modal-change-password">
+    <div class="glass-card settings-modal-card">
+      <h3 data-i18n="modalChangePassTitle">Change Password</h3>
+      <form id="form-change-password" style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+        <div class="form-group">
+          <label data-i18n="modalOldPassLabel">Current Password</label>
+          <input type="password" id="change-pass-old" class="form-control" placeholder="••••••••" required>
+        </div>
+        <div class="form-group">
+          <label data-i18n="modalNewPassLabel">New Password</label>
+          <input type="password" id="change-pass-new" class="form-control" placeholder="••••••••" required>
+        </div>
+        <div class="form-group">
+          <label data-i18n="modalConfirmNewPassLabel">Confirm New Password</label>
+          <input type="password" id="change-pass-confirm" class="form-control" placeholder="••••••••" required>
+        </div>
+        <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 0.5rem;">
+          <button type="button" class="btn btn-secondary btn-modal-cancel" data-i18n="modalCancelBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" data-i18n="modalUpdatePassBtn">Update Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- DELETE ACCOUNT MODAL -->
+  <div class="settings-modal-overlay" id="modal-delete-account">
+    <div class="glass-card settings-modal-card" style="border-color: rgba(239, 68, 68, 0.4);">
+      <h3 style="color: #EF4444;" data-i18n="modalDeleteTitle">Delete Account</h3>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;" data-i18n="modalDeleteWarning">
+        Warning: This action is permanent and cannot be undone. All your project history and saved preferences associated with this account will be removed.
+      </p>
+      <form id="form-delete-account" style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+        <div class="form-group">
+          <label data-i18n="modalConfirmPassLabel">Enter your password to confirm deletion</label>
+          <input type="password" id="delete-pass-confirm" class="form-control" placeholder="••••••••" required>
+        </div>
+        <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 0.5rem;">
+          <button type="button" class="btn btn-secondary btn-modal-cancel" data-i18n="modalCancelBtn">Cancel</button>
+          <button type="submit" class="btn btn-danger" data-i18n="modalDeleteConfirmBtn">Confirm & Delete Account</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="logo-brand">
+            <img src="assets/images/logo.png" alt="WebWorldBD Logo">
+            <span>WebWorld<span style="color:var(--accent-blue);">BD</span></span>
+          </a>
+          <p data-i18n="footerDesc">
+            SHAFAET HOSSEN SARIP — WebWorldBD. Building powerful digital experiences, high-converting websites, and modern apps with zero compromise on quality and ethics.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="footer-title" data-i18n="quickLinksTitle">Quick Links</h4>
+          <div class="footer-links">
+            <a href="index.html" data-i18n="navHome">Home</a>
+            <a href="index.html#about" data-i18n="navAbout">About Me</a>
+            <a href="services.html" data-i18n="navServices">Services</a>
+            <a href="projects.html" data-i18n="navProjects">Projects</a>
+            <a href="contact.html" data-i18n="navContact">Contact</a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-title" data-i18n="servicesListTitle">Popular Services</h4>
+          <div class="footer-links">
+            <a href="services.html">Business Website</a>
+            <a href="services.html">E-commerce Website</a>
+            <a href="services.html">Portfolio Website</a>
+            <a href="services.html">Web App / SaaS</a>
+            <a href="services.html">AI Website & Tools</a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-title" data-i18n="contactTitle">Contact Info</h4>
+          <div class="footer-links">
+            <span>Kushtia, Bangladesh</span>
+            <a href="mailto:saripofficialsupport@gmail.com">saripofficialsupport@gmail.com</a>
+            <a href="https://wa.me/8801342697743" target="_blank" rel="noopener noreferrer">+8801342697743</a>
+            <a href="tel:+8809658183506">+8809658183506</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p data-i18n="copyrightText">© 2026 WebWorldBD. Created with passion by SHAFAET HOSSEN SARIP. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="mobile-bottom-nav" id="mobile-bottom-nav" aria-label="Mobile Bottom Navigation">
+    <a href="index.html" class="mobile-nav-item" data-nav="home">
+      <div class="mobile-nav-icon"><i class="fas fa-house"></i></div>
+      <span class="mobile-nav-label" data-i18n="mobileNavHome">হোম</span>
+    </a>
+    <a href="services.html" class="mobile-nav-item" data-nav="services">
+      <div class="mobile-nav-icon"><i class="fas fa-layer-group"></i></div>
+      <span class="mobile-nav-label" data-i18n="mobileNavServices">সার্ভিস</span>
+    </a>
+    <a href="contact.html" class="mobile-nav-item mobile-fab-item" data-nav="fab">
+      <div class="mobile-fab-btn">
+        <i class="fas fa-rocket"></i>
+      </div>
+      <span class="mobile-nav-label mobile-fab-label" data-i18n="mobileNavStartProject">প্রজেক্ট শুরু করুন</span>
+    </a>
+    <a href="projects.html" class="mobile-nav-item" data-nav="projects">
+      <div class="mobile-nav-icon"><i class="fas fa-desktop"></i></div>
+      <span class="mobile-nav-label" data-i18n="mobileNavLivePreview">লাইভ প্রিভিউ</span>
+    </a>
+    <a href="account.html" class="mobile-nav-item" data-nav="account">
+      <div class="mobile-nav-icon"><i class="fas fa-user"></i></div>
+      <span class="mobile-nav-label" data-i18n="mobileNavAccount">অ্যাকাউন্ট</span>
+    </a>
+  </nav>
+
+  <!-- Floating WhatsApp & Back to Top Buttons -->
+  <a href="https://wa.me/8801342697743" target="_blank" rel="noopener noreferrer" class="floating-whatsapp" title="Chat on WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+
+  <button class="back-to-top" id="back-to-top" title="Back to top">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+
+  <!-- Application Scripts -->
+  <script type="module" src="assets/js/firebase-config.js"></script>
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/translations.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
