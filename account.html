@@ -90,7 +90,7 @@
       </div>
 
       <!-- Auth Form Card Container -->
-      <div class="auth-card-container" id="auth-card-container" data-active-tab="register">
+      <div class="auth-card-container" id="auth-card-container" data-active-tab="login">
         <!-- Inline Alert / Status Message Box -->
         <div class="auth-alert-box" id="auth-alert-box" style="display: none;" role="alert">
           <i class="fas fa-info-circle alert-icon"></i>
@@ -103,12 +103,12 @@
         <!-- Pill-Style Segmented Tab Switcher -->
         <div class="auth-tabs-wrapper" id="auth-tabs-wrapper">
           <div class="auth-tab-slider"></div>
-          <button type="button" class="auth-tab-btn active" id="tab-btn-register" data-auth-tab="register" data-i18n="tabRegister">Register</button>
-          <button type="button" class="auth-tab-btn" id="tab-btn-login" data-auth-tab="login" data-i18n="tabLogin">Login</button>
+          <button type="button" class="auth-tab-btn active" id="tab-btn-login" data-auth-tab="login" data-i18n="tabLogin">Login</button>
+          <button type="button" class="auth-tab-btn" id="tab-btn-register" data-auth-tab="register" data-i18n="tabRegister">Register</button>
         </div>
 
-        <!-- LOGIN FORM (Hidden by Default) -->
-        <form id="login-form" class="auth-form" style="display: none;" novalidate>
+        <!-- LOGIN FORM -->
+        <form id="login-form" class="auth-form" novalidate>
           <div class="form-group">
             <label for="login-email" data-i18n="formEmailLabel">Your Email Address</label>
             <div class="input-icon-wrapper">
@@ -163,8 +163,8 @@
           </div>
         </form>
 
-        <!-- REGISTER FORM -->
-        <form id="register-form" class="auth-form" novalidate>
+        <!-- REGISTER FORM (Hidden by Default) -->
+        <form id="register-form" class="auth-form" style="display: none;" novalidate>
           <div class="form-group">
             <label for="reg-name" data-i18n="formNameLabel">Your Full Name</label>
             <div class="input-icon-wrapper">

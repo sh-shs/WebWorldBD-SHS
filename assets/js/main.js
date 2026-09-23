@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function highlightActiveNavLink() {
       const currentPath = window.location.pathname.toLowerCase();
       const currentHash = window.location.hash.toLowerCase();
-      const navLinks = navMenu.querySelectorAll('.nav-link[data-nav-id]');
+      const navLinks = document.querySelectorAll('.nav-link[data-nav-id]');
 
       navLinks.forEach(link => {
         const navId = link.getAttribute('data-nav-id');
@@ -1206,14 +1206,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (userDashView) userDashView.style.display = 'none';
             const infoNotice = document.getElementById('auth-info-notice');
             if (infoNotice) infoNotice.style.display = 'flex';
-            switchAuthTab('register');
+            switchAuthTab('login');
             showAlert(currentLang === 'bn' ? 'সফলভাবে লগআউট করা হয়েছে।' : 'Logged out successfully.', 'info');
           });
         } else {
           if (userDashView) userDashView.style.display = 'none';
           const infoNotice = document.getElementById('auth-info-notice');
           if (infoNotice) infoNotice.style.display = 'flex';
-          switchAuthTab('register');
+          switchAuthTab('login');
           showAlert(currentLang === 'bn' ? 'সফলভাবে লগআউট করা হয়েছে।' : 'Logged out successfully.', 'info');
         }
       });
@@ -1533,8 +1533,10 @@ document.addEventListener('DOMContentLoaded', () => {
           if (infoNotice) infoNotice.style.display = 'flex';
           const tabsWrapper = document.getElementById('auth-tabs-wrapper');
           if (tabsWrapper) tabsWrapper.style.display = 'flex';
+          const loginForm = document.getElementById('login-form');
+          if (loginForm) loginForm.style.display = 'flex';
           const regForm = document.getElementById('register-form');
-          if (regForm) regForm.style.display = 'flex';
+          if (regForm) regForm.style.display = 'none';
         }
       }
     });
