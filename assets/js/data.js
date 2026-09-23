@@ -18,7 +18,7 @@ const portfolioData = {
     department_en: "Electronics Technology",
     department_bn: "ইলেকট্রনিক্স টেকনোলজি বিভাগ",
     experience_en: "1+ Years of Web & App Development Experience",
-    experience_bn: "১ বছরেরও বেশি সময় ধরে ওয়েবাসাইট ও অ্যাপ ডেভেলপমেন্ট অভিজ্ঞতা",
+    experience_bn: "১ বছরেরও বেশি সময় ধরে ওয়েবসাইট ও অ্যাপ ডেভেলপমেন্ট অভিজ্ঞতা",
     bio_en: "Student at Kushtia Government Polytechnic Institute (Electronics Technology). Over 1 year of experience building Websites, Web Apps, E-commerce, and AI platforms for clients and personal ventures. Ethical Commitment: Strict policy to develop positive, business-oriented sites only — absolutely NO Gambling/Betting or illegal platforms.",
     bio_bn: "শিক্ষার্থী — কুষ্টিয়া সরকারি পলিটেকনিক ইনস্টিটিউট, Electronics Technology বিভাগ। ১ বছরেরও বেশি সময় ধরে Web Development-এ কাজ করছেন, ক্লায়েন্ট ও নিজস্ব উদ্যোগের জন্য Website/Web App/E-commerce/AI Website তৈরি করেন। নীতি: শুধু positive ও business-oriented সাইট, কোনো Gambling/Betting সাইট বানানো হয় না।",
     email: "saripofficialsupport@gmail.com",
@@ -80,7 +80,7 @@ const portfolioData = {
       features_bn: [
         { icon: "fas fa-chart-line", title: "লিড জেনারেশন ফর্ম", desc: "সম্ভাব্য কাস্টমারদের তথ্য ও প্রজেক্ট রিকুয়েস্ট সরাসরি ইমেইল বা ডাটাবেজে পাওয়ার সুবিধা।" },
         { icon: "fas fa-shield-alt", title: "ব্র্যান্ড ট্রাস্ট বিল্ডিং", desc: "প্রফেশনাল গ্লাস ইউআই ডিজাইন ও ক্লায়েন্ট ফিডব্যাকের মাধ্যমে গ্রাহকের আস্থা অর্জন।" },
-        { icon: "fas fa-search-dollar", title: "এসইও ও গুগল ইনডেক্সিং", desc: "সার্চ ইঞ্জিনে দ্রুত রেঙ্ক করার জন্য অপটিমাইজড মেটা ট্যাগ ও সাইটম্যাপ।" }
+        { icon: "fas fa-search-dollar", title: "এসইও ও গুগল ইনডেক্সিং", desc: "সার্চ ইঞ্জিনে দ্রুত র‍্যাঙ্ক করার জন্য অপটিমাইজড মেটা ট্যাগ ও সাইটম্যাপ।" }
       ],
       features_en: [
         { icon: "fas fa-chart-line", title: "Lead Generation Engine", desc: "Capture project inquiries and customer leads directly to your email or database." },
@@ -325,7 +325,7 @@ const portfolioData = {
         "লাইভ ব্রেকিং নিউজ স্ক্রলিং টিকার",
         "মাল্টি-ক্যাটাগরি কাস্টম নিউজ লেআউট",
         "লাইভ ভিডিও ও ইউটিউব এম্বেড",
-        "রিপোর্টার ও এডিতর প্রোফাইল ড্যাশবোর্ড",
+        "রিপোর্টার ও এডিটর প্রোফাইল ড্যাশবোর্ড",
         "মতামত, ই-পেপার ও আর্কাইভ ফিচার",
         "ট্রেন্ডিং ও সর্বাধিক পঠিত সংবাদ ট্যাব",
         "সোশ্যাল মিডিয়া অটো-শেয়ারিং সাপোর্ট",
@@ -351,7 +351,7 @@ const portfolioData = {
       ],
       features_bn: [
         { icon: "fas fa-bolt", title: "লাইভ ব্রেকিং নিউজ", desc: "তাৎক্ষণিক জরুরি খবর টিকার আকারে হোমপেজে প্রদর্শনের ক্ষমতা।" },
-        { icon: "fas fa-layer-group", title: "মাল্টি-ক্যাটাগরি গ্রিড", desc: "দেশ, রাজনীতি, খেলাধূলা ও বিনোদন সংবাদের জন্য আলাদা বিন্যাস।" },
+        { icon: "fas fa-layer-group", title: "মাল্টি-ক্যাটাগরি গ্রিড", desc: "দেশ, রাজনীতি, খেলাধুলা ও বিনোদন সংবাদের জন্য আলাদা বিন্যাস।" },
         { icon: "fas fa-tachometer-alt", title: "হাই-ট্রাফিক অপটিমাইজেশন", desc: "লক্ষাধিক পাঠক একসাথে ভিজিট করলেও সাইট না স্লো হওয়ার সিস্টেম।" }
       ],
       features_en: [
@@ -361,9 +361,9 @@ const portfolioData = {
       ],
       audience_bn: [
         "অনলাইন নিউজ পোর্টাল মালিক",
-        "প্রসংগ ও স্থানীয় পত্রিকা কর্তৃপক্ষ",
+        "প্রসঙ্গ ও স্থানীয় পত্রিকা কর্তৃপক্ষ",
         "জার্নালিস্ট ও রিপোর্টিং টিম",
-        "বিষয়ভিত্তিক নিউজ এজেন্সী"
+        "বিষয়ভিত্তিক নিউজ এজেন্সি"
       ],
       audience_en: [
         "Online News Portal Owners",
@@ -462,7 +462,7 @@ const portfolioData = {
         "রিয়েল-টাইম নিউজফিড ও পোস্ট তৈরি",
         "লাইক, রিয়েক্ট ও কমেন্ট সিস্টেম",
         "মেম্বার ফ্রেন্ড রিকোয়েস্ট ও ফলোয়ার্স",
-        "প্রাইভেসী ও সিকিউরিটি কন্ট্রোল",
+        "প্রাইভেসি ও সিকিউরিটি কন্ট্রোল",
         "রিয়েল-টাইম নোটিফিকেশন সিস্টেম",
         "ছবি ও ভিডিও আপলোড সুবিধা",
         "প্রাইভেট ডাইরেক্ট মেসেজিং (DM)",
@@ -1193,7 +1193,7 @@ const portfolioData = {
       role_en: "Coaching Center Director",
       role_bn: "কোচিং সেন্টার পরিচালক",
       text_en: "Shafaet created an excellent educational web portal for our institute. Honest developer, delivered on time without any hassle.",
-      text_bn: "সাফায়েত হোসেন ছারিফ আমাদের ইনস্টিটিউটের জন্য চমৎকার ওয়েবসাইট বানিয়ে দিয়েছেন। সৎ ও নির্দিষ্ট সময়ে কাজ সম্পন্ন করেন।"
+      text_bn: "সাফায়েত হোসেন শরীফ আমাদের ইনস্টিটিউটের জন্য চমৎকার ওয়েবসাইট বানিয়ে দিয়েছেন। সৎ ও নির্দিষ্ট সময়ে কাজ সম্পন্ন করেন।"
     },
     {
       name_en: "Rakibul Islam",
