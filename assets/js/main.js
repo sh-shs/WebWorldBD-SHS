@@ -200,7 +200,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const navId = link.getAttribute('data-nav-id');
         let isActive = false;
 
-        if (currentPath.endsWith('services.html') || currentPath.includes('/services/')) {
+        if (currentPath.endsWith('why-choose-me.html')) {
+          isActive = (navId === 'why');
+        } else if (currentPath.endsWith('process.html')) {
+          isActive = (navId === 'process');
+        } else if (currentPath.endsWith('faq.html')) {
+          isActive = (navId === 'faq');
+        } else if (currentPath.endsWith('services.html') || currentPath.includes('/services/')) {
           isActive = (navId === 'services');
         } else if (currentPath.endsWith('projects.html') || currentPath.endsWith('project-details.html')) {
           isActive = (navId === 'projects');
@@ -212,12 +218,6 @@ document.addEventListener('DOMContentLoaded', () => {
           // Home page index.html with or without section hashes
           if (currentHash === '#about') {
             isActive = (navId === 'about');
-          } else if (currentHash === '#why') {
-            isActive = (navId === 'why');
-          } else if (currentHash === '#process') {
-            isActive = (navId === 'process');
-          } else if (currentHash === '#faq') {
-            isActive = (navId === 'faq');
           } else {
             isActive = (navId === 'home');
           }
