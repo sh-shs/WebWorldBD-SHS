@@ -311,11 +311,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (currentPath.endsWith('services.html') || currentPath.includes('/services/')) {
         activeNavKey = 'services';
       } else if (currentPath.endsWith('contact.html')) {
-        activeNavKey = 'fab';
+        activeNavKey = 'connect';
       } else if (currentPath.endsWith('projects.html') || currentPath.endsWith('project-details.html')) {
         activeNavKey = 'projects';
-      } else if (currentPath.endsWith('settings.html') || currentPath.endsWith('account.html')) {
-        activeNavKey = 'connect';
+      } else if (currentPath.endsWith('start-project.html')) {
+        activeNavKey = 'fab';
       } else {
         activeNavKey = 'home';
       }
@@ -1474,7 +1474,6 @@ document.addEventListener('DOMContentLoaded', () => {
           if (authLoader) authLoader.style.display = 'none';
 
           const accountNavSpans = document.querySelectorAll('.nav-menu [data-i18n="navAccount"]');
-          const mobileConnectSpans = document.querySelectorAll('[data-i18n="mobileNavConnect"]');
           const accountSubEl = document.querySelector('[data-i18n="accountSub"]');
 
           if (user) {
@@ -1482,7 +1481,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const userName = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
 
             accountNavSpans.forEach(span => { span.textContent = userName; });
-            mobileConnectSpans.forEach(span => { span.textContent = translations[currentLang].mobileNavConnect; });
 
             if (accountSubEl) accountSubEl.textContent = translations[currentLang].accountSubLoggedIn;
 
@@ -1533,7 +1531,6 @@ document.addEventListener('DOMContentLoaded', () => {
           } else {
             window.currentUserState = null;
             accountNavSpans.forEach(span => { span.textContent = translations[currentLang].navAccount; });
-            mobileConnectSpans.forEach(span => { span.textContent = translations[currentLang].mobileNavConnect; });
 
             if (accountSubEl) accountSubEl.textContent = translations[currentLang].accountSub;
 
