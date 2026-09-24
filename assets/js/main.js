@@ -1473,7 +1473,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mod.onAuthStateChanged(mod.auth, (user) => {
           if (authLoader) authLoader.style.display = 'none';
 
-          const accountNavSpans = document.querySelectorAll('[data-i18n="navAccount"]');
+          const accountNavSpans = document.querySelectorAll('.nav-menu [data-i18n="navAccount"]');
           const mobileNavSpans = document.querySelectorAll('[data-i18n="mobileNavAccount"]');
           const accountSubEl = document.querySelector('[data-i18n="accountSub"]');
 
