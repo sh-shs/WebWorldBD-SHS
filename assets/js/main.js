@@ -1474,7 +1474,6 @@ document.addEventListener('DOMContentLoaded', () => {
           if (authLoader) authLoader.style.display = 'none';
 
           const accountNavSpans = document.querySelectorAll('.nav-menu [data-i18n="navAccount"]');
-          const mobileNavSpans = document.querySelectorAll('[data-i18n="mobileNavAccount"]');
           const mobileConnectSpans = document.querySelectorAll('[data-i18n="mobileNavConnect"]');
           const accountSubEl = document.querySelector('[data-i18n="accountSub"]');
 
@@ -1483,7 +1482,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const userName = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
 
             accountNavSpans.forEach(span => { span.textContent = userName; });
-            mobileNavSpans.forEach(span => { span.textContent = translations[currentLang].mobileNavAccount; });
             mobileConnectSpans.forEach(span => { span.textContent = translations[currentLang].mobileNavConnect; });
 
             if (accountSubEl) accountSubEl.textContent = translations[currentLang].accountSubLoggedIn;
@@ -1535,7 +1533,6 @@ document.addEventListener('DOMContentLoaded', () => {
           } else {
             window.currentUserState = null;
             accountNavSpans.forEach(span => { span.textContent = translations[currentLang].navAccount; });
-            mobileNavSpans.forEach(span => { span.textContent = translations[currentLang].mobileNavAccount; });
             mobileConnectSpans.forEach(span => { span.textContent = translations[currentLang].mobileNavConnect; });
 
             if (accountSubEl) accountSubEl.textContent = translations[currentLang].accountSub;
