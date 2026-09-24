@@ -129,6 +129,7 @@ const translations = {
     heroHeadingGradient: "Powerful Digital Experiences.",
     heroSubtitle: "Hi! I am Shafaet Hossen Sarip. I build fast, ultra-responsive, high-converting websites, web applications, and mobile apps tailored for your business success.",
     heroIntro: "Hello! I am Safayet Hossain Sharif. Our work starts right from your ideas. We transform your preferences, needs, and vision into modern, attractive websites, web apps, and mobile apps. Your ideas, our technology—together we build your desired website & website applications.",
+    statCompleted: "Projects Completed",
     statClients: "Satisfied Clients",
     statExp: "Years Experience",
     statSatisfaction: "Satisfaction Rate",
@@ -296,7 +297,15 @@ const translations = {
     mobileNavLivePreview: "Live Preview",
     mobileNavAccount: "Account",
 
-    /* Footer */
+    /* Footer & Extra Services */
+    serviceBusiness: "Business Website",
+    serviceEcommerce: "E-commerce Website",
+    servicePortfolio: "Portfolio Website",
+    serviceWebapp: "Web App / SaaS",
+    serviceAi: "AI Website & Tools",
+    footerLocation: "Kushtia, Bangladesh",
+    ethicalTitle: "Strict Ethical Commitment Policy",
+    ethicalDesc: "WebWorldBD strictly builds positive, business-oriented, and legal platforms only. Absolutely NO Gambling, Betting, Adult, or illegal websites are accepted.",
     footerDesc: "SHAFAET HOSSEN SARIP — WebWorldBD. Building powerful digital experiences, high-converting websites, and modern apps with zero compromise on quality and ethics.",
     quickLinksTitle: "Quick Links",
     servicesListTitle: "Popular Services",
@@ -597,7 +606,15 @@ const translations = {
     mobileNavLivePreview: "লাইভ প্রিভিউ",
     mobileNavAccount: "অ্যাকাউন্ট",
 
-    /* Footer */
+    /* Footer & Extra Services */
+    serviceBusiness: "বিজনেস ওয়েবসাইট",
+    serviceEcommerce: "ই-কমার্স ওয়েবসাইট",
+    servicePortfolio: "পোর্টফোলিও ওয়েবসাইট",
+    serviceWebapp: "ওয়েব অ্যাপ / SaaS",
+    serviceAi: "এআই ওয়েবসাইট ও টুলস",
+    footerLocation: "কুষ্টিয়া, বাংলাদেশ",
+    ethicalTitle: "কঠোর নীতিগত প্রতিশ্রুতি পলিসি",
+    ethicalDesc: "WebWorldBD শুধুমাত্র ইতিবাচক, ব্যবসায়িক ও আইনসম্মত প্ল্যাটফর্ম তৈরি করে। কোনো ধরনের জুয়া (Gambling/Betting), অ্যাডাল্ট বা অবৈধ ওয়েবসাইট তৈরি করা হয় না।",
     footerDesc: "সাফায়েত হোসেন ছারিফ — WebWorldBD। গুণমান ও নীতিতে কোনো আপস না করে তৈরি করি শক্তিশালী ওয়েবসাইট ও মোবাইল অ্যাপ।",
     quickLinksTitle: "কুইক লিঙ্ক",
     servicesListTitle: "জনপ্রিয় সার্ভিসসমূহ",
