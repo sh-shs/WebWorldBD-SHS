@@ -1113,10 +1113,24 @@ body.lang-bn .hero-intro-text {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   border: 1px solid var(--border-glow);
   flex-shrink: 0;
+  overflow: hidden;
 }
+
+.contact-icon svg {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+
+/* Contact Info Icon Brand Variants */
+.contact-icon.gmail { background: rgba(234, 67, 53, 0.12); border-color: rgba(234, 67, 53, 0.3); }
+.contact-icon.whatsapp { background: rgba(37, 211, 102, 0.12); border-color: rgba(37, 211, 102, 0.3); color: #25D366; }
+.contact-icon.hotline { background: rgba(56, 189, 248, 0.12); border-color: rgba(56, 189, 248, 0.3); color: var(--accent-blue); }
+.contact-icon.telegram { background: rgba(36, 161, 222, 0.12); border-color: rgba(36, 161, 222, 0.3); color: #24A1DE; }
+.contact-icon.fiverr { background: rgba(29, 191, 115, 0.12); border-color: rgba(29, 191, 115, 0.3); color: #1DBF73; }
 
 .contact-text h4 { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.15rem; }
 .contact-text a, .contact-text p { font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
@@ -1132,10 +1146,36 @@ body.lang-bn .hero-intro-text {
   align-items: center;
   justify-content: center;
   color: var(--text-main);
+  font-size: 1.15rem;
   transition: all var(--transition-fast);
 }
 
-.social-btn:hover { background: var(--accent-blue); color: #000; transform: translateY(-3px); }
+.social-btn svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+/* Brand Authentic Colors & Hover States for Social Row Buttons */
+.social-btn.facebook { color: #1877F2; background: rgba(24, 119, 242, 0.1); border-color: rgba(24, 119, 242, 0.25); }
+.social-btn.facebook:hover { background: #1877F2; color: #FFFFFF; transform: translateY(-3px); box-shadow: 0 4px 12px rgba(24, 119, 242, 0.4); }
+
+.social-btn.tiktok { color: #000000; background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.25); }
+[data-theme="dark"] .social-btn.tiktok { color: #FFFFFF; }
+.social-btn.tiktok:hover { background: #000000; color: #00f2fe; transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0, 242, 254, 0.3); }
+
+.social-btn.telegram { color: #24A1DE; background: rgba(36, 161, 222, 0.1); border-color: rgba(36, 161, 222, 0.25); }
+.social-btn.telegram:hover { background: #24A1DE; color: #FFFFFF; transform: translateY(-3px); box-shadow: 0 4px 12px rgba(36, 161, 222, 0.4); }
+
+.social-btn.email { color: #EA4335; background: rgba(234, 67, 53, 0.1); border-color: rgba(234, 67, 53, 0.25); }
+.social-btn.email:hover { background: #EA4335; color: #FFFFFF; transform: translateY(-3px); box-shadow: 0 4px 12px rgba(234, 67, 53, 0.4); }
+
+.social-btn.whatsapp { color: #25D366; background: rgba(37, 211, 102, 0.1); border-color: rgba(37, 211, 102, 0.25); }
+.social-btn.whatsapp:hover { background: #25D366; color: #FFFFFF; transform: translateY(-3px); box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4); }
+
+.social-btn.fiverr { color: #1DBF73; background: rgba(29, 191, 115, 0.1); border-color: rgba(29, 191, 115, 0.25); }
+.social-btn.fiverr:hover { background: #1DBF73; color: #FFFFFF; transform: translateY(-3px); box-shadow: 0 4px 12px rgba(29, 191, 115, 0.4); }
+.social-btn.fiverr:hover svg path { fill: #FFFFFF; }
 
 /* --------------------------------------------------------------------------
    12. DEDICATED SETTINGS PAGE STYLES
