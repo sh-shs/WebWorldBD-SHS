@@ -57,8 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
     if (themeToggleBtn) {
       themeToggleBtn.innerHTML = effectiveTheme === 'dark'
-        ? '<i class="fas fa-sun"></i>'
-        : '<i class="fas fa-moon"></i>';
+        ? '<i class="fas fa-moon"></i>'
+        : '<i class="fas fa-sun"></i>';
       themeToggleBtn.setAttribute('title', effectiveTheme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode');
     }
 
@@ -314,8 +314,8 @@ document.addEventListener('DOMContentLoaded', () => {
         activeNavKey = 'fab';
       } else if (currentPath.endsWith('projects.html') || currentPath.endsWith('project-details.html')) {
         activeNavKey = 'projects';
-      } else if (currentPath.endsWith('account.html')) {
-        activeNavKey = 'account';
+      } else if (currentPath.endsWith('settings.html') || currentPath.endsWith('account.html')) {
+        activeNavKey = 'connect';
       } else {
         activeNavKey = 'home';
       }
@@ -1475,6 +1475,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
           const accountNavSpans = document.querySelectorAll('.nav-menu [data-i18n="navAccount"]');
           const mobileNavSpans = document.querySelectorAll('[data-i18n="mobileNavAccount"]');
+          const mobileConnectSpans = document.querySelectorAll('[data-i18n="mobileNavConnect"]');
           const accountSubEl = document.querySelector('[data-i18n="accountSub"]');
 
           if (user) {
@@ -1483,6 +1484,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             accountNavSpans.forEach(span => { span.textContent = userName; });
             mobileNavSpans.forEach(span => { span.textContent = translations[currentLang].mobileNavAccount; });
+            mobileConnectSpans.forEach(span => { span.textContent = translations[currentLang].mobileNavConnect; });
 
             if (accountSubEl) accountSubEl.textContent = translations[currentLang].accountSubLoggedIn;
 
@@ -1534,6 +1536,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.currentUserState = null;
             accountNavSpans.forEach(span => { span.textContent = translations[currentLang].navAccount; });
             mobileNavSpans.forEach(span => { span.textContent = translations[currentLang].mobileNavAccount; });
+            mobileConnectSpans.forEach(span => { span.textContent = translations[currentLang].mobileNavConnect; });
 
             if (accountSubEl) accountSubEl.textContent = translations[currentLang].accountSub;
 
