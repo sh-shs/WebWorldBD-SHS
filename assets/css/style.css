@@ -89,6 +89,11 @@
   padding: 0;
 }
 
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
 html {
   scroll-behavior: smooth;
   font-size: 16px;
@@ -99,7 +104,6 @@ body {
   background-color: var(--bg-dark);
   color: var(--text-main);
   line-height: 1.6;
-  overflow-x: hidden;
   transition: background-color 0.3s ease, color 0.3s ease;
   position: relative;
   min-height: 100vh;
@@ -401,12 +405,10 @@ p {
   border: none;
 }
 
-.nav-menu {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-left: 1.5rem;
-  margin-right: auto;
+.nav-menu,
+.nav-menu-links,
+.nav-links {
+  display: none;
 }
 
 .nav-menu-header,
@@ -414,10 +416,31 @@ p {
   display: none;
 }
 
-.nav-menu-links {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+@media (max-width: 1023px) {
+  .header-actions .btn {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .nav-menu,
+  .nav-menu-links,
+  .nav-links {
+    display: flex;
+  }
+
+  .nav-menu {
+    align-items: center;
+    gap: 1rem;
+    margin-left: 1.5rem;
+    margin-right: auto;
+  }
+
+  .nav-menu-links,
+  .nav-links {
+    align-items: center;
+    gap: 0.75rem;
+  }
 }
 
 .nav-link {
@@ -937,7 +960,7 @@ body.lang-bn .hero-intro-text {
 
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 2rem;
 }
 
@@ -1540,7 +1563,41 @@ body.lang-bn .hero-intro-text {
 /* --------------------------------------------------------------------------
    15. Responsive Breakpoints
    -------------------------------------------------------------------------- */
+@media (max-width: 1023px) {
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+}
+
 @media (max-width: 768px) {
+  .container {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+  .about-layout-grid {
+    grid-template-columns: 1fr;
+  }
+  .tech-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .projects-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .stat-item {
+    padding: 1rem 0.5rem;
+  }
+  .stat-item h3 {
+    font-size: 1.5rem;
+  }
+  .hero-stats {
+    gap: 0.75rem;
+  }
   .settings-account-actions {
     grid-template-columns: 1fr;
   }
@@ -1557,6 +1614,15 @@ body.lang-bn .hero-intro-text {
 }
 
 @media (max-width: 480px) {
-  .container { padding: 0 1rem; }
-  .settings-card { padding: 1.25rem 1rem; }
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .settings-card {
+    padding: 1.25rem 1rem;
+  }
+  .tech-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
 }
