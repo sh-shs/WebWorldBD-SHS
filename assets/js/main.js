@@ -1490,10 +1490,34 @@ document.addEventListener('DOMContentLoaded', () => {
               const nameEl = document.getElementById('user-display-name');
               const emailEl = document.getElementById('user-display-email');
               const avatarEl = document.getElementById('user-avatar-img');
+              const avatarInitialEl = document.getElementById('user-avatar-initial');
 
-              if (nameEl) nameEl.textContent = user.displayName || user.email || 'Client User';
+              const displayName = user.displayName || user.email || 'SHAFAET HOSSEN SARIP';
+              if (nameEl) nameEl.textContent = displayName;
               if (emailEl) emailEl.textContent = user.email || '';
-              if (avatarEl) avatarEl.src = user.photoURL || 'profile.jpg';
+
+              const firstChar = displayName.trim().charAt(0).toUpperCase() || 'S';
+
+              if (user.photoURL) {
+                if (avatarEl) {
+                  avatarEl.src = user.photoURL;
+                  avatarEl.style.display = 'block';
+                  avatarEl.onerror = () => {
+                    avatarEl.style.display = 'none';
+                    if (avatarInitialEl) {
+                      avatarInitialEl.textContent = firstChar;
+                      avatarInitialEl.style.display = 'flex';
+                    }
+                  };
+                }
+                if (avatarInitialEl) avatarInitialEl.style.display = 'none';
+              } else {
+                if (avatarEl) avatarEl.style.display = 'none';
+                if (avatarInitialEl) {
+                  avatarInitialEl.textContent = firstChar;
+                  avatarInitialEl.style.display = 'flex';
+                }
+              }
 
               if (loginForm) loginForm.style.display = 'none';
               if (regForm) regForm.style.display = 'none';

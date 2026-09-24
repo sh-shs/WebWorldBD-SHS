@@ -251,31 +251,39 @@
 
         <!-- Dynamic User Authenticated Dashboard View (Displayed upon login) -->
         <div id="dashboard-user-view" style="display: none;">
-          <div class="dashboard-user-card">
-            <div class="user-avatar-badge">
-              <img id="user-avatar-img" src="profile.jpg" alt="User Profile">
+          <div class="dashboard-user-card glass-card">
+            <div class="user-avatar-ring">
+              <div class="user-avatar-inner">
+                <img id="user-avatar-img" src="profile.jpg" alt="User Profile" style="display: none;">
+                <div id="user-avatar-initial" class="user-avatar-initial">S</div>
+              </div>
             </div>
-            <h3 id="user-display-name">Client User</h3>
-            <p id="user-display-email" class="user-email-text">client@example.com</p>
+
+            <h3 id="user-display-name" class="user-display-name">SHAFAET HOSSEN SARIP</h3>
+            <p id="user-display-email" class="user-display-email">saripofficialsupport@gmail.com</p>
 
             <div class="dashboard-stats-grid">
               <div class="dash-stat-box">
-                <i class="fas fa-folder-open stat-ic"></i>
+                <div class="dash-stat-icon">
+                  <i class="fas fa-folder-open"></i>
+                </div>
                 <span class="stat-num">1</span>
                 <span class="stat-lbl" data-i18n="dashActiveProjects">Active Project</span>
               </div>
               <div class="dash-stat-box">
-                <i class="fas fa-file-invoice-dollar stat-ic"></i>
+                <div class="dash-stat-icon">
+                  <i class="fas fa-file-invoice-dollar"></i>
+                </div>
                 <span class="stat-num">0</span>
                 <span class="stat-lbl" data-i18n="dashPendingInvoices">Due Invoices</span>
               </div>
             </div>
 
             <div class="dashboard-actions">
-              <a href="contact.html" class="btn btn-primary" style="width: 100%;">
+              <a href="contact.html" class="btn btn-primary dash-btn">
                 <i class="fas fa-headset"></i> <span data-i18n="dashSupport">Request Support</span>
               </a>
-              <button type="button" class="btn btn-secondary" id="logout-btn" style="width: 100%; margin-top: 0.5rem;">
+              <button type="button" class="btn btn-secondary dash-btn" id="logout-btn">
                 <i class="fas fa-sign-out-alt"></i> <span data-i18n="dashLogout">Log Out</span>
               </button>
             </div>
