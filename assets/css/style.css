@@ -1613,11 +1613,15 @@ body.lang-bn .hero-intro-text {
    14. Footer
    -------------------------------------------------------------------------- */
 .footer {
-  background: rgba(4, 6, 12, 0.95);
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-top: 1px solid var(--border-glass);
   padding: 4.5rem 0 2rem;
   position: relative;
   z-index: 1;
+  color: var(--text-main);
+  transition: background-color var(--transition-normal), color var(--transition-normal), border-color var(--transition-normal);
 }
 
 .footer-grid {
@@ -1628,10 +1632,12 @@ body.lang-bn .hero-intro-text {
 }
 
 .footer-brand p { color: var(--text-muted); margin-top: 1rem; font-size: 0.9rem; max-width: 320px; }
-.footer-title { font-size: 1rem; font-weight: 700; margin-bottom: 1.25rem; }
+.footer-title { font-size: 1rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-main); }
 .footer-links { display: flex; flex-direction: column; gap: 0.75rem; }
-.footer-links a { color: var(--text-muted); font-size: 0.9rem; }
-.footer-bottom { text-align: center; padding-top: 2rem; border-top: 1px solid var(--border-glass); color: var(--text-dim); font-size: 0.85rem; }
+.footer-links a { color: var(--text-muted); font-size: 0.9rem; transition: color var(--transition-fast); }
+.footer-links a:hover { color: var(--accent-blue); }
+.footer-links span { color: var(--text-muted); font-size: 0.9rem; }
+.footer-bottom { text-align: center; padding-top: 2rem; border-top: 1px solid var(--border-glass); color: var(--text-muted); font-size: 0.85rem; }
 
 /* --------------------------------------------------------------------------
    14b. Auth & Dashboard Profile Card Glassmorphism Styles
