@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initHeader();
   initThemeToggle();
   initLangSwitch();
+  initThreeDotsMenu();
   initParticles();
   initCounters();
   initAccordion();
@@ -76,6 +77,145 @@ document.addEventListener('DOMContentLoaded', () => {
         applyTheme('system');
       }
     });
+  }
+
+  /* --------------------------------------------------------------------------
+     3a1. Top-Right Navbar Three-Dot (⋮) Menu Control
+     -------------------------------------------------------------------------- */
+  function initThreeDotsMenu() {
+    const btn = document.getElementById('nav-three-dots-btn');
+    if (!btn) return;
+
+    const isSubdir = window.location.pathname.includes('/services/');
+    const p = isSubdir ? '../' : '';
+
+    const menuItemsData = [
+      { id: 'home', url: `${p}index.html`, icon: 'fas fa-house', i18nKey: 'menuHome' },
+      { id: 'services', url: `${p}services.html`, icon: 'fas fa-layer-group', i18nKey: 'menuServices' },
+      { id: 'start-project', url: `${p}start-project.html`, icon: 'fas fa-rocket', i18nKey: 'menuStartProject' },
+      { id: 'projects', url: `${p}projects.html`, icon: 'fas fa-desktop', i18nKey: 'menuLivePreview' },
+      { id: 'connect', url: `${p}contact.html`, icon: 'fas fa-link', i18nKey: 'menuConnect' },
+      { id: 'settings', url: `${p}settings.html`, icon: 'fas fa-gear', i18nKey: 'menuSettings' },
+      { id: 'about', url: `${p}index.html#about`, icon: 'fas fa-user', i18nKey: 'menuAbout' },
+      { id: 'why', url: `${p}why-choose-me.html`, icon: 'fas fa-shield-halved', i18nKey: 'menuWhy' },
+      { id: 'process', url: `${p}process.html`, icon: 'fas fa-list-check', i18nKey: 'menuProcess' },
+      { id: 'faq', url: `${p}faq.html`, icon: 'fas fa-circle-question', i18nKey: 'menuFaq' }
+    ];
+
+    let container = btn.parentElement;
+    if (!container.classList.contains('three-dots-wrapper')) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'three-dots-wrapper';
+      container.insertBefore(wrapper, btn);
+      wrapper.appendChild(btn);
+      container = wrapper;
+    }
+
+    let menuEl = document.getElementById('three-dots-menu');
+    if (!menuEl) {
+      menuEl = document.createElement('div');
+      menuEl.id = 'three-dots-menu';
+      menuEl.className = 'three-dots-dropdown-menu';
+      container.appendChild(menuEl);
+    }
+
+    function renderMenuContent() {
+      menuEl.innerHTML = menuItemsData.map(item => `
+        <a href="${item.url}" class="three-dots-menu-item" data-menu-id="${item.id}">
+          <i class="${item.icon} three-dots-menu-icon"></i>
+          <span data-i18n="${item.i18nKey}">${translations[currentLang] && translations[currentLang][item.i18nKey] ? translations[currentLang][item.i18nKey] : ''}</span>
+        </a>
+      `).join('');
+      highlightActiveMenuItem();
+    }
+
+    function highlightActiveMenuItem() {
+      const currentPath = window.location.pathname.toLowerCase();
+      const currentHash = window.location.hash.toLowerCase();
+      const menuLinks = menuEl.querySelectorAll('.three-dots-menu-item');
+
+      menuLinks.forEach(link => {
+        const menuId = link.getAttribute('data-menu-id');
+        let isActive = false;
+
+        if (currentPath.endsWith('services.html') || currentPath.includes('/services/')) {
+          isActive = (menuId === 'services');
+        } else if (currentPath.endsWith('start-project.html')) {
+          isActive = (menuId === 'start-project');
+        } else if (currentPath.endsWith('projects.html') || currentPath.endsWith('project-details.html')) {
+          isActive = (menuId === 'projects');
+        } else if (currentPath.endsWith('contact.html')) {
+          isActive = (menuId === 'connect');
+        } else if (currentPath.endsWith('settings.html')) {
+          isActive = (menuId === 'settings');
+        } else if (currentPath.endsWith('why-choose-me.html')) {
+          isActive = (menuId === 'why');
+        } else if (currentPath.endsWith('process.html')) {
+          isActive = (menuId === 'process');
+        } else if (currentPath.endsWith('faq.html')) {
+          isActive = (menuId === 'faq');
+        } else {
+          if (currentHash === '#about') {
+            isActive = (menuId === 'about');
+          } else {
+            isActive = (menuId === 'home');
+          }
+        }
+
+        if (isActive) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+    }
+
+    renderMenuContent();
+
+    function toggleMenu(e) {
+      if (e) e.stopPropagation();
+      const isOpen = menuEl.classList.contains('active');
+      if (isOpen) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    }
+
+    function openMenu() {
+      highlightActiveMenuItem();
+      menuEl.classList.add('active');
+      btn.classList.add('active');
+      btn.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeMenu() {
+      menuEl.classList.remove('active');
+      btn.classList.remove('active');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+
+    btn.addEventListener('click', toggleMenu);
+
+    menuEl.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        closeMenu();
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (menuEl.classList.contains('active') && !container.contains(e.target)) {
+        closeMenu();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menuEl.classList.contains('active')) {
+        closeMenu();
+      }
+    });
+
+    window.addEventListener('hashchange', highlightActiveMenuItem);
   }
 
   function initThemeToggle() {

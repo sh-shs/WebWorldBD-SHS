@@ -534,6 +534,101 @@ p {
 }
 
 /* --------------------------------------------------------------------------
+   4b. Top-Right Three-Dot Navigation Dropdown Menu
+   -------------------------------------------------------------------------- */
+.three-dots-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.three-dots-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 0.65rem);
+  right: 0;
+  width: 250px;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  padding: 0.6rem 0.5rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(56, 189, 248, 0.1);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px) scale(0.96);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+[data-theme="light"] .three-dots-dropdown-menu {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(203, 213, 225, 0.8);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12), 0 0 20px rgba(14, 165, 233, 0.08);
+}
+
+.three-dots-dropdown-menu.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+.three-dots-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  text-decoration: none;
+  font-size: 0.92rem;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.three-dots-menu-icon {
+  font-size: 1.05rem;
+  width: 22px;
+  text-align: center;
+  color: var(--text-muted);
+  transition: color var(--transition-fast);
+}
+
+.three-dots-menu-item:hover {
+  background: rgba(56, 189, 248, 0.12);
+  color: var(--accent-blue);
+}
+
+.three-dots-menu-item:hover .three-dots-menu-icon {
+  color: var(--accent-blue);
+}
+
+.three-dots-menu-item.active {
+  background: rgba(56, 189, 248, 0.16);
+  color: var(--accent-blue);
+  font-weight: 700;
+}
+
+.three-dots-menu-item.active .three-dots-menu-icon {
+  color: var(--accent-blue);
+}
+
+.three-dots-menu-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0.35rem;
+  top: 25%;
+  bottom: 25%;
+  width: 3px;
+  background: var(--accent-blue);
+  border-radius: 2px;
+  box-shadow: 0 0 8px var(--accent-blue);
+}
+
+/* --------------------------------------------------------------------------
    5. Hero Section & Profile Centered Design
    -------------------------------------------------------------------------- */
 .hero {
