@@ -176,21 +176,21 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'services', url: `${p}services.html`, icon: 'fas fa-layer-group', i18nKey: 'menuServices' },
         { id: 'start-project', url: `${p}start-project.html`, icon: 'fas fa-rocket', i18nKey: 'menuStartProject' },
         { id: 'projects', url: `${p}projects.html`, icon: 'fas fa-desktop', i18nKey: 'menuLivePreview' },
-        { id: 'connect', url: `${p}contact.html`, icon: 'fas fa-link', i18nKey: 'menuConnect' }
-      ];
-
-      const group2 = [
-        isLoggedIn
-          ? { id: 'logout', action: 'logout', icon: 'fas fa-right-from-bracket', i18nKey: 'menuLogout' }
-          : { id: 'account-auth', url: `${p}account.html`, icon: 'fas fa-right-to-bracket', i18nKey: 'menuLoginRegister' },
+        { id: 'connect', url: `${p}contact.html`, icon: 'fas fa-link', i18nKey: 'menuConnect' },
         { id: 'settings', url: `${p}settings.html`, icon: 'fas fa-gear', i18nKey: 'menuSettings' }
       ];
 
-      const group3 = [
+      const group2 = [
         { id: 'about', url: `${p}index.html#about`, icon: 'fas fa-user', i18nKey: 'menuAbout' },
         { id: 'why', url: `${p}why-choose-me.html`, icon: 'fas fa-shield-halved', i18nKey: 'menuWhy' },
         { id: 'process', url: `${p}process.html`, icon: 'fas fa-list-check', i18nKey: 'menuProcess' },
         { id: 'faq', url: `${p}faq.html`, icon: 'fas fa-circle-question', i18nKey: 'menuFaq' }
+      ];
+
+      const group3 = [
+        isLoggedIn
+          ? { id: 'logout', action: 'logout', icon: 'fas fa-right-from-bracket', i18nKey: 'menuLogout' }
+          : { id: 'account-auth', url: `${p}account.html`, icon: 'fas fa-right-to-bracket', i18nKey: 'menuLoginRegister' }
       ];
 
       let html = '';
@@ -317,6 +317,8 @@ document.addEventListener('DOMContentLoaded', () => {
         activeMenuId = 'process';
       } else if (normPath === '/faq') {
         activeMenuId = 'faq';
+      } else if (normPath === '/account') {
+        activeMenuId = 'account-auth';
       }
 
       menuLinks.forEach(link => {
