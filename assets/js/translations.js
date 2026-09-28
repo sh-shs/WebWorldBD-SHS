@@ -184,6 +184,7 @@ const translations = {
     /* Projects */
     projectsBadge: "Featured Work",
     projectsHeading: "Recent Works & Digital Solutions",
+    projectsSub: "Explore live web applications, e-commerce systems, education platforms, and interactive creative web projects crafted by WebWorldBD.",
     filterAll: "All Projects",
     filterEcommerce: "E-Commerce",
     filterAiEdu: "AI & Education",
@@ -504,6 +505,7 @@ const translations = {
     /* Projects */
     projectsBadge: "পোর্টফোলিও",
     projectsHeading: "সাম্প্রতিক সম্পন্নকৃত প্রজেক্টসমূহ",
+    projectsSub: "WebWorldBD এর তৈরি লাইভ ওয়েব অ্যাপ্লিকেশন, ই-কমার্স সিস্টেম, শিক্ষা প্ল্যাটফর্ম এবং ইন্টারঅ্যাক্টিভ ক্রিয়েটিভ ওয়েব প্রজেক্টসমূহ দেখুন।",
     filterAll: "সকল প্রজেক্ট",
     filterEcommerce: "ই-কমার্স",
     filterAiEdu: "এআই ও শিক্ষা",
