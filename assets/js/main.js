@@ -186,7 +186,8 @@ document.addEventListener('DOMContentLoaded', () => {
           : { id: 'about', url: `${p}index.html#about`, icon: 'fas fa-user', i18nKey: 'menuAbout' },
         { id: 'why', url: `${p}why-choose-me.html`, icon: 'fas fa-shield-halved', i18nKey: 'menuWhy' },
         { id: 'process', url: `${p}process.html`, icon: 'fas fa-list-check', i18nKey: 'menuProcess' },
-        { id: 'faq', url: `${p}faq.html`, icon: 'fas fa-circle-question', i18nKey: 'menuFaq' }
+        { id: 'faq', url: `${p}faq.html`, icon: 'fas fa-circle-question', i18nKey: 'menuFaq' },
+        { id: 'privacy-policy', url: 'https://privacy-policy-5dn.pages.dev/', icon: 'fas fa-user-shield', i18nKey: 'menuPrivacyPolicy', external: true }
       ];
 
       const group3 = [
@@ -238,8 +239,9 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
           }
 
+          const targetAttr = item.external ? 'target="_blank" rel="noopener noreferrer"' : '';
           return `
-            <a href="${item.url}" class="three-dots-menu-item" data-menu-id="${item.id}">
+            <a href="${item.url}" ${targetAttr} class="three-dots-menu-item" data-menu-id="${item.id}">
               <div class="three-dots-icon-box">
                 <i class="${item.icon} three-dots-menu-icon"></i>
               </div>
