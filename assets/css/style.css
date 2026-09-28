@@ -548,30 +548,57 @@ p {
 
 .three-dots-dropdown-menu {
   position: absolute;
-  top: calc(100% + 0.65rem);
+  top: calc(100% + 0.75rem);
   right: 0;
-  width: 280px;
+  width: 290px;
   max-width: calc(100vw - 24px);
-  max-height: calc(100vh - 90px);
+  max-height: 80vh;
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  background: #0F172A;
+  background: rgba(15, 23, 42, 0.92);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--border-glass);
-  border-radius: 18px;
+  border-radius: 20px;
   padding: 0.85rem;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8), 0 0 25px rgba(56, 189, 248, 0.25);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75), 0 0 30px rgba(56, 189, 248, 0.2);
   opacity: 0;
   visibility: hidden;
   transform-origin: top right;
-  transform: scale(0.92);
-  transition: opacity 0.18s ease-out, transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.18s;
+  transform: translateY(-10px) scale(0.95);
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.25s;
   z-index: 12000;
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
+}
+
+/* Custom Slim Scrollbar for Three-Dots Dropdown Menu */
+.three-dots-dropdown-menu::-webkit-scrollbar {
+  width: 5px;
+}
+
+.three-dots-dropdown-menu::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 10px;
+  margin: 8px 0;
+}
+
+.three-dots-dropdown-menu::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  transition: background 0.2s ease;
+}
+
+.three-dots-dropdown-menu::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-blue);
+}
+
+/* Firefox scrollbar styling */
+.three-dots-dropdown-menu {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 
 /* Signature gradient border highlight */
@@ -579,7 +606,7 @@ p {
   content: '';
   position: absolute;
   inset: -1px;
-  border-radius: 19px;
+  border-radius: 21px;
   padding: 1px;
   background: var(--gradient-primary);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -587,40 +614,45 @@ p {
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
-  opacity: 0.5;
+  opacity: 0.55;
   transition: opacity var(--transition-fast);
 }
 
 [data-theme="light"] .three-dots-dropdown-menu {
-  background: #FFFFFF;
+  background: rgba(255, 255, 255, 0.95);
   border-color: rgba(203, 213, 225, 0.8);
-  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.2), 0 0 20px rgba(14, 165, 233, 0.15);
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.18), 0 0 25px rgba(14, 165, 233, 0.15);
+  scrollbar-color: rgba(15, 23, 42, 0.2) transparent;
+}
+
+[data-theme="light"] .three-dots-dropdown-menu::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.2);
 }
 
 [data-theme="light"] .three-dots-dropdown-menu::before {
-  opacity: 0.4;
+  opacity: 0.45;
 }
 
 .three-dots-dropdown-menu.active {
   opacity: 1;
   visibility: visible;
-  transform: scale(1);
+  transform: translateY(0) scale(1);
 }
 
 .three-dots-group {
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.25rem;
 }
 
 .three-dots-menu-divider {
   height: 1px;
   background: var(--border-glass);
-  margin: 0.35rem 0;
+  margin: 0.4rem 0;
 }
 
 [data-theme="light"] .three-dots-menu-divider {
-  background: rgba(15, 23, 42, 0.1);
+  background: rgba(15, 23, 42, 0.08);
 }
 
 /* User Profile Header at top of Three-Dot Menu */
@@ -628,24 +660,31 @@ p {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.6rem 0.75rem;
+  padding: 0.65rem 0.8rem;
   margin-bottom: 0.35rem;
   background: rgba(56, 189, 248, 0.08);
-  border: 1px solid rgba(56, 189, 248, 0.2);
-  border-radius: 12px;
+  border: 1px solid rgba(56, 189, 248, 0.22);
+  border-radius: 14px;
+  transition: transform var(--transition-fast), background-color var(--transition-fast);
+}
+
+.three-dots-user-header:hover {
+  background: rgba(56, 189, 248, 0.14);
+  transform: translateY(-1px);
 }
 
 .three-dots-user-avatar {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
-  border: 1.5px solid var(--accent-blue);
+  border: 2px solid var(--accent-blue);
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--bg-dark);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
 }
 
 .three-dots-avatar-img {
@@ -663,7 +702,7 @@ p {
   background: var(--gradient-primary);
   color: #ffffff;
   font-weight: 800;
-  font-size: 1rem;
+  font-size: 1.05rem;
 }
 
 .three-dots-user-info {
@@ -673,7 +712,7 @@ p {
 }
 
 .three-dots-user-name {
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   font-weight: 800;
   color: var(--text-main);
   white-space: nowrap;
@@ -682,7 +721,7 @@ p {
 }
 
 .three-dots-user-email {
-  font-size: 0.75rem;
+  font-size: 0.76rem;
   color: var(--accent-blue);
   white-space: nowrap;
   overflow: hidden;
@@ -692,14 +731,14 @@ p {
 .three-dots-menu-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem 0.65rem;
-  border-radius: 10px;
+  gap: 0.8rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 12px;
   color: var(--text-main);
   text-decoration: none;
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   font-weight: 600;
-  transition: all var(--transition-fast);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   width: 100%;
   background: transparent;
@@ -710,16 +749,16 @@ p {
 
 /* Soft-tinted squircle icon container */
 .three-dots-icon-box {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
   background: rgba(56, 189, 248, 0.1);
   border: 1px solid rgba(56, 189, 248, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: all var(--transition-fast);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 [data-theme="light"] .three-dots-icon-box {
@@ -728,29 +767,30 @@ p {
 }
 
 .three-dots-menu-icon {
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   color: var(--accent-blue);
-  transition: color var(--transition-fast), transform var(--transition-fast);
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
 .three-dots-menu-item:hover {
   background: rgba(56, 189, 248, 0.12);
   color: var(--accent-blue);
+  transform: translateX(4px);
 }
 
 .three-dots-menu-item:hover .three-dots-icon-box {
   background: var(--gradient-primary);
   border-color: transparent;
-  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.35);
+  box-shadow: 0 4px 14px rgba(56, 189, 248, 0.4);
 }
 
 .three-dots-menu-item:hover .three-dots-menu-icon {
   color: #ffffff;
-  transform: scale(1.08);
+  transform: scale(1.1);
 }
 
 .three-dots-menu-item.active {
-  background: rgba(56, 189, 248, 0.15);
+  background: rgba(56, 189, 248, 0.16);
   color: var(--accent-blue);
   font-weight: 700;
 }
@@ -758,7 +798,7 @@ p {
 .three-dots-menu-item.active .three-dots-icon-box {
   background: var(--gradient-primary);
   border-color: transparent;
-  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.35);
 }
 
 .three-dots-menu-item.active .three-dots-menu-icon {
@@ -769,23 +809,22 @@ p {
   content: '';
   position: absolute;
   left: 2px;
-  top: 20%;
-  bottom: 20%;
+  top: 18%;
+  bottom: 18%;
   width: 3.5px;
   background: var(--accent-blue);
-  border-radius: 3px;
-  box-shadow: 0 0 8px var(--accent-blue);
+  border-radius: 4px;
+  box-shadow: 0 0 10px var(--accent-blue);
 }
 
 /* Desktop & Larger Screens (min-width: 768px) */
 @media screen and (min-width: 768px) {
   .three-dots-dropdown-menu {
-    width: 340px;
+    width: 330px;
     max-width: calc(100vw - 32px);
-    max-height: 90vh;
-    overflow-y: auto;
-    padding: 1rem;
-    gap: 0.45rem;
+    max-height: 80vh;
+    padding: 0.95rem;
+    gap: 0.4rem;
   }
 
   .three-dots-user-header {
@@ -809,8 +848,8 @@ p {
   }
 
   .three-dots-menu-item {
-    padding: 0.6rem 0.75rem;
-    font-size: 0.95rem;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.925rem;
     border-radius: 12px;
     gap: 0.85rem;
   }
