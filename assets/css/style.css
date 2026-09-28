@@ -552,10 +552,12 @@ p {
   right: 0;
   width: 290px;
   max-width: calc(100vw - 24px);
-  max-height: 80vh;
+  max-height: calc(100vh - 100px);
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
   background: rgba(15, 23, 42, 0.92);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
@@ -580,25 +582,27 @@ p {
 }
 
 .three-dots-dropdown-menu::-webkit-scrollbar-track {
-  background: transparent;
+  background: rgba(15, 23, 42, 0.4);
   border-radius: 10px;
   margin: 8px 0;
 }
 
 .three-dots-dropdown-menu::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(56, 189, 248, 0.4);
   border-radius: 10px;
-  transition: background 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
 }
 
 .three-dots-dropdown-menu::-webkit-scrollbar-thumb:hover {
   background: var(--accent-blue);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
 }
 
 /* Firefox scrollbar styling */
 .three-dots-dropdown-menu {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  scrollbar-color: rgba(56, 189, 248, 0.4) transparent;
 }
 
 /* Signature gradient border highlight */
@@ -822,7 +826,7 @@ p {
   .three-dots-dropdown-menu {
     width: 330px;
     max-width: calc(100vw - 32px);
-    max-height: 80vh;
+    max-height: calc(100vh - 100px);
     padding: 0.95rem;
     gap: 0.4rem;
   }
@@ -2556,7 +2560,7 @@ body.lang-bn .hero-intro-text {
   .three-dots-dropdown-menu {
     width: 260px;
     max-width: calc(100vw - 20px);
-    max-height: calc(100vh - 85px);
+    max-height: calc(100vh - 90px);
     padding: 0.65rem;
   }
 
