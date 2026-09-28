@@ -12,6 +12,45 @@ document.addEventListener('DOMContentLoaded', () => {
   applyTheme(currentTheme);
   applyLanguage(currentLang);
 
+  /* Global Toast Notification Helper */
+  function showToast(message, type = 'info') {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'toast-container';
+      container.className = 'webworldbd-toast-container';
+      document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `webworldbd-toast toast-${type}`;
+
+    let iconClass = 'fas fa-circle-info';
+    if (type === 'success') iconClass = 'fas fa-circle-check';
+    if (type === 'error') iconClass = 'fas fa-circle-exclamation';
+
+    toast.innerHTML = `
+      <i class="${iconClass} toast-icon"></i>
+      <span class="toast-message">${message}</span>
+    `;
+
+    container.appendChild(toast);
+
+    requestAnimationFrame(() => {
+      toast.classList.add('show');
+    });
+
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => {
+        if (toast.parentElement) {
+          toast.parentElement.removeChild(toast);
+        }
+      }, 300);
+    }, 3500);
+  }
+  window.showToast = showToast;
+
   // Initialize UI Features
   initHeader();
   initThemeToggle();
@@ -111,19 +150,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const isSubdir = window.location.pathname.includes('/services/');
     const p = isSubdir ? '../' : '';
 
-    const menuItemsData = [
-      { id: 'home', url: `${p}index.html`, icon: 'fas fa-house', i18nKey: 'menuHome' },
-      { id: 'services', url: `${p}services.html`, icon: 'fas fa-layer-group', i18nKey: 'menuServices' },
-      { id: 'start-project', url: `${p}start-project.html`, icon: 'fas fa-rocket', i18nKey: 'menuStartProject' },
-      { id: 'projects', url: `${p}projects.html`, icon: 'fas fa-desktop', i18nKey: 'menuLivePreview' },
-      { id: 'connect', url: `${p}contact.html`, icon: 'fas fa-link', i18nKey: 'menuConnect' },
-      { id: 'settings', url: `${p}settings.html`, icon: 'fas fa-gear', i18nKey: 'menuSettings' },
-      { id: 'about', url: `${p}index.html#about`, icon: 'fas fa-user', i18nKey: 'menuAbout' },
-      { id: 'why', url: `${p}why-choose-me.html`, icon: 'fas fa-shield-halved', i18nKey: 'menuWhy' },
-      { id: 'process', url: `${p}process.html`, icon: 'fas fa-list-check', i18nKey: 'menuProcess' },
-      { id: 'faq', url: `${p}faq.html`, icon: 'fas fa-circle-question', i18nKey: 'menuFaq' }
-    ];
-
     let container = btn.parentElement;
     if (!container.classList.contains('three-dots-wrapper')) {
       const wrapper = document.createElement('div');
@@ -142,13 +168,124 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderMenuContent() {
-      menuEl.innerHTML = menuItemsData.map(item => `
-        <a href="${item.url}" class="three-dots-menu-item" data-menu-id="${item.id}">
-          <i class="${item.icon} three-dots-menu-icon"></i>
-          <span data-i18n="${item.i18nKey}">${translations[currentLang] && translations[currentLang][item.i18nKey] ? translations[currentLang][item.i18nKey] : ''}</span>
-        </a>
-      `).join('');
+      const user = window.currentUserState;
+      const isLoggedIn = !!user;
+
+      const group1 = [
+        { id: 'home', url: `${p}index.html`, icon: 'fas fa-house', i18nKey: 'menuHome' },
+        { id: 'services', url: `${p}services.html`, icon: 'fas fa-layer-group', i18nKey: 'menuServices' },
+        { id: 'start-project', url: `${p}start-project.html`, icon: 'fas fa-rocket', i18nKey: 'menuStartProject' },
+        { id: 'projects', url: `${p}projects.html`, icon: 'fas fa-desktop', i18nKey: 'menuLivePreview' },
+        { id: 'connect', url: `${p}contact.html`, icon: 'fas fa-link', i18nKey: 'menuConnect' }
+      ];
+
+      const group2 = [
+        isLoggedIn
+          ? { id: 'logout', action: 'logout', icon: 'fas fa-right-from-bracket', i18nKey: 'menuLogout' }
+          : { id: 'account-auth', url: `${p}account.html`, icon: 'fas fa-right-to-bracket', i18nKey: 'menuLoginRegister' },
+        { id: 'settings', url: `${p}settings.html`, icon: 'fas fa-gear', i18nKey: 'menuSettings' }
+      ];
+
+      const group3 = [
+        { id: 'about', url: `${p}index.html#about`, icon: 'fas fa-user', i18nKey: 'menuAbout' },
+        { id: 'why', url: `${p}why-choose-me.html`, icon: 'fas fa-shield-halved', i18nKey: 'menuWhy' },
+        { id: 'process', url: `${p}process.html`, icon: 'fas fa-list-check', i18nKey: 'menuProcess' },
+        { id: 'faq', url: `${p}faq.html`, icon: 'fas fa-circle-question', i18nKey: 'menuFaq' }
+      ];
+
+      let html = '';
+
+      // User profile header at top of menu if logged in
+      if (isLoggedIn) {
+        const displayName = user.displayName || user.email || 'Client User';
+        const displayEmail = user.email || '';
+        const firstChar = displayName.trim().charAt(0).toUpperCase() || 'U';
+
+        let avatarHtml = `<div class="three-dots-avatar-initial">${firstChar}</div>`;
+        if (user.photoURL) {
+          avatarHtml = `<img src="${user.photoURL}" alt="${displayName}" class="three-dots-avatar-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" /><div class="three-dots-avatar-initial" style="display:none;">${firstChar}</div>`;
+        }
+
+        html += `
+          <div class="three-dots-user-header">
+            <div class="three-dots-user-avatar">
+              ${avatarHtml}
+            </div>
+            <div class="three-dots-user-info">
+              <span class="three-dots-user-name">${displayName}</span>
+              <span class="three-dots-user-email">${displayEmail}</span>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderGroupHtml(items) {
+        return items.map(item => {
+          const label = translations[currentLang] && translations[currentLang][item.i18nKey]
+            ? translations[currentLang][item.i18nKey]
+            : '';
+
+          if (item.action === 'logout') {
+            return `
+              <button type="button" class="three-dots-menu-item three-dots-logout-btn" data-menu-id="${item.id}">
+                <div class="three-dots-icon-box">
+                  <i class="${item.icon} three-dots-menu-icon"></i>
+                </div>
+                <span data-i18n="${item.i18nKey}">${label}</span>
+              </button>
+            `;
+          }
+
+          return `
+            <a href="${item.url}" class="three-dots-menu-item" data-menu-id="${item.id}">
+              <div class="three-dots-icon-box">
+                <i class="${item.icon} three-dots-menu-icon"></i>
+              </div>
+              <span data-i18n="${item.i18nKey}">${label}</span>
+            </a>
+          `;
+        }).join('');
+      }
+
+      html += `<div class="three-dots-group">${renderGroupHtml(group1)}</div>`;
+      html += `<div class="three-dots-menu-divider"></div>`;
+      html += `<div class="three-dots-group">${renderGroupHtml(group2)}</div>`;
+      html += `<div class="three-dots-menu-divider"></div>`;
+      html += `<div class="three-dots-group">${renderGroupHtml(group3)}</div>`;
+
+      menuEl.innerHTML = html;
+      attachMenuClickListeners();
       highlightActiveMenuItem();
+    }
+
+    function attachMenuClickListeners() {
+      const links = menuEl.querySelectorAll('a.three-dots-menu-item');
+      links.forEach(a => {
+        a.addEventListener('click', () => {
+          closeMenu();
+        });
+      });
+
+      const logoutBtn = menuEl.querySelector('.three-dots-logout-btn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          closeMenu();
+          const mod = window.FirebaseModule;
+          if (mod && mod.auth && mod.signOut) {
+            mod.signOut(mod.auth).then(() => {
+              const msg = currentLang === 'bn' ? 'সফলভাবে লগআউট করা হয়েছে।' : 'Logged out successfully.';
+              if (window.showToast) {
+                window.showToast(msg, 'info');
+              }
+            }).catch(err => {
+              if (window.showToast) {
+                window.showToast(err.message || 'Logout error', 'error');
+              }
+            });
+          }
+        });
+      }
     }
 
     function highlightActiveMenuItem() {
@@ -193,6 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     renderMenuContent();
+    window.refreshThreeDotsMenu = renderMenuContent;
 
     function toggleMenu(e) {
       if (e) e.stopPropagation();
@@ -314,6 +452,11 @@ document.addEventListener('DOMContentLoaded', () => {
     langRadios.forEach(radio => {
       radio.checked = (radio.value === lang);
     });
+
+    // Re-render three-dots menu
+    if (window.refreshThreeDotsMenu) {
+      window.refreshThreeDotsMenu();
+    }
 
     // Re-render dynamic sections if present
     if (document.getElementById('services-grid')) renderServices();
@@ -1696,11 +1839,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Sync Settings Page Account View
             updateSettingsAccountView(user);
+
+            // Re-render three-dots menu
+            if (window.refreshThreeDotsMenu) window.refreshThreeDotsMenu();
           } else {
             window.currentUserState = null;
             accountNavSpans.forEach(span => { span.textContent = translations[currentLang].navAccount; });
 
             if (accountSubEl) accountSubEl.textContent = translations[currentLang].accountSub;
+
+            // Re-render three-dots menu
+            if (window.refreshThreeDotsMenu) window.refreshThreeDotsMenu();
 
             if (userDashView) {
               userDashView.style.display = 'none';
