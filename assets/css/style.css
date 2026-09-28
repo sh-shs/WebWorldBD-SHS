@@ -2429,7 +2429,31 @@ body.lang-bn .hero-intro-text {
     padding-right: 1.25rem;
   }
   .about-layout-grid {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .about-column {
+    display: contents;
+  }
+  .about-block-card.card-cyan { order: 1; }
+  .about-block-card.card-purple { order: 2; }
+  .about-block-card.card-blue { order: 3; }
+  .about-block-card.card-policy { order: 4; }
+  .about-block-card {
+    padding: 1.5rem 1.25rem;
+  }
+  .about-block-desc {
+    font-size: 0.975rem;
+    line-height: 1.75;
+  }
+  .about-card-title {
+    font-size: 1.25rem;
+  }
+  .about-highlight,
+  .about-highlight-danger {
+    max-width: 100%;
+    word-break: break-word;
   }
   .tech-grid {
     grid-template-columns: repeat(2, 1fr);
