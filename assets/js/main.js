@@ -107,6 +107,11 @@ document.addEventListener('DOMContentLoaded', () => {
     themeRadios.forEach(radio => {
       radio.checked = (radio.value === theme);
     });
+
+    // Re-render three-dots menu
+    if (window.refreshThreeDotsMenu) {
+      window.refreshThreeDotsMenu();
+    }
   }
 
   // Listen to system color scheme changes if system preference is active
@@ -177,7 +182,9 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'start-project', url: `${p}start-project.html`, icon: 'fas fa-rocket', i18nKey: 'menuStartProject' },
         { id: 'projects', url: `${p}projects.html`, icon: 'fas fa-desktop', i18nKey: 'menuLivePreview' },
         { id: 'connect', url: `${p}contact.html`, icon: 'fas fa-link', i18nKey: 'menuConnect' },
-        { id: 'settings', url: `${p}settings.html`, icon: 'fas fa-gear', i18nKey: 'menuSettings' }
+        { id: 'settings', url: `${p}settings.html`, icon: 'fas fa-gear', i18nKey: 'menuSettings' },
+        { id: 'theme', action: 'theme', icon: currentTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun', i18nKey: 'menuTheme' },
+        { id: 'language', action: 'language', icon: 'fas fa-globe', i18nKey: 'menuLanguage' }
       ];
 
       const group2 = [
@@ -241,6 +248,28 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
           }
 
+          if (item.action === 'theme') {
+            return `
+              <button type="button" class="three-dots-menu-item three-dots-theme-btn" data-menu-id="${item.id}">
+                <div class="three-dots-icon-box">
+                  <i class="${item.icon} three-dots-menu-icon"></i>
+                </div>
+                <span data-i18n="${item.i18nKey}">${label}</span>
+              </button>
+            `;
+          }
+
+          if (item.action === 'language') {
+            return `
+              <button type="button" class="three-dots-menu-item three-dots-lang-btn" data-menu-id="${item.id}">
+                <div class="three-dots-icon-box">
+                  <i class="${item.icon} three-dots-menu-icon"></i>
+                </div>
+                <span data-i18n="${item.i18nKey}">${label}</span>
+              </button>
+            `;
+          }
+
           const targetAttr = item.external ? 'target="_blank" rel="noopener noreferrer"' : '';
           return `
             <a href="${item.url}" ${targetAttr} class="three-dots-menu-item" data-menu-id="${item.id}">
@@ -271,6 +300,26 @@ document.addEventListener('DOMContentLoaded', () => {
           closeMenu();
         });
       });
+
+      const themeBtn = menuEl.querySelector('.three-dots-theme-btn');
+      if (themeBtn) {
+        themeBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+          applyTheme(nextTheme);
+        });
+      }
+
+      const langBtn = menuEl.querySelector('.three-dots-lang-btn');
+      if (langBtn) {
+        langBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const nextLang = currentLang === 'en' ? 'bn' : 'en';
+          applyLanguage(nextLang);
+        });
+      }
 
       const logoutBtn = menuEl.querySelector('.three-dots-logout-btn');
       if (logoutBtn) {
