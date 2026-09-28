@@ -552,7 +552,7 @@ p {
   right: 0;
   width: 290px;
   max-width: calc(100vw - 24px);
-  max-height: calc(100vh - 100px);
+  max-height: 80vh;
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
@@ -749,6 +749,7 @@ p {
   border: none;
   cursor: pointer;
   text-align: left;
+  font-family: inherit;
 }
 
 /* Soft-tinted squircle icon container */
@@ -826,7 +827,7 @@ p {
   .three-dots-dropdown-menu {
     width: 330px;
     max-width: calc(100vw - 32px);
-    max-height: calc(100vh - 100px);
+    max-height: 80vh;
     padding: 0.95rem;
     gap: 0.4rem;
   }
@@ -2560,7 +2561,7 @@ body.lang-bn .hero-intro-text {
   .three-dots-dropdown-menu {
     width: 260px;
     max-width: calc(100vw - 20px);
-    max-height: calc(100vh - 90px);
+    max-height: 80vh;
     padding: 0.65rem;
   }
 
