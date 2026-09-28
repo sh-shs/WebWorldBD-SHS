@@ -552,8 +552,10 @@ p {
   right: 0;
   width: 280px;
   max-width: calc(100vw - 24px);
-  max-height: calc(100vh - 100px);
+  max-height: calc(100vh - 90px);
   overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
   background: #0F172A;
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
@@ -566,7 +568,7 @@ p {
   transform-origin: top right;
   transform: scale(0.92);
   transition: opacity 0.18s ease-out, transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.18s;
-  z-index: 1050;
+  z-index: 12000;
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
@@ -2448,6 +2450,27 @@ body.lang-bn .hero-intro-text {
 }
 
 @media (max-width: 768px) {
+  .three-dots-dropdown-menu {
+    width: 260px;
+    max-width: calc(100vw - 20px);
+    max-height: calc(100vh - 85px);
+    padding: 0.65rem;
+  }
+
+  .three-dots-menu-item {
+    padding: 0.45rem 0.55rem;
+    font-size: 0.85rem;
+  }
+
+  .three-dots-icon-box {
+    width: 28px;
+    height: 28px;
+  }
+
+  .three-dots-menu-icon {
+    font-size: 0.85rem;
+  }
+
   .container {
     padding-left: 1.25rem;
     padding-right: 1.25rem;
