@@ -181,7 +181,9 @@ document.addEventListener('DOMContentLoaded', () => {
       ];
 
       const group2 = [
-        { id: 'about', url: `${p}index.html#about`, icon: 'fas fa-user', i18nKey: 'menuAbout' },
+        isLoggedIn
+          ? { id: 'profile', url: `${p}account.html`, icon: 'fas fa-user-gear', i18nKey: 'menuProfile' }
+          : { id: 'about', url: `${p}index.html#about`, icon: 'fas fa-user', i18nKey: 'menuAbout' },
         { id: 'why', url: `${p}why-choose-me.html`, icon: 'fas fa-shield-halved', i18nKey: 'menuWhy' },
         { id: 'process', url: `${p}process.html`, icon: 'fas fa-list-check', i18nKey: 'menuProcess' },
         { id: 'faq', url: `${p}faq.html`, icon: 'fas fa-circle-question', i18nKey: 'menuFaq' }
@@ -197,9 +199,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // User profile header at top of menu if logged in
       if (isLoggedIn) {
-        const displayName = user.displayName || user.email || 'Client User';
+        const displayName = user.displayName || (user.email ? user.email.split('@')[0] : 'Client User');
         const displayEmail = user.email || '';
-        const firstChar = displayName.trim().charAt(0).toUpperCase() || 'U';
+        const firstChar = (displayName.trim().charAt(0) || 'U').toUpperCase();
 
         let avatarHtml = `<div class="three-dots-avatar-initial">${firstChar}</div>`;
         if (user.photoURL) {
@@ -207,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         html += `
-          <div class="three-dots-user-header">
+          <a href="${p}account.html" class="three-dots-user-header">
             <div class="three-dots-user-avatar">
               ${avatarHtml}
             </div>
@@ -215,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <span class="three-dots-user-name">${displayName}</span>
               <span class="three-dots-user-email">${displayEmail}</span>
             </div>
-          </div>
+          </a>
         `;
       }
 
@@ -271,6 +273,10 @@ document.addEventListener('DOMContentLoaded', () => {
         logoutBtn.addEventListener('click', (e) => {
           e.preventDefault();
           closeMenu();
+          window.currentUserState = null;
+          if (window.refreshThreeDotsMenu) {
+            window.refreshThreeDotsMenu();
+          }
           const mod = window.FirebaseModule;
           if (mod && mod.auth && mod.signOut) {
             mod.signOut(mod.auth).then(() => {
@@ -318,7 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (normPath === '/faq') {
         activeMenuId = 'faq';
       } else if (normPath === '/account') {
-        activeMenuId = 'account-auth';
+        activeMenuId = isLoggedIn ? 'profile' : 'account-auth';
       }
 
       menuLinks.forEach(link => {
@@ -426,6 +432,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const subKey = isUserLoggedIn ? 'accountSubLoggedIn' : 'accountSub';
         if (translations[lang] && translations[lang][subKey]) {
           el.textContent = translations[lang][subKey];
+        }
+      } else if (key === 'navAccount') {
+        if (isUserLoggedIn && window.currentUserState) {
+          const u = window.currentUserState;
+          el.textContent = u.displayName || (u.email ? u.email.split('@')[0] : 'User');
+        } else if (translations[lang] && translations[lang][key]) {
+          el.textContent = translations[lang][key];
         }
       } else if (translations[lang] && translations[lang][key]) {
         if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
@@ -1517,6 +1530,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (logoutBtn) {
       logoutBtn.addEventListener('click', () => {
+        window.currentUserState = null;
+        if (window.refreshThreeDotsMenu) {
+          window.refreshThreeDotsMenu();
+        }
         const mod = window.FirebaseModule;
         if (mod && mod.auth && mod.signOut) {
           mod.signOut(mod.auth).then(() => {
@@ -1528,6 +1545,12 @@ document.addEventListener('DOMContentLoaded', () => {
           }).catch(err => {
             showAlert(getFirebaseErrorMessage(err ? err.code : ''), 'error');
           });
+        } else {
+          if (userDashView) userDashView.style.display = 'none';
+          const infoNotice = document.getElementById('auth-info-notice');
+          if (infoNotice) infoNotice.style.display = 'flex';
+          switchAuthTab('register');
+          showAlert(currentLang === 'bn' ? 'সফলভাবে লগআউট করা হয়েছে।' : 'Logged out successfully.', 'info');
         }
       });
     }
@@ -1874,7 +1897,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       } else {
         checkAttempts++;
-        if (checkAttempts > 40) {
+        if (checkAttempts > 200) {
           if (authLoader) authLoader.style.display = 'none';
           if (infoNotice) infoNotice.style.display = 'flex';
           if (tabsWrapper) tabsWrapper.style.display = 'flex';
@@ -2060,11 +2083,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (logoutSettingsBtn) {
       logoutSettingsBtn.addEventListener('click', () => {
+        window.currentUserState = null;
+        if (window.refreshThreeDotsMenu) {
+          window.refreshThreeDotsMenu();
+        }
+        updateSettingsAccountView(null);
         const mod = window.FirebaseModule;
         if (mod && mod.auth && mod.signOut) {
           mod.signOut(mod.auth).then(() => {
             alert(currentLang === 'bn' ? 'সফলভাবে লগআউট করা হয়েছে।' : 'Logged out successfully.');
           });
+        } else {
+          alert(currentLang === 'bn' ? 'সফলভাবে লগআউট করা হয়েছে।' : 'Logged out successfully.');
         }
       });
     }
