@@ -80,6 +80,28 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* --------------------------------------------------------------------------
+     3a. URL Path Normalization Helper
+     -------------------------------------------------------------------------- */
+  function getNormalizedPath() {
+    let path = window.location.pathname.toLowerCase();
+    if (path.length > 1 && path.endsWith('/')) {
+      path = path.slice(0, -1);
+    }
+    if (path.endsWith('.html')) {
+      path = path.slice(0, -5);
+    }
+    if (path.endsWith('/index')) {
+      path = path.slice(0, -6);
+    } else if (path === '/index') {
+      path = '';
+    }
+    if (path === '' || path === '/') {
+      return '/';
+    }
+    return path;
+  }
+
+  /* --------------------------------------------------------------------------
      3a1. Top-Right Navbar Three-Dot (⋮) Menu Control
      -------------------------------------------------------------------------- */
   function initThreeDotsMenu() {
@@ -130,39 +152,39 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function highlightActiveMenuItem() {
-      const currentPath = window.location.pathname.toLowerCase();
+      const normPath = getNormalizedPath();
       const currentHash = window.location.hash.toLowerCase();
       const menuLinks = menuEl.querySelectorAll('.three-dots-menu-item');
 
+      let activeMenuId = null;
+
+      if (normPath === '/') {
+        if (currentHash === '#about') {
+          activeMenuId = 'about';
+        } else {
+          activeMenuId = 'home';
+        }
+      } else if (normPath === '/services' || normPath.startsWith('/services/')) {
+        activeMenuId = 'services';
+      } else if (normPath === '/start-project' || normPath.startsWith('/start-project/')) {
+        activeMenuId = 'start-project';
+      } else if (normPath === '/projects' || normPath.startsWith('/projects/') || normPath === '/project-details' || normPath.startsWith('/project-details/')) {
+        activeMenuId = 'projects';
+      } else if (normPath === '/contact' || normPath === '/connect') {
+        activeMenuId = 'connect';
+      } else if (normPath === '/settings') {
+        activeMenuId = 'settings';
+      } else if (normPath === '/why-choose-me') {
+        activeMenuId = 'why';
+      } else if (normPath === '/process') {
+        activeMenuId = 'process';
+      } else if (normPath === '/faq') {
+        activeMenuId = 'faq';
+      }
+
       menuLinks.forEach(link => {
         const menuId = link.getAttribute('data-menu-id');
-        let isActive = false;
-
-        if (currentPath.endsWith('services.html') || currentPath.includes('/services/')) {
-          isActive = (menuId === 'services');
-        } else if (currentPath.endsWith('start-project.html')) {
-          isActive = (menuId === 'start-project');
-        } else if (currentPath.endsWith('projects.html') || currentPath.endsWith('project-details.html')) {
-          isActive = (menuId === 'projects');
-        } else if (currentPath.endsWith('contact.html')) {
-          isActive = (menuId === 'connect');
-        } else if (currentPath.endsWith('settings.html')) {
-          isActive = (menuId === 'settings');
-        } else if (currentPath.endsWith('why-choose-me.html')) {
-          isActive = (menuId === 'why');
-        } else if (currentPath.endsWith('process.html')) {
-          isActive = (menuId === 'process');
-        } else if (currentPath.endsWith('faq.html')) {
-          isActive = (menuId === 'faq');
-        } else {
-          if (currentHash === '#about') {
-            isActive = (menuId === 'about');
-          } else {
-            isActive = (menuId === 'home');
-          }
-        }
-
-        if (isActive) {
+        if (activeMenuId && menuId === activeMenuId) {
           link.classList.add('active');
         } else {
           link.classList.remove('active');
@@ -381,37 +403,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function highlightActiveNavLink() {
-      const currentPath = window.location.pathname.toLowerCase();
+      const normPath = getNormalizedPath();
       const currentHash = window.location.hash.toLowerCase();
       const navLinks = navMenu.querySelectorAll('.nav-link[data-nav-id]');
 
+      let activeNavId = null;
+
+      if (normPath === '/') {
+        if (currentHash === '#about') {
+          activeNavId = 'about';
+        } else {
+          activeNavId = 'home';
+        }
+      } else if (normPath === '/why-choose-me') {
+        activeNavId = 'why';
+      } else if (normPath === '/process') {
+        activeNavId = 'process';
+      } else if (normPath === '/faq') {
+        activeNavId = 'faq';
+      } else if (normPath === '/services' || normPath.startsWith('/services/')) {
+        activeNavId = 'services';
+      } else if (normPath === '/projects' || normPath.startsWith('/projects/') || normPath === '/project-details' || normPath.startsWith('/project-details/')) {
+        activeNavId = 'projects';
+      } else if (normPath === '/account') {
+        activeNavId = 'account';
+      } else if (normPath === '/contact' || normPath === '/connect') {
+        activeNavId = 'contact';
+      }
+
       navLinks.forEach(link => {
         const navId = link.getAttribute('data-nav-id');
-        let isActive = false;
-
-        if (currentPath.endsWith('why-choose-me.html')) {
-          isActive = (navId === 'why');
-        } else if (currentPath.endsWith('process.html')) {
-          isActive = (navId === 'process');
-        } else if (currentPath.endsWith('faq.html')) {
-          isActive = (navId === 'faq');
-        } else if (currentPath.endsWith('services.html') || currentPath.includes('/services/')) {
-          isActive = (navId === 'services');
-        } else if (currentPath.endsWith('projects.html') || currentPath.endsWith('project-details.html')) {
-          isActive = (navId === 'projects');
-        } else if (currentPath.endsWith('account.html')) {
-          isActive = (navId === 'account');
-        } else if (currentPath.endsWith('contact.html')) {
-          isActive = (navId === 'contact');
-        } else {
-          if (currentHash === '#about') {
-            isActive = (navId === 'about');
-          } else {
-            isActive = (navId === 'home');
-          }
-        }
-
-        if (isActive) {
+        if (activeNavId && navId === activeNavId) {
           link.classList.add('active');
         } else {
           link.classList.remove('active');
@@ -445,28 +467,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const navItems = mobileNav.querySelectorAll('.mobile-nav-item');
 
     function updateActiveBottomNav() {
-      const currentPath = window.location.pathname.toLowerCase();
-      let activeNavKey = 'home';
+      const normPath = getNormalizedPath();
+      let activeNavKey = null;
 
-      if (currentPath.endsWith('services.html') || currentPath.includes('/services/')) {
-        activeNavKey = 'services';
-      } else if (currentPath.endsWith('contact.html')) {
-        activeNavKey = 'connect';
-      } else if (currentPath.endsWith('projects.html') || currentPath.endsWith('project-details.html')) {
-        activeNavKey = 'projects';
-      } else if (currentPath.endsWith('start-project.html')) {
-        activeNavKey = 'fab';
-      } else {
+      if (normPath === '/') {
         activeNavKey = 'home';
+      } else if (normPath === '/services' || normPath.startsWith('/services/')) {
+        activeNavKey = 'services';
+      } else if (normPath === '/projects' || normPath.startsWith('/projects/') || normPath === '/project-details' || normPath.startsWith('/project-details/')) {
+        activeNavKey = 'projects';
+      } else if (normPath === '/contact' || normPath === '/connect') {
+        activeNavKey = 'connect';
+      } else if (normPath === '/start-project' || normPath.startsWith('/start-project/')) {
+        activeNavKey = 'fab';
       }
 
+      // Remove "active" class from all items first
       navItems.forEach(item => {
-        if (item.dataset.nav === activeNavKey) {
-          item.classList.add('active');
-        } else {
-          item.classList.remove('active');
-        }
+        item.classList.remove('active');
       });
+
+      // Add "active" class only to the matching item if one matched
+      if (activeNavKey) {
+        navItems.forEach(item => {
+          if (item.dataset.nav === activeNavKey) {
+            item.classList.add('active');
+          }
+        });
+      }
     }
 
     updateActiveBottomNav();
