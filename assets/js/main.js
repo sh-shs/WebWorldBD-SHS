@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* --------------------------------------------------------------------------
-     3a1. Top-Right Navbar Three-Dot (⋮) Menu Control
+     3a1. Left-Side Sliding Navigation Drawer Control
      -------------------------------------------------------------------------- */
   function initThreeDotsMenu() {
     const btn = document.getElementById('nav-three-dots-btn');
@@ -158,21 +158,42 @@ document.addEventListener('DOMContentLoaded', () => {
     const isSubdir = window.location.pathname.includes('/services/');
     const p = isSubdir ? '../' : '';
 
-    let container = btn.parentElement;
-    if (!container.classList.contains('three-dots-wrapper')) {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'three-dots-wrapper';
-      container.insertBefore(wrapper, btn);
-      wrapper.appendChild(btn);
-      container = wrapper;
+    let backdropEl = document.getElementById('nav-drawer-backdrop');
+    if (!backdropEl) {
+      backdropEl = document.createElement('div');
+      backdropEl.id = 'nav-drawer-backdrop';
+      backdropEl.className = 'nav-drawer-backdrop';
+      document.body.appendChild(backdropEl);
     }
 
-    let menuEl = document.getElementById('three-dots-menu');
-    if (!menuEl) {
-      menuEl = document.createElement('div');
-      menuEl.id = 'three-dots-menu';
-      menuEl.className = 'three-dots-dropdown-menu';
-      container.appendChild(menuEl);
+    let panelEl = document.getElementById('nav-drawer-panel');
+    if (!panelEl) {
+      panelEl = document.createElement('aside');
+      panelEl.id = 'nav-drawer-panel';
+      panelEl.className = 'nav-drawer-panel';
+      document.body.appendChild(panelEl);
+    }
+
+    let drawerBody = document.getElementById('nav-drawer-body');
+    if (!drawerBody) {
+      panelEl.innerHTML = `
+        <div class="nav-drawer-header">
+          <a href="${p}index.html" class="logo-brand">
+            <img src="${p}assets/images/logo.png" alt="WebWorldBD Logo">
+            <span>WebWorld<span style="color:var(--accent-blue);">BD</span></span>
+          </a>
+          <button type="button" class="nav-drawer-close-btn" id="nav-drawer-close-btn" aria-label="Close menu">
+            <i class="fas fa-xmark"></i>
+          </button>
+        </div>
+        <div class="nav-drawer-body" id="nav-drawer-body"></div>
+      `;
+      drawerBody = document.getElementById('nav-drawer-body');
+    }
+
+    const closeBtn = document.getElementById('nav-drawer-close-btn');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeMenu);
     }
 
     function renderMenuContent() {
@@ -292,20 +313,20 @@ document.addEventListener('DOMContentLoaded', () => {
       html += `<div class="three-dots-menu-divider"></div>`;
       html += `<div class="three-dots-group">${renderGroupHtml(group3)}</div>`;
 
-      menuEl.innerHTML = html;
+      drawerBody.innerHTML = html;
       attachMenuClickListeners();
       highlightActiveMenuItem();
     }
 
     function attachMenuClickListeners() {
-      const links = menuEl.querySelectorAll('a.three-dots-menu-item');
+      const links = drawerBody.querySelectorAll('a.three-dots-menu-item');
       links.forEach(a => {
         a.addEventListener('click', () => {
           closeMenu();
         });
       });
 
-      const themeBtn = menuEl.querySelector('.three-dots-theme-btn');
+      const themeBtn = drawerBody.querySelector('.three-dots-theme-btn');
       if (themeBtn) {
         themeBtn.addEventListener('click', (e) => {
           e.preventDefault();
@@ -315,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
 
-      const langBtn = menuEl.querySelector('.three-dots-lang-btn');
+      const langBtn = drawerBody.querySelector('.three-dots-lang-btn');
       if (langBtn) {
         langBtn.addEventListener('click', (e) => {
           e.preventDefault();
@@ -325,7 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
 
-      const logoutBtn = menuEl.querySelector('.three-dots-logout-btn');
+      const logoutBtn = drawerBody.querySelector('.three-dots-logout-btn');
       if (logoutBtn) {
         logoutBtn.addEventListener('click', (e) => {
           e.preventDefault();
@@ -354,7 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function highlightActiveMenuItem() {
       const normPath = getNormalizedPath();
       const currentHash = window.location.hash.toLowerCase();
-      const menuLinks = menuEl.querySelectorAll('.three-dots-menu-item');
+      const menuLinks = drawerBody.querySelectorAll('.three-dots-menu-item');
       const isLoggedInUser = !!window.currentUserState;
 
       let activeMenuId = null;
@@ -400,7 +421,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function toggleMenu(e) {
       if (e) e.stopPropagation();
-      const isOpen = menuEl.classList.contains('active');
+      const isOpen = panelEl.classList.contains('active');
       if (isOpen) {
         closeMenu();
       } else {
@@ -410,33 +431,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function openMenu() {
       highlightActiveMenuItem();
-      menuEl.classList.add('active');
+      panelEl.classList.add('active');
+      backdropEl.classList.add('active');
       btn.classList.add('active');
       btn.setAttribute('aria-expanded', 'true');
+      document.body.classList.add('menu-open');
+      document.body.style.overflow = 'hidden';
     }
 
     function closeMenu() {
-      menuEl.classList.remove('active');
+      panelEl.classList.remove('active');
+      backdropEl.classList.remove('active');
       btn.classList.remove('active');
       btn.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('menu-open');
+      document.body.style.overflow = '';
     }
 
     btn.addEventListener('click', toggleMenu);
-
-    menuEl.querySelectorAll('a').forEach(a => {
-      a.addEventListener('click', () => {
-        closeMenu();
-      });
-    });
-
-    document.addEventListener('click', (e) => {
-      if (menuEl.classList.contains('active') && !container.contains(e.target)) {
-        closeMenu();
-      }
-    });
+    backdropEl.addEventListener('click', closeMenu);
 
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && menuEl.classList.contains('active')) {
+      if (e.key === 'Escape' && panelEl.classList.contains('active')) {
         closeMenu();
       }
     });
