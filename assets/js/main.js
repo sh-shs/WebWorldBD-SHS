@@ -1482,7 +1482,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const alertClose = document.getElementById('auth-alert-close');
     const forgotPassLink = document.getElementById('forgot-password-link');
     const backToLoginBtn = document.getElementById('back-to-login-btn');
-    const logoutBtn = document.getElementById('logout-btn');
+    const logoutBtns = [document.getElementById('logout-btn'), document.getElementById('account-logout-bottom-btn')].filter(Boolean);
 
     if (!authCardContainer || !loginTabBtn || !regTabBtn || !loginForm || !regForm) return;
 
@@ -1586,8 +1586,8 @@ document.addEventListener('DOMContentLoaded', () => {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
 
-    if (logoutBtn) {
-      logoutBtn.addEventListener('click', () => {
+    logoutBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
         window.currentUserState = null;
         if (window.refreshThreeDotsMenu) {
           window.refreshThreeDotsMenu();
@@ -1611,7 +1611,7 @@ document.addEventListener('DOMContentLoaded', () => {
           showAlert(currentLang === 'bn' ? 'সফলভাবে লগআউট করা হয়েছে।' : 'Logged out successfully.', 'info');
         }
       });
-    }
+    });
 
     function getFirebaseErrorMessage(errorCode) {
       switch (errorCode) {
@@ -1955,6 +1955,15 @@ document.addEventListener('DOMContentLoaded', () => {
               if (authCardContainer) authCardContainer.classList.add('authenticated');
 
               userDashView.style.display = 'block';
+
+              // Populate Account Settings Form inputs
+              const profileNameInput = document.getElementById('profile-name-input');
+              const profileEmailInput = document.getElementById('profile-email-input');
+              const profilePhoneInput = document.getElementById('profile-phone-input');
+
+              if (profileNameInput) profileNameInput.value = displayName;
+              if (profileEmailInput) profileEmailInput.value = user.email || '';
+              if (profilePhoneInput) profilePhoneInput.value = user.phoneNumber || localStorage.getItem('webworldbd_user_phone_' + user.uid) || '';
 
               // Sync Firestore projects for Account Dashboard
               syncAccountDashboardProjects(user.uid);
@@ -2339,68 +2348,103 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    if (editProfileBtn) {
-      editProfileBtn.addEventListener('click', () => {
-        window.location.href = 'settings.html';
-      });
-    }
-
-    // Tab Switching Logic for Account Dashboard
-    const navLinks = document.querySelectorAll('[data-account-nav]');
-    const tabPanes = {
-      'overview': document.getElementById('tab-pane-overview'),
-      'my-projects': document.getElementById('tab-pane-my-projects'),
-      'messages': document.getElementById('tab-pane-messages'),
-      'invoices': document.getElementById('tab-pane-invoices')
-    };
-
-    navLinks.forEach(link => {
-      link.addEventListener('click', (e) => {
-        const navTarget = link.getAttribute('data-account-nav');
-        if (!tabPanes[navTarget]) return;
-
+    // Account Settings Form Submission
+    const accountSettingsForm = document.getElementById('account-settings-form');
+    if (accountSettingsForm) {
+      accountSettingsForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Active class on sidebar/action links
-        document.querySelectorAll('[data-account-nav]').forEach(item => {
-          if (item.getAttribute('data-account-nav') === navTarget && item.classList.contains('dash-nav-item')) {
-            item.classList.add('active');
-          } else if (item.classList.contains('dash-nav-item')) {
-            item.classList.remove('active');
-          }
-        });
+        const user = window.currentUserState;
+        const mod = window.FirebaseModule;
+        if (!user) return;
 
-        // Switch pane visibility
-        Object.keys(tabPanes).forEach(key => {
-          if (tabPanes[key]) {
-            if (key === navTarget) {
-              tabPanes[key].style.display = 'block';
-              tabPanes[key].classList.add('active');
-            } else {
-              tabPanes[key].style.display = 'none';
-              tabPanes[key].classList.remove('active');
-            }
-          }
-        });
+        const nameInput = document.getElementById('profile-name-input');
+        const emailInput = document.getElementById('profile-email-input');
+        const phoneInput = document.getElementById('profile-phone-input');
+        const oldPassInput = document.getElementById('profile-old-pass');
+        const newPassInput = document.getElementById('profile-new-pass');
+        const confirmPassInput = document.getElementById('profile-confirm-pass');
+        const submitBtn = document.getElementById('save-account-settings-btn');
 
-        // Page title map
-        const titleEl = document.getElementById('account-page-title');
-        if (titleEl) {
-          const map = {
-            'overview': 'Client Dashboard',
-            'my-projects': 'My Projects',
-            'messages': 'Messages & Support',
-            'invoices': 'Invoices & Billing'
-          };
-          titleEl.textContent = map[navTarget] || 'Client Dashboard';
+        const newName = nameInput ? nameInput.value.trim() : '';
+        const newEmail = emailInput ? emailInput.value.trim() : '';
+        const newPhone = phoneInput ? phoneInput.value.trim() : '';
+        const oldPass = oldPassInput ? oldPassInput.value : '';
+        const newPass = newPassInput ? newPassInput.value : '';
+        const confirmPass = confirmPassInput ? confirmPassInput.value : '';
+
+        if (!newName) {
+          if (window.showToast) window.showToast(translations[currentLang].errNameRequired || 'Full name is required', 'error');
+          return;
         }
 
-        // Close sidebar if mobile open
-        if (sidebar) sidebar.classList.remove('active');
-        if (overlay) overlay.classList.remove('active');
-        document.body.style.overflow = '';
+        if (newPass || confirmPass) {
+          if (newPass.length < 6) {
+            if (window.showToast) window.showToast(translations[currentLang].errWeakPassword || 'New password must be at least 6 characters', 'error');
+            return;
+          }
+          if (newPass !== confirmPass) {
+            if (window.showToast) window.showToast(translations[currentLang].errPasswordMismatch || 'Passwords do not match', 'error');
+            return;
+          }
+        }
+
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = `<span class="btn-spinner"></span> ${currentLang === 'bn' ? 'সংরক্ষণ করা হচ্ছে...' : 'Saving Changes...'}`;
+        }
+
+        try {
+          // Update Display Name
+          if (mod && mod.updateProfile && newName !== user.displayName) {
+            await mod.updateProfile(user, { displayName: newName });
+          }
+
+          // Update Email if changed
+          if (mod && mod.updateEmail && newEmail && newEmail !== user.email) {
+            await mod.updateEmail(user, newEmail);
+          }
+
+          // Save Phone Number in LocalStorage/user metadata
+          if (newPhone) {
+            localStorage.setItem('webworldbd_user_phone_' + user.uid, newPhone);
+          }
+
+          // Handle Password Update if requested
+          if (newPass && mod && mod.updatePassword) {
+            if (oldPass && mod.EmailAuthProvider && mod.reauthenticateWithCredential) {
+              const cred = mod.EmailAuthProvider.credential(user.email, oldPass);
+              await mod.reauthenticateWithCredential(user, cred);
+            }
+            await mod.updatePassword(user, newPass);
+            if (oldPassInput) oldPassInput.value = '';
+            if (newPassInput) newPassInput.value = '';
+            if (confirmPassInput) confirmPassInput.value = '';
+          }
+
+          // Update UI Display Elements
+          const displayName = newName || user.email.split('@')[0];
+          if (document.getElementById('account-profile-name')) document.getElementById('account-profile-name').textContent = displayName;
+          if (document.getElementById('account-sidebar-name')) document.getElementById('account-sidebar-name').textContent = displayName;
+          if (document.getElementById('account-topbar-name')) document.getElementById('account-topbar-name').textContent = displayName;
+          if (document.getElementById('welcome-client-name')) document.getElementById('welcome-client-name').textContent = displayName.split(' ')[0];
+
+          if (window.showToast) {
+            window.showToast(translations[currentLang].msgProfileUpdated || 'Account settings updated successfully!', 'success');
+          }
+        } catch (err) {
+          console.error('Error updating account settings:', err);
+          if (window.showToast) {
+            window.showToast(err.message || translations[currentLang].errAuthDefault || 'Failed to update account settings.', 'error');
+          }
+        } finally {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `<i class="fas fa-floppy-disk"></i> <span>${translations[currentLang].btnSaveChanges || 'Save Changes'}</span>`;
+          }
+        }
       });
-    });
+    }
   }
 
   function syncAccountDashboardProjects(uid) {
