@@ -1954,19 +1954,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
               if (document.getElementById('account-profile-name')) document.getElementById('account-profile-name').textContent = displayName;
 
-              // Username handle derivation (e.g., from Firestore user doc or email prefix)
+              // Username handle derivation & Firestore profile details (username, phone)
               let usernameHandle = user.email ? user.email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '') : 'client';
+              const phoneRow = document.getElementById('account-profile-phone-row');
+              const phoneText = document.getElementById('account-profile-phone');
+              const initialPhone = user.phoneNumber || user.phone || '';
+
+              if (phoneRow && phoneText) {
+                phoneRow.style.display = 'flex';
+                if (initialPhone) {
+                  phoneText.textContent = initialPhone;
+                } else {
+                  const isBn = currentLang === 'bn';
+                  const promptLabel = isBn ? '+ ফোন নম্বর যোগ করুন' : '+ Add phone number';
+                  phoneText.innerHTML = `<a href="settings.html" style="font-size: 0.88rem; font-weight: 500;">${promptLabel}</a>`;
+                }
+              }
+
               const mod = window.FirebaseModule;
               if (mod && mod.db && mod.doc && mod.getDoc) {
                 const userRef = mod.doc(mod.db, 'users', user.uid);
                 mod.getDoc(userRef).then(docSnap => {
-                  if (docSnap.exists() && docSnap.data().username) {
-                    usernameHandle = docSnap.data().username;
-                    if (document.getElementById('account-profile-username')) {
-                      document.getElementById('account-profile-username').textContent = usernameHandle;
+                  if (docSnap.exists()) {
+                    const userData = docSnap.data();
+                    if (userData.username) {
+                      usernameHandle = userData.username;
+                      if (document.getElementById('account-profile-username')) {
+                        document.getElementById('account-profile-username').textContent = usernameHandle;
+                      }
+                    }
+                    if (phoneRow && phoneText && userData.phone !== undefined) {
+                      if (userData.phone) {
+                        phoneText.textContent = userData.phone;
+                      } else {
+                        const isBn = currentLang === 'bn';
+                        const promptLabel = isBn ? '+ ফোন নম্বর যোগ করুন' : '+ Add phone number';
+                        phoneText.innerHTML = `<a href="settings.html" style="font-size: 0.88rem; font-weight: 500;">${promptLabel}</a>`;
+                      }
                     }
                   }
-                }).catch(e => console.error('Error getting username handle:', e));
+                }).catch(e => console.error('Error getting user profile doc:', e));
               }
               if (document.getElementById('account-profile-username')) {
                 document.getElementById('account-profile-username').textContent = usernameHandle;
@@ -1974,20 +2001,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
               if (document.getElementById('account-profile-email')) {
                 document.getElementById('account-profile-email').textContent = user.email || '';
-              }
-
-              const phoneRow = document.getElementById('account-profile-phone-row');
-              const phoneText = document.getElementById('account-profile-phone');
-              const userPhone = user.phoneNumber || user.phone || '';
-              if (phoneRow && phoneText) {
-                phoneRow.style.display = 'flex';
-                if (userPhone) {
-                  phoneText.textContent = userPhone;
-                } else {
-                  const isBn = currentLang === 'bn';
-                  const promptLabel = isBn ? '+ ফোন নম্বর যোগ করুন' : '+ Add phone number';
-                  phoneText.innerHTML = `<a href="settings.html" style="font-size: 0.88rem; font-weight: 500;">${promptLabel}</a>`;
-                }
               }
 
               if (document.getElementById('account-sidebar-name')) document.getElementById('account-sidebar-name').textContent = displayName;
@@ -3277,7 +3290,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (docSnap.exists()) {
           const data = docSnap.data();
           if (data.username) initialUsername = data.username;
-          if (data.phone) initialPhone = data.phone;
+          if (data.phone !== undefined) initialPhone = data.phone;
         }
         currentUserUsername = initialUsername;
         if (usernameInput) {
