@@ -1489,8 +1489,8 @@ p {
   top: 0;
   left: 0;
   bottom: 0;
-  width: 85vw;
-  max-width: 340px;
+  width: 72vw;
+  max-width: 275px;
   height: 100vh;
   height: 100dvh;
   background: #0f172a;
@@ -1508,8 +1508,8 @@ p {
 
 @media (min-width: 601px) {
   .nav-drawer-panel {
-    width: 340px;
-    max-width: 360px;
+    width: 275px;
+    max-width: 280px;
   }
 }
 
@@ -1531,7 +1531,7 @@ p {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.1rem 1.25rem;
+  padding: 1rem 15px;
   border-bottom: 1px solid var(--border-glass);
   flex-shrink: 0;
 }
@@ -1565,7 +1565,7 @@ p {
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   touch-action: pan-y;
-  padding: 1rem 0.85rem 2rem 0.85rem;
+  padding: 1rem 15px 2rem 15px;
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
@@ -1616,7 +1616,7 @@ p {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.65rem 0.8rem;
+  padding: 0.65rem 12px;
   margin-bottom: 0.35rem;
   background: rgba(56, 189, 248, 0.08);
   border: 1px solid rgba(56, 189, 248, 0.22);
@@ -1665,23 +1665,34 @@ p {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-width: 0;
 }
 
 .three-dots-user-name {
   font-size: 0.9rem;
   font-weight: 800;
   color: var(--text-main);
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.25;
 }
 
 .three-dots-user-email {
   font-size: 0.76rem;
   color: var(--accent-blue);
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.25;
 }
 
 .three-dots-menu-item {
