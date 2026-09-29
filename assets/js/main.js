@@ -2591,6 +2591,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const isAdminPage = window.location.pathname.endsWith('admin.html');
     if (!isAdminPage) return;
 
+    // Show initial loading overlay for Admin route protection
+    const dashWrapper = document.querySelector('.dash-wrapper');
+    let adminLoader = document.getElementById('admin-auth-loading-overlay');
+    if (!adminLoader && dashWrapper) {
+      adminLoader = document.createElement('div');
+      adminLoader.id = 'admin-auth-loading-overlay';
+      adminLoader.style.cssText = 'position: fixed; inset: 0; background: var(--bg-dark, #0B0F17); z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; color: var(--text-main, #FFFFFF);';
+      adminLoader.innerHTML = `<span class="btn-spinner" style="width: 36px; height: 36px; border-width: 3px; border-color: rgba(56,189,248,0.2); border-top-color: var(--accent-blue);"></span><div style="font-weight: 600; font-size: 1.05rem;">Verifying Admin Access...</div>`;
+      dashWrapper.appendChild(adminLoader);
+    }
+
     function checkAdminAuth() {
       const mod = window.FirebaseModule;
       if (!mod || !mod.auth || !mod.onAuthStateChanged) {
@@ -2600,27 +2611,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
       mod.onAuthStateChanged(mod.auth, async (user) => {
         if (!user) {
-          // Unauthenticated - redirect to account.html
+          if (adminLoader) adminLoader.style.display = 'none';
           window.location.href = 'account.html';
           return;
         }
 
-        // Check Admin role in Firestore 'users' collection or user claims
         let isAdmin = false;
         try {
           if (mod.db && mod.doc && mod.getDoc) {
             const userDocRef = mod.doc(mod.db, 'users', user.uid);
             const userSnap = await mod.getDoc(userDocRef);
-            if (userSnap.exists() && userSnap.data() && userSnap.data().role === 'admin') {
+            if (userSnap.exists() && userSnap.data()) {
+              const uData = userSnap.data();
+              if (uData.role === 'admin' || user.email === 'onlyphone678@gmail.com') {
+                isAdmin = true;
+                if (uData.role !== 'admin' && user.email === 'onlyphone678@gmail.com' && mod.setDoc) {
+                  await mod.setDoc(userDocRef, { role: 'admin' }, { merge: true });
+                }
+              }
+            } else if (user.email === 'onlyphone678@gmail.com') {
               isAdmin = true;
+              if (mod.setDoc) {
+                await mod.setDoc(userDocRef, {
+                  displayName: user.displayName || 'Admin',
+                  email: user.email,
+                  role: 'admin',
+                  createdAt: new Date().toISOString()
+                }, { merge: true });
+              }
             }
           }
         } catch (e) {
           console.error('Error fetching admin role document:', e);
+          if (user.email === 'onlyphone678@gmail.com') isAdmin = true;
         }
 
+        if (adminLoader) adminLoader.style.display = 'none';
+
         if (!isAdmin) {
-          alert('Access Denied: You do not have permission to access the Admin Control Panel.');
+          if (window.showToast) window.showToast('Access Denied: Admin authorization required.', 'error');
+          else alert('Access Denied: You do not have permission to access the Admin Control Panel.');
           window.location.href = 'account.html';
           return;
         }
@@ -2630,6 +2660,8 @@ document.addEventListener('DOMContentLoaded', () => {
         initAdminProjectRequestsSync();
         initAdminProjectsSync();
         initAdminServicesSync();
+        initAdminUsersSync();
+        initAdminMessagesSync();
         initAdminModalControls();
       });
     }
@@ -2640,7 +2672,9 @@ document.addEventListener('DOMContentLoaded', () => {
         'dashboard': document.getElementById('admin-section-overview'),
         'project-requests': document.getElementById('admin-section-overview'),
         'projects': document.getElementById('admin-section-projects'),
-        'services': document.getElementById('admin-section-services')
+        'clients': document.getElementById('admin-section-clients'),
+        'services': document.getElementById('admin-section-services'),
+        'messages': document.getElementById('admin-section-messages')
       };
 
       navLinks.forEach(link => {
@@ -2667,7 +2701,9 @@ document.addEventListener('DOMContentLoaded', () => {
               'dashboard': 'Admin Control Panel',
               'project-requests': 'Project Requests',
               'projects': 'Projects Management',
-              'services': 'Services & Cover Images'
+              'clients': 'Registered Clients & Users',
+              'services': 'Services & Cover Images',
+              'messages': 'Support Messages & Inquiries'
             };
             pageTitle.textContent = titles[navTarget] || 'Admin Control Panel';
           }
@@ -2716,7 +2752,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (projects.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+            <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">
               No projects in database yet.
             </td>
           </tr>
@@ -2739,6 +2775,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span class="dash-table-project-sub">ID: ${p.projectId || p.docId}</span>
               </div>
             </td>
+            <td>${p.category || 'Web Development'}</td>
             <td>${p.clientName || p.userEmail || 'Client'}</td>
             <td><span class="badge-status status-active">${p.status || 'Active'}</span></td>
             <td>${p.progress || 0}%</td>
@@ -2792,6 +2829,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
           document.getElementById('admin-project-doc-id').value = docId;
           document.getElementById('admin-project-name').value = proj.projectName || '';
+          if (document.getElementById('admin-project-desc')) document.getElementById('admin-project-desc').value = proj.description || '';
+          if (document.getElementById('admin-project-category')) document.getElementById('admin-project-category').value = proj.category || '';
+          if (document.getElementById('admin-project-techs')) document.getElementById('admin-project-techs').value = Array.isArray(proj.techs) ? proj.techs.join(', ') : (proj.techs || '');
+          if (document.getElementById('admin-project-url')) document.getElementById('admin-project-url').value = proj.projectUrl || proj.url || '';
           document.getElementById('admin-project-client').value = proj.clientName || proj.userEmail || '';
           document.getElementById('admin-project-status').value = proj.status || 'In Progress';
           document.getElementById('admin-project-progress').value = proj.progress || 10;
@@ -2886,6 +2927,10 @@ document.addEventListener('DOMContentLoaded', () => {
         addProjBtn.addEventListener('click', () => {
           document.getElementById('admin-project-doc-id').value = '';
           document.getElementById('admin-project-name').value = '';
+          if (document.getElementById('admin-project-desc')) document.getElementById('admin-project-desc').value = '';
+          if (document.getElementById('admin-project-category')) document.getElementById('admin-project-category').value = '';
+          if (document.getElementById('admin-project-techs')) document.getElementById('admin-project-techs').value = '';
+          if (document.getElementById('admin-project-url')) document.getElementById('admin-project-url').value = '';
           document.getElementById('admin-project-client').value = '';
           document.getElementById('admin-project-status').value = 'In Progress';
           document.getElementById('admin-project-progress').value = 10;
@@ -2955,6 +3000,10 @@ document.addEventListener('DOMContentLoaded', () => {
           e.preventDefault();
           const docId = document.getElementById('admin-project-doc-id').value;
           const name = document.getElementById('admin-project-name').value.trim();
+          const desc = document.getElementById('admin-project-desc') ? document.getElementById('admin-project-desc').value.trim() : '';
+          const category = document.getElementById('admin-project-category') ? document.getElementById('admin-project-category').value.trim() : '';
+          const techsRaw = document.getElementById('admin-project-techs') ? document.getElementById('admin-project-techs').value.trim() : '';
+          const projectUrl = document.getElementById('admin-project-url') ? document.getElementById('admin-project-url').value.trim() : '';
           const client = document.getElementById('admin-project-client').value.trim();
           const status = document.getElementById('admin-project-status').value;
           const progress = parseInt(document.getElementById('admin-project-progress').value, 10) || 0;
@@ -2986,8 +3035,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const mod = window.FirebaseModule;
             if (mod && mod.db) {
+              const techsArray = techsRaw ? techsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
               const payload = {
                 projectName: name,
+                description: desc,
+                category: category || 'Web Development',
+                techs: techsArray,
+                projectUrl: projectUrl,
                 clientName: client,
                 status: status,
                 progress: progress,
@@ -3149,12 +3203,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Render Recent Project Requests Table
-        const tableBody = document.querySelector('.dash-table-card table tbody');
+        const tableBody = document.getElementById('admin-requests-tbody');
         if (tableBody) {
           if (requests.length === 0) {
             tableBody.innerHTML = `
               <tr>
-                <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">
                   <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 0.5rem; display: block; color: var(--accent-blue);"></i>
                   ${currentLang === 'bn' ? 'কোন প্রজেক্ট রিকুয়েস্ট পাওয়া যায়নি।' : 'No project requests found.'}
                 </td>
@@ -3171,6 +3225,8 @@ document.addEventListener('DOMContentLoaded', () => {
               }
 
               const formattedDate = req.createdAt ? new Date(req.createdAt).toLocaleDateString() : 'Recent';
+              const reqDetails = req.description ? (req.description.length > 50 ? req.description.substring(0, 50) + '...' : req.description) : 'N/A';
+              const attachmentHtml = req.attachmentUrl ? `<br><a href="${req.attachmentUrl}" target="_blank" rel="noopener noreferrer" style="font-size:0.75rem; color: var(--accent-blue);"><i class="fas fa-paperclip"></i> View Attachment</a>` : '';
 
               return `
                 <tr>
@@ -3182,6 +3238,7 @@ document.addEventListener('DOMContentLoaded', () => {
                   </td>
                   <td>${req.serviceName || 'Custom Service'}</td>
                   <td>${req.budget || 'Flexible'}</td>
+                  <td style="max-width: 200px; font-size: 0.85rem;">${reqDetails}${attachmentHtml}</td>
                   <td>${badge}</td>
                   <td>${formattedDate}</td>
                   <td>
@@ -3222,10 +3279,11 @@ document.addEventListener('DOMContentLoaded', () => {
             await mod.addDoc(mod.collection(mod.db, 'projects'), {
               projectId: reqData.requestId || 'PRJ-' + Math.floor(100000 + Math.random() * 900000),
               projectName: reqData.serviceName + ' - ' + reqData.clientName,
-              service: reqData.serviceName,
+              category: reqData.serviceName || 'Web Development',
+              description: reqData.description || '',
               clientName: reqData.clientName,
-              userId: reqData.userId,
-              userEmail: reqData.userEmail,
+              userId: reqData.userId || '',
+              userEmail: reqData.userEmail || reqData.contactInfo || '',
               status: 'In Progress',
               progress: 10,
               createdAt: new Date().toISOString()
@@ -3248,6 +3306,142 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error rejecting request:', err);
           }
         });
+      });
+    }
+
+    function initAdminUsersSync() {
+      const tbody = document.getElementById('admin-users-tbody');
+      if (!tbody) return;
+
+      const mod = window.FirebaseModule;
+      if (!mod || !mod.db || !mod.collection || !mod.onSnapshot) return;
+
+      const usersRef = mod.collection(mod.db, 'users');
+      mod.onSnapshot(usersRef, (snapshot) => {
+        const users = [];
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          data.id = doc.id;
+          users.push(data);
+        });
+
+        // Update total clients stat card
+        const statCards = document.querySelectorAll('.dash-stats-row .dash-stat-card .stat-number');
+        if (statCards.length >= 1) {
+          statCards[0].textContent = users.length;
+        }
+
+        if (users.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                No registered users found.
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = users.map(u => {
+          const name = u.displayName || 'Client User';
+          const email = u.email || 'N/A';
+          const username = u.username || (email.includes('@') ? email.split('@')[0] : 'client');
+          const phone = u.phone || u.phoneNumber || 'N/A';
+          const role = u.role || 'user';
+          const photoUrl = u.photoURL || '';
+
+          const firstChar = (name.trim().charAt(0) || 'U').toUpperCase();
+          const avatarHtml = photoUrl
+            ? `<img src="${photoUrl}" alt="${name}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;" />`
+            : `<div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(56,189,248,0.2); color: var(--accent-blue); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem;">${firstChar}</div>`;
+
+          const roleBadge = role === 'admin'
+            ? `<span class="badge-pill" style="background: rgba(16,185,129,0.15); color: #10B981; border: 1px solid rgba(16,185,129,0.3); font-size: 0.78rem;">Admin</span>`
+            : `<span style="font-size: 0.82rem; color: var(--text-muted);">User</span>`;
+
+          return `
+            <tr>
+              <td>${avatarHtml}</td>
+              <td><strong>${name}</strong></td>
+              <td><code>${username}</code></td>
+              <td>${email}</td>
+              <td>${phone}</td>
+              <td>${roleBadge}</td>
+            </tr>
+          `;
+        }).join('');
+      }, (err) => {
+        console.error('Error listening to users collection:', err);
+      });
+    }
+
+    function initAdminMessagesSync() {
+      const tbody = document.getElementById('admin-messages-tbody');
+      if (!tbody) return;
+
+      const mod = window.FirebaseModule;
+      if (!mod || !mod.db || !mod.collection || !mod.onSnapshot) return;
+
+      const msgRef = mod.collection(mod.db, 'messages');
+      mod.onSnapshot(msgRef, (snapshot) => {
+        const messages = [];
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          data.id = doc.id;
+          messages.push(data);
+        });
+
+        if (messages.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                No support messages received yet.
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = messages.map(m => {
+          const sender = m.name || m.clientName || 'Anonymous';
+          const contact = m.contact || m.email || m.contactInfo || 'N/A';
+          const body = m.message || m.subject || m.description || 'No message content';
+          const date = m.createdAt ? new Date(m.createdAt).toLocaleDateString() : 'Recent';
+          const status = m.status || 'unread';
+
+          const statusBadge = status === 'read'
+            ? `<span style="font-size:0.8rem; color: var(--text-muted);"><i class="fas fa-check-double"></i> Read</span>`
+            : `<span class="badge-status status-pending"><i class="fas fa-envelope"></i> Unread</span>`;
+
+          return `
+            <tr>
+              <td><strong>${sender}</strong></td>
+              <td>${contact}</td>
+              <td style="max-width: 250px; font-size: 0.88rem;">${body}</td>
+              <td>${date}</td>
+              <td>${statusBadge}</td>
+              <td>
+                ${status === 'unread' ? `
+                  <button type="button" class="btn btn-secondary btn-mark-msg-read" data-msg-id="${m.id}" style="padding: 0.3rem 0.6rem; font-size: 0.78rem;"><i class="fas fa-check"></i> Mark Read</button>
+                ` : `<span style="font-size:0.78rem; color:var(--text-muted);">Processed</span>`}
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        document.querySelectorAll('.btn-mark-msg-read').forEach(b => {
+          b.addEventListener('click', async () => {
+            const mId = b.getAttribute('data-msg-id');
+            try {
+              await mod.updateDoc(mod.doc(mod.db, 'messages', mId), { status: 'read' });
+              if (window.showToast) window.showToast('Message marked as read.', 'info');
+            } catch (e) {
+              console.error('Error marking message read:', e);
+            }
+          });
+        });
+      }, (err) => {
+        console.error('Error listening to messages collection:', err);
       });
     }
 
