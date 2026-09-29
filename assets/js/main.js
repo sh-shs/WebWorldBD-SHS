@@ -3903,6 +3903,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             await mod.setDoc(saripRef, {
+              uid: user.uid,
               fullName: name,
               displayName: name,
               username: username,
