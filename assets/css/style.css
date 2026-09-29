@@ -842,6 +842,7 @@ p {
   border-radius: var(--radius-lg);
   padding: 1.5rem 1.75rem;
   box-shadow: var(--shadow-card);
+  margin-top: 1.5rem;
   margin-bottom: 2rem;
 }
 
@@ -849,7 +850,7 @@ p {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.15rem;
 }
 
 .dash-card-title {
@@ -868,8 +869,24 @@ p {
 .dash-quick-btns {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.85rem;
   flex-wrap: wrap;
+  width: 100%;
+}
+
+.dash-quick-btns .btn {
+  flex: 1;
+  min-width: 200px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  font-size: 0.925rem;
+  font-weight: 600;
+  padding: 0 1.25rem;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
 }
 
 /* Tables Section */
@@ -1028,17 +1045,20 @@ p {
   position: relative;
   overflow: hidden;
   border-radius: var(--radius-lg);
-  margin-bottom: 2rem;
+  margin-bottom: 1.75rem;
   background: var(--bg-card);
   box-shadow: var(--shadow-card);
   border: 1px solid var(--border-glass);
 }
 
 .profile-card-body {
-  padding: 1.75rem;
+  padding: 2rem 1.5rem;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  justify-content: center;
+  text-align: center;
+  gap: 1.25rem;
 }
 
 .profile-avatar-wrapper {
@@ -1092,29 +1112,32 @@ p {
 }
 
 .profile-details-info {
-  flex: 1;
-  min-width: 240px;
+  width: 100%;
+  max-width: 480px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   gap: 0.6rem;
 }
 
-.profile-name-row {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  margin-bottom: 0;
-}
-
-.profile-name-row h3 {
+.user-display-name {
   font-size: 1.35rem;
   font-weight: 800;
   margin: 0;
-  line-height: 1.25;
+  line-height: 1.3;
   color: var(--text-main);
+  text-align: center;
   overflow-wrap: anywhere;
   word-break: break-word;
+}
+
+.profile-badge-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.1rem;
 }
 
 .client-badge {
@@ -1126,7 +1149,7 @@ p {
   color: var(--accent-blue);
   background: rgba(56, 189, 248, 0.12);
   border: 1px solid rgba(56, 189, 248, 0.3);
-  padding: 0.2rem 0.65rem;
+  padding: 0.2rem 0.75rem;
   border-radius: var(--radius-full);
   flex-shrink: 0;
 }
@@ -1134,11 +1157,21 @@ p {
 .profile-info-row {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 0.45rem;
   color: var(--text-muted);
-  font-size: 0.925rem;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  font-size: 0.875rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.profile-info-row span {
+  overflow-wrap: break-word;
+  word-break: break-all;
+  text-align: center;
+  min-width: 0;
 }
 
 .profile-info-row a {
@@ -1166,12 +1199,14 @@ p {
   margin: 0;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
 }
 
 .profile-actions-wrapper {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.75rem;
   margin-top: 50px;
 }
@@ -1179,15 +1214,27 @@ p {
 .profile-card-actions {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.75rem;
-  margin-top: 0.75rem;
+  margin-top: 0.6rem;
+  width: 100%;
+  max-width: 380px;
   flex-wrap: wrap;
 }
 
 .profile-card-actions .btn {
-  padding: 0.5rem 1.1rem;
+  flex: 1;
+  min-width: 130px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0 1.1rem;
   font-size: 0.88rem;
+  font-weight: 600;
   border-radius: var(--radius-full);
+  box-sizing: border-box;
 }
 
 .dash-topbar-back-btn {
@@ -1338,7 +1385,7 @@ p {
   }
 
   .profile-card-body {
-    padding: 1.5rem 1.25rem;
+    padding: 1.5rem 1rem;
     flex-direction: column;
     align-items: center;
     text-align: center;
@@ -1358,29 +1405,35 @@ p {
     gap: 0.5rem;
   }
 
-  .profile-name-row {
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .profile-name-row h3 {
+  .user-display-name {
     font-size: 1.2rem;
     word-break: break-word;
     overflow-wrap: anywhere;
   }
 
   .client-badge {
-    font-size: 0.7rem;
-    padding: 0.15rem 0.55rem;
+    font-size: 0.72rem;
+    padding: 0.18rem 0.65rem;
   }
 
   .profile-info-row {
-    font-size: 0.88rem;
+    font-size: clamp(0.75rem, 3.4vw, 0.85rem);
     justify-content: center;
-    word-break: break-word;
-    overflow-wrap: anywhere;
+  }
+
+  .profile-info-row span {
+    word-break: break-all;
+    overflow-wrap: break-word;
+  }
+
+  .profile-card-actions {
+    max-width: 100%;
+    gap: 0.6rem;
+  }
+
+  .profile-card-actions .btn {
+    width: 100%;
+    flex: none;
   }
 
   .dash-stats-row {
@@ -1390,11 +1443,13 @@ p {
 
   .dash-quick-btns {
     flex-direction: column;
+    gap: 0.75rem;
     width: 100%;
   }
 
   .dash-quick-btns .btn {
     width: 100%;
+    flex: none;
   }
 
   .dash-actions-card,
@@ -2921,7 +2976,7 @@ body.lang-bn .hero-intro-text {
 .mobile-bottom-nav { display: none; }
 
 @media (max-width: 768px) {
-  body { padding-bottom: calc(92px + env(safe-area-inset-bottom)); }
+  body { padding-bottom: calc(108px + env(safe-area-inset-bottom)); }
 
   .mobile-bottom-nav {
     position: fixed;
@@ -2931,14 +2986,16 @@ body.lang-bn .hero-intro-text {
     height: 64px;
     background: var(--bg-card);
     backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--border-glass);
     border-radius: var(--radius-full);
     box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45);
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
     z-index: 10000;
-    padding: 0 6px;
+    padding: 0 4px;
+    box-sizing: border-box;
   }
 
   .mobile-nav-item {
@@ -2947,29 +3004,62 @@ body.lang-bn .hero-intro-text {
     align-items: center;
     justify-content: center;
     flex: 1;
+    min-width: 0;
     height: 100%;
     color: var(--text-muted);
+    text-decoration: none;
+    padding: 4px 2px;
+    box-sizing: border-box;
+    transition: color 0.2s ease;
   }
 
   .mobile-nav-item.active { color: var(--accent-blue); font-weight: 700; }
-  .mobile-nav-icon { font-size: 1.15rem; }
-  .mobile-nav-label { font-size: 0.65rem; font-weight: 600; margin-top: 3px; }
+  .mobile-nav-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .mobile-nav-label {
+    font-size: 0.62rem;
+    font-weight: 600;
+    margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    text-align: center;
+    line-height: 1.1;
+  }
 
   .mobile-fab-item { position: relative; }
   .mobile-fab-btn {
     position: absolute;
-    top: -24px;
-    width: 52px;
-    height: 52px;
+    top: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     background: var(--gradient-primary);
     color: #FFF;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     box-shadow: 0 8px 22px rgba(56, 189, 248, 0.5);
     border: 3px solid var(--bg-dark);
+    transition: transform 0.2s ease;
+  }
+
+  .mobile-fab-btn:active {
+    transform: translateX(-50%) scale(0.95);
+  }
+
+  .mobile-fab-label {
+    margin-top: auto;
+    padding-bottom: 5px;
   }
 
   .floating-whatsapp {
@@ -2977,7 +3067,8 @@ body.lang-bn .hero-intro-text {
     right: 16px;
     width: 48px;
     height: 48px;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
+    z-index: 9999;
   }
 
   .back-to-top {
@@ -2985,7 +3076,8 @@ body.lang-bn .hero-intro-text {
     right: 72px;
     width: 42px;
     height: 42px;
-    font-size: 1rem;
+    font-size: 0.95rem;
+    z-index: 9999;
   }
 }
 
