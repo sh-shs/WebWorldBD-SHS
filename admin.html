@@ -245,6 +245,7 @@
                     <th>Client Name</th>
                     <th>Service Requested</th>
                     <th>Budget Range</th>
+                    <th>Requirements</th>
                     <th>Status</th>
                     <th>Date Submitted</th>
                     <th>Action</th>
@@ -252,7 +253,7 @@
                 </thead>
                 <tbody id="admin-requests-tbody">
                   <tr>
-                    <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                    <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">
                       <i class="fas fa-spinner fa-spin" style="font-size: 1.5rem; margin-bottom: 0.5rem; display: block; color: var(--accent-blue);"></i>
                       Loading project requests...
                     </td>
@@ -279,6 +280,7 @@
                   <tr>
                     <th>Image</th>
                     <th>Project Name</th>
+                    <th>Category</th>
                     <th>Client / User</th>
                     <th>Status</th>
                     <th>Progress</th>
@@ -287,7 +289,7 @@
                 </thead>
                 <tbody id="admin-projects-tbody">
                   <tr>
-                    <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                    <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">
                       Loading projects...
                     </td>
                   </tr>
@@ -297,7 +299,38 @@
           </div>
         </div>
 
-        <!-- 3. SERVICES MANAGEMENT SECTION -->
+        <!-- 3. CLIENTS / USERS SECTION -->
+        <div id="admin-section-clients" class="admin-tab-section" style="display: none;">
+          <div class="dash-table-card">
+            <div class="dash-card-header">
+              <h3 class="dash-card-title"><i class="fas fa-users"></i> Registered Users & Clients</h3>
+            </div>
+
+            <div class="dash-table-responsive">
+              <table class="dash-table">
+                <thead>
+                  <tr>
+                    <th>Avatar</th>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Role</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-users-tbody">
+                  <tr>
+                    <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                      Loading user accounts...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. SERVICES MANAGEMENT SECTION -->
         <div id="admin-section-services" class="admin-tab-section" style="display: none;">
           <div class="dash-table-card">
             <div class="dash-card-header">
@@ -327,6 +360,37 @@
           </div>
         </div>
 
+        <!-- 5. MESSAGES & SUPPORT SECTION -->
+        <div id="admin-section-messages" class="admin-tab-section" style="display: none;">
+          <div class="dash-table-card">
+            <div class="dash-card-header">
+              <h3 class="dash-card-title"><i class="fas fa-comments"></i> Support Messages & Inquiries</h3>
+            </div>
+
+            <div class="dash-table-responsive">
+              <table class="dash-table">
+                <thead>
+                  <tr>
+                    <th>Sender Name</th>
+                    <th>Contact Info</th>
+                    <th>Subject / Message</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-messages-tbody">
+                  <tr>
+                    <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                      Loading messages...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
       </main>
     </div>
   </div>
@@ -346,15 +410,38 @@
         <input type="hidden" id="admin-project-existing-img" value="">
 
         <div class="form-group">
-          <label for="admin-project-name">Project Name <span style="color: #EF4444;">*</span></label>
+          <label for="admin-project-name">Project Title <span style="color: #EF4444;">*</span></label>
           <input type="text" id="admin-project-name" class="form-control" placeholder="e.g. E-Commerce Portal Redesign" required>
+        </div>
+
+        <div class="form-group">
+          <label for="admin-project-desc">Description</label>
+          <textarea id="admin-project-desc" class="form-control" rows="2" placeholder="Brief project summary or details..."></textarea>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
           <div class="form-group">
-            <label for="admin-project-client">Client / Email</label>
+            <label for="admin-project-category">Category</label>
+            <input type="text" id="admin-project-category" class="form-control" placeholder="e.g. Web Development">
+          </div>
+          <div class="form-group">
+            <label for="admin-project-techs">Technologies</label>
+            <input type="text" id="admin-project-techs" class="form-control" placeholder="e.g. HTML5, CSS3, JS, Firebase">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label for="admin-project-client">Client Name / Email</label>
             <input type="text" id="admin-project-client" class="form-control" placeholder="e.g. client@company.com">
           </div>
+          <div class="form-group">
+            <label for="admin-project-url">Project Live URL</label>
+            <input type="url" id="admin-project-url" class="form-control" placeholder="https://example.com">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
           <div class="form-group">
             <label for="admin-project-status">Status</label>
             <select id="admin-project-status" class="form-control" style="background: var(--bg-glass); color: var(--text-main);">
@@ -364,11 +451,10 @@
               <option value="Review">Under Review</option>
             </select>
           </div>
-        </div>
-
-        <div class="form-group">
-          <label for="admin-project-progress">Progress % (0 - 100)</label>
-          <input type="number" id="admin-project-progress" class="form-control" min="0" max="100" value="10">
+          <div class="form-group">
+            <label for="admin-project-progress">Progress % (0 - 100)</label>
+            <input type="number" id="admin-project-progress" class="form-control" min="0" max="100" value="10">
+          </div>
         </div>
 
         <div class="form-group">
