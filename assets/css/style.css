@@ -2960,18 +2960,20 @@ body.lang-bn .hero-intro-text {
 .settings-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(8, 12, 20, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(5, 9, 17, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   z-index: 20000;
   display: none;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem;
+  padding: 1.25rem;
+  overflow-y: auto;
 }
 
 .settings-modal-overlay.active {
   display: flex;
+  animation: modalOverlayFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .settings-modal-card {
@@ -2981,9 +2983,415 @@ body.lang-bn .hero-intro-text {
   animation: modalScaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+@keyframes modalOverlayFadeIn {
+  from { opacity: 0; backdrop-filter: blur(0px); }
+  to { opacity: 1; backdrop-filter: blur(16px); }
+}
+
 @keyframes modalScaleUp {
   from { opacity: 0; transform: scale(0.92); }
   to { opacity: 1; transform: scale(1); }
+}
+
+/* --------------------------------------------------------------------------
+   Premium "Edit Profile" Dark Theme Modal Styling
+   -------------------------------------------------------------------------- */
+.edit-profile-modal-card {
+  background: #0f172a !important;
+  border: 1px solid rgba(56, 189, 248, 0.22) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 35px rgba(56, 189, 248, 0.18), inset 0 1px 1px rgba(255, 255, 255, 0.1) !important;
+  max-width: 520px;
+  width: 100%;
+  padding: 2rem !important;
+  margin: auto;
+  max-height: calc(100vh - 2.5rem);
+  overflow-y: auto;
+  animation: editModalScaleUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+@keyframes editModalScaleUp {
+  from { opacity: 0; transform: scale(0.9) translateY(12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.edit-profile-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.edit-profile-modal-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #f8fafc;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-family: var(--font-primary);
+  margin: 0;
+}
+
+.edit-profile-title-icon {
+  color: #38bdf8;
+  font-size: 1.15rem;
+  filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.4));
+}
+
+.edit-profile-close-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit-profile-close-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #f87171;
+  transform: rotate(90deg);
+}
+
+.edit-profile-form-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+.edit-profile-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.required-star {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+.optional-tag {
+  font-size: 0.78rem;
+  color: #64748b;
+  font-weight: 400;
+}
+
+.modal-form-control {
+  background: #1e293b !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #f8fafc !important;
+  border-radius: 12px !important;
+  padding: 0.75rem 1rem 0.75rem 2.85rem !important;
+  font-size: 0.95rem !important;
+  width: 100% !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease !important;
+}
+
+.modal-form-control::placeholder {
+  color: #64748b !important;
+  opacity: 1 !important;
+}
+
+.modal-form-control:focus {
+  background: #1e293b !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.35) !important;
+  outline: none !important;
+}
+
+.edit-profile-modal-card .input-icon-left {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #38bdf8 !important;
+  font-size: 0.95rem;
+  pointer-events: none;
+  transition: color 0.2s ease;
+  z-index: 2;
+}
+
+.username-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.username-wrapper .modal-form-control {
+  padding-right: 2.75rem !important;
+}
+
+.username-status-icon {
+  position: absolute;
+  right: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  z-index: 2;
+}
+
+.username-status-success {
+  color: #10b981 !important;
+}
+
+.username-status-error {
+  color: #ef4444 !important;
+}
+
+.edit-profile-hint {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  margin-top: 0.35rem;
+  display: block;
+  line-height: 1.4;
+}
+
+/* Avatar Upload Section Styling */
+.avatar-upload-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: 0.25rem;
+  background: rgba(30, 41, 59, 0.5);
+  padding: 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.avatar-preview-container {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+}
+
+.avatar-preview-ring {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%);
+  padding: 3px;
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.avatar-preview-ring:hover {
+  transform: scale(1.06);
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.5);
+}
+
+.avatar-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
+.avatar-preview-initial {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f8fafc;
+  font-weight: 700;
+  font-size: 1.85rem;
+  font-family: var(--font-primary);
+}
+
+.avatar-controls-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.avatar-btns-group {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.btn-avatar-change {
+  background: rgba(56, 189, 248, 0.12) !important;
+  border: 1px solid rgba(56, 189, 248, 0.3) !important;
+  color: #38bdf8 !important;
+  padding: 0.55rem 1rem !important;
+  border-radius: 10px !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease !important;
+}
+
+.btn-avatar-change:hover {
+  background: rgba(56, 189, 248, 0.25) !important;
+  border-color: #38bdf8 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.3) !important;
+  transform: translateY(-1px);
+}
+
+.btn-avatar-remove {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.18) 0%, rgba(220, 38, 38, 0.28) 100%) !important;
+  border: 1px solid rgba(239, 68, 68, 0.4) !important;
+  color: #fca5a5 !important;
+  padding: 0.55rem 0.9rem !important;
+  border-radius: 10px !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease !important;
+}
+
+.btn-avatar-remove:hover {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  color: #ffffff !important;
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.4) !important;
+  transform: translateY(-1px);
+}
+
+.avatar-file-name {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  word-break: break-all;
+}
+
+.avatar-upload-status {
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+/* Modal Action Buttons */
+.edit-profile-actions {
+  display: flex;
+  gap: 0.85rem;
+  justify-content: flex-end;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.btn-modal-cancel-outline {
+  background: transparent !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #cbd5e1 !important;
+  padding: 0.65rem 1.35rem !important;
+  border-radius: 12px !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease !important;
+}
+
+.btn-modal-cancel-outline:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  transform: translateY(-1px);
+}
+
+.btn-save-gradient {
+  background: linear-gradient(135deg, #38BDF8 0%, #6366F1 50%, #A855F7 100%) !important;
+  border: none !important;
+  color: #ffffff !important;
+  padding: 0.65rem 1.6rem !important;
+  border-radius: 12px !important;
+  font-size: 0.9rem !important;
+  font-weight: 700 !important;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 15px rgba(56, 189, 248, 0.25) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.btn-save-gradient:hover:not(:disabled) {
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.55), 0 0 10px rgba(168, 85, 247, 0.3) !important;
+  transform: translateY(-2px);
+}
+
+.btn-save-gradient:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  filter: grayscale(0.5) !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 576px) {
+  .edit-profile-modal-card {
+    padding: 1.25rem !important;
+    max-width: 94%;
+    max-height: calc(100vh - 1.5rem) !important;
+    border-radius: 16px !important;
+  }
+  .edit-profile-form-body {
+    gap: 0.85rem !important;
+  }
+  .avatar-upload-row {
+    padding: 0.75rem !important;
+    gap: 0.85rem !important;
+  }
+  .avatar-preview-container,
+  .avatar-preview-ring {
+    width: 60px !important;
+    height: 60px !important;
+  }
+  .avatar-preview-initial {
+    font-size: 1.35rem !important;
+  }
+  .edit-profile-actions {
+    margin-top: 0.85rem !important;
+    padding-top: 0.75rem !important;
+    gap: 0.65rem !important;
+  }
+  .btn-modal-cancel-outline,
+  .btn-save-gradient {
+    flex: 1;
+    justify-content: center;
+    padding: 0.55rem 0.85rem !important;
+    font-size: 0.85rem !important;
+  }
 }
 
 /* --------------------------------------------------------------------------
