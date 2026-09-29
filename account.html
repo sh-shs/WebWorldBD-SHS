@@ -322,47 +322,14 @@
             <!-- Main Content Layout -->
             <div class="dash-main">
 
-              <!-- Top Header Bar -->
-              <header class="dash-topbar">
-                <div class="dash-topbar-left">
-                  <button type="button" class="dash-hamburger-btn" id="account-hamburger-btn" title="Toggle Navigation">
-                    <i class="fas fa-bars"></i>
-                  </button>
-                  <h1 class="dash-page-title" id="account-page-title">Client Dashboard</h1>
-                </div>
-
-                <div class="dash-topbar-right">
-                  <!-- Back to Website Button -->
-                  <a href="index.html" class="btn btn-secondary dash-topbar-back-btn">
-                    <i class="fas fa-arrow-left"></i> <span>Back to Website</span>
-                  </a>
-
-                  <!-- Dark/Light Theme Toggle -->
-                  <button type="button" class="toggle-btn" id="account-theme-toggle-btn" title="Toggle Theme">
-                    <i class="fas fa-moon"></i>
-                  </button>
-
-                  <!-- Notification Bell -->
-                  <div class="notif-dropdown-wrapper" style="position: relative;">
-                    <button type="button" class="toggle-btn" id="account-notif-btn" title="Notifications" style="position: relative;">
-                      <i class="fas fa-bell"></i>
-                      <span style="position: absolute; top: 6px; right: 6px; width: 9px; height: 9px; background: #EF4444; border-radius: 50%; border: 2px solid var(--bg-card);"></span>
-                    </button>
-                  </div>
-
-                  <!-- User Profile Brief -->
-                  <div class="dash-topbar-user" id="account-topbar-user-btn">
-                    <img src="profile.jpg" alt="User Profile Photo" class="dash-topbar-avatar" id="account-topbar-avatar">
-                    <span class="dash-topbar-name" id="account-topbar-name">SHAFAET HOSSEN SARIP</span>
-                  </div>
-                </div>
-              </header>
-
               <!-- Main Overview Page Content -->
               <main class="dash-content">
 
                 <!-- OVERVIEW TAB CONTENT -->
                 <div class="account-tab-pane active" id="tab-pane-overview">
+
+                  <!-- Plain Page Heading -->
+                  <h1 class="dash-page-heading" id="account-page-title" style="font-size: 1.75rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--text-main);" data-i18n="dashClientTitle">ক্লায়েন্ট ড্যাশবোর্ড</h1>
 
                   <!-- Welcome Banner Section -->
                   <div class="dash-welcome-card">
@@ -428,117 +395,6 @@
                       <a href="contact.html" class="btn btn-whatsapp">
                         <i class="fas fa-headset"></i> Request Support
                       </a>
-                    </div>
-                  </div>
-
-                  <!-- Recent Projects Table Section -->
-                  <div class="dash-table-card">
-                    <div class="dash-card-header">
-                      <h3 class="dash-card-title"><i class="fas fa-clock-rotate-left"></i> Recent Projects</h3>
-                      <a href="#my-projects" class="btn btn-secondary dash-action-nav-link" data-account-nav="my-projects" style="padding: 0.45rem 1rem; font-size: 0.85rem;">View All Projects</a>
-                    </div>
-
-                    <div class="dash-table-responsive">
-                      <table class="dash-table">
-                        <thead>
-                          <tr>
-                            <th>Project Name</th>
-                            <th>Status</th>
-                            <th>Progress</th>
-                            <th>Deadline</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody id="recent-projects-tbody">
-                          <tr>
-                            <td>
-                              <div class="dash-table-project-name">
-                                SHS Bazar E-Commerce Platform
-                                <span class="dash-table-project-sub">Category: E-Commerce Web App</span>
-                              </div>
-                            </td>
-                            <td><span class="badge-status status-active"><i class="fas fa-sync fa-spin"></i> Active</span></td>
-                            <td>
-                              <div class="dash-progress-wrapper">
-                                <div class="dash-progress-bar">
-                                  <div class="dash-progress-fill" style="width: 85%;"></div>
-                                </div>
-                                <span class="dash-progress-text">85%</span>
-                              </div>
-                            </td>
-                            <td><span class="dash-date-badge"><i class="fas fa-calendar-day"></i> May 15, 2026</span></td>
-                            <td>
-                              <a href="project-details.html?id=shs-bazar" class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">View Details</a>
-                            </td>
-                          </tr>
-
-                          <tr>
-                            <td>
-                              <div class="dash-table-project-name">
-                                Student Tools & AI Platform
-                                <span class="dash-table-project-sub">Category: AI & Education App</span>
-                              </div>
-                            </td>
-                            <td><span class="badge-status status-completed"><i class="fas fa-check"></i> Completed</span></td>
-                            <td>
-                              <div class="dash-progress-wrapper">
-                                <div class="dash-progress-bar">
-                                  <div class="dash-progress-fill" style="width: 100%;"></div>
-                                </div>
-                                <span class="dash-progress-text">100%</span>
-                              </div>
-                            </td>
-                            <td><span class="dash-date-badge"><i class="fas fa-calendar-check"></i> April 10, 2026</span></td>
-                            <td>
-                              <a href="project-details.html?id=student-tools-ai" class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">View Details</a>
-                            </td>
-                          </tr>
-
-                          <tr>
-                            <td>
-                              <div class="dash-table-project-name">
-                                Corporate Business Portal
-                                <span class="dash-table-project-sub">Category: Corporate Web Solution</span>
-                              </div>
-                            </td>
-                            <td><span class="badge-status status-in-progress"><i class="fas fa-code"></i> In Progress</span></td>
-                            <td>
-                              <div class="dash-progress-wrapper">
-                                <div class="dash-progress-bar">
-                                  <div class="dash-progress-fill" style="width: 45%;"></div>
-                                </div>
-                                <span class="dash-progress-text">45%</span>
-                              </div>
-                            </td>
-                            <td><span class="dash-date-badge"><i class="fas fa-calendar-day"></i> June 01, 2026</span></td>
-                            <td>
-                              <a href="contact.html" class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">Contact Dev</a>
-                            </td>
-                          </tr>
-
-                          <tr>
-                            <td>
-                              <div class="dash-table-project-name">
-                                Happy Birthday Wish Greeting App
-                                <span class="dash-table-project-sub">Category: Interactive Web App</span>
-                              </div>
-                            </td>
-                            <td><span class="badge-status status-completed"><i class="fas fa-check"></i> Completed</span></td>
-                            <td>
-                              <div class="dash-progress-wrapper">
-                                <div class="dash-progress-bar">
-                                  <div class="dash-progress-fill" style="width: 100%;"></div>
-                                </div>
-                                <span class="dash-progress-text">100%</span>
-                              </div>
-                            </td>
-                            <td><span class="dash-date-badge"><i class="fas fa-calendar-check"></i> March 22, 2026</span></td>
-                            <td>
-                              <a href="project-details.html?id=happy-birthday-wish" class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">View Details</a>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
                     </div>
                   </div>
 
