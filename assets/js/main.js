@@ -3606,26 +3606,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
           if (pendingAvatarFile && storageMod) {
             if (photoStatusSpan) {
-              photoStatusSpan.textContent = currentLang === 'bn' ? 'ছবি প্রসেসিং হচ্ছে...' : 'Processing image...';
+              photoStatusSpan.textContent = currentLang === 'bn' ? 'ছবি আপলোড হচ্ছে...' : 'Uploading image...';
               photoStatusSpan.style.color = 'var(--accent-blue)';
             }
 
             try {
               const optimizedBlob = await storageMod.optimizeAndConvertImage(pendingAvatarFile, 500, 500, 0.85);
               const avatarPath = `avatars/${user.uid}/avatar.webp`;
-              const uploadRes = await storageMod.replaceFile(optimizedBlob, avatarPath, user.photoURL, {
-                contentType: 'image/webp'
-              });
+              const uploadRes = await storageMod.uploadImage(optimizedBlob, avatarPath);
 
-              if (uploadRes.success) {
-                if (uploadRes.url) photoURLToSave = uploadRes.url;
+              if (uploadRes.success && uploadRes.url) {
+                photoURLToSave = uploadRes.url;
                 if (photoStatusSpan) {
-                  photoStatusSpan.textContent = currentLang === 'bn' ? 'ছবি সফলভাবে প্রক্রিয়া করা হয়েছে!' : 'Image processed successfully!';
+                  photoStatusSpan.textContent = currentLang === 'bn' ? 'ছবি সফলভাবে আপলোড করা হয়েছে!' : 'Image uploaded successfully!';
                   photoStatusSpan.style.color = '#10B981';
                 }
+              } else {
+                const uploadErrMsg = currentLang === 'bn' ? 'ছবি আপলোড ব্যর্থ হয়েছে, আবার চেষ্টা করুন' : 'Image upload failed, please try again.';
+                if (photoStatusSpan) {
+                  photoStatusSpan.textContent = `⚠️ ${uploadErrMsg}`;
+                  photoStatusSpan.style.color = '#EF4444';
+                }
+                if (window.showToast) {
+                  window.showToast(uploadErrMsg, 'error');
+                }
+                if (saveBtn) {
+                  saveBtn.disabled = false;
+                  saveBtn.textContent = 'সংরক্ষণ করুন';
+                }
+                return;
               }
             } catch (imgErr) {
               console.error('Avatar processing error:', imgErr);
+              const uploadErrMsg = currentLang === 'bn' ? 'ছবি আপলোড ব্যর্থ হয়েছে, আবার চেষ্টা করুন' : 'Image upload failed, please try again.';
+              if (photoStatusSpan) {
+                photoStatusSpan.textContent = `⚠️ ${uploadErrMsg}`;
+                photoStatusSpan.style.color = '#EF4444';
+              }
+              if (window.showToast) {
+                window.showToast(uploadErrMsg, 'error');
+              }
+              if (saveBtn) {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'সংরক্ষণ করুন';
+              }
+              return;
             }
           } else if (removeAvatarRequested) {
             if (user.photoURL && storageMod) {
