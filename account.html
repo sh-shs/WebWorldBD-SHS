@@ -371,6 +371,14 @@
                           <i class="fas fa-phone profile-info-icon"></i>
                           <span id="account-profile-phone" class="user-display-phone"><a href="settings.html" style="font-size: 0.88rem; font-weight: 500;">+ phone number add/edit</a></span>
                         </div>
+                        <div class="profile-card-actions">
+                          <button type="button" class="btn btn-secondary" id="account-edit-profile-btn">
+                            <i class="fas fa-user-pen"></i> <span data-i18n="btnEditProfile">প্রোফাইল এডিট</span>
+                          </button>
+                          <button type="button" class="btn btn-danger-outline" id="account-logout-btn">
+                            <i class="fas fa-right-from-bracket"></i> <span data-i18n="btnLogout">লগ আউট</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -629,6 +637,87 @@
       <span class="mobile-nav-label" data-i18n="mobileNavConnect">কানেক্ট</span>
     </a>
   </nav>
+
+  <!-- Edit Profile Modal -->
+  <div class="settings-modal-overlay" id="edit-profile-modal">
+    <div class="settings-modal-card glass-card" style="max-width: 500px; width: 100%;">
+      <div class="dash-card-header" style="margin-bottom: 1.25rem;">
+        <h3 class="dash-card-title"><i class="fas fa-user-pen"></i> <span data-i18n="modalEditProfileTitle">প্রোফাইল এডিট</span></h3>
+        <button type="button" class="alert-close-btn btn-modal-cancel" aria-label="Close modal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <form id="edit-profile-form" class="auth-form" style="background: transparent; border: none; padding: 0; box-shadow: none;" novalidate>
+
+        <!-- a) Full Name -->
+        <div class="form-group">
+          <label for="edit-name-input"><span data-i18n="formNameLabel">নাম (Full Name)</span> <span style="color: #EF4444;">*</span></label>
+          <div class="input-icon-wrapper">
+            <i class="fas fa-user input-icon-left"></i>
+            <input type="text" id="edit-name-input" class="form-control" placeholder="আপনার পূর্ণ নাম লিখুন" required>
+          </div>
+          <span class="field-error-msg" id="edit-name-error"></span>
+        </div>
+
+        <!-- b) Username -->
+        <div class="form-group">
+          <label for="edit-username-input">ইউজারনেম (Username) <span style="color: #EF4444;">*</span></label>
+          <div class="input-icon-wrapper" style="position: relative;">
+            <i class="fas fa-at input-icon-left"></i>
+            <input type="text" id="edit-username-input" class="form-control" placeholder="username" autocomplete="off" required style="padding-right: 2.5rem;">
+            <div id="username-status-spinner" class="username-status-icon" style="display: none; position: absolute; right: 0.85rem;">
+              <span class="btn-spinner" style="width: 18px; height: 18px; border-width: 2px; border-top-color: var(--accent-blue);"></span>
+            </div>
+            <div id="username-status-icon-success" class="username-status-icon" style="display: none; position: absolute; right: 0.85rem; color: #10B981;">
+              <i class="fas fa-circle-check"></i>
+            </div>
+            <div id="username-status-icon-error" class="username-status-icon" style="display: none; position: absolute; right: 0.85rem; color: #EF4444;">
+              <i class="fas fa-circle-xmark"></i>
+            </div>
+          </div>
+          <span id="username-hint-msg" style="font-size: 0.8rem; margin-top: 0.25rem; display: block; color: var(--text-muted);">শুধুমাত্র ইংরেজি ছোট হাতের অক্ষর (a-z) ও সংখ্যা (0-9) ব্যবহারযোগ্য। (কমপক্ষে ৩ অক্ষর)</span>
+          <span class="field-error-msg" id="edit-username-error"></span>
+        </div>
+
+        <!-- c) Phone Number -->
+        <div class="form-group">
+          <label for="edit-phone-input">ফোন নম্বর (Phone Number) <span style="font-size: 0.8rem; color: var(--text-muted);">(ঐচ্ছিক)</span></label>
+          <div class="input-icon-wrapper">
+            <i class="fas fa-phone input-icon-left"></i>
+            <input type="tel" id="edit-phone-input" class="form-control" placeholder="+8801700000000">
+          </div>
+          <span class="field-error-msg" id="edit-phone-error"></span>
+        </div>
+
+        <!-- d) Profile Picture UI -->
+        <div class="form-group">
+          <label>প্রোফাইল ছবি (Profile Picture) <span style="font-size: 0.8rem; color: var(--text-muted);">(ঐচ্ছিক)</span></label>
+          <div style="display: flex; align-items: center; gap: 1.25rem; margin-top: 0.25rem;">
+            <div style="position: relative; width: 70px; height: 70px; flex-shrink: 0;">
+              <div id="edit-avatar-preview-box" class="user-avatar-inner" style="width: 70px; height: 70px; border-radius: 50%; background: var(--gradient-primary); border: 2px solid var(--accent-blue); overflow: hidden; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 1.75rem;">
+                <img id="edit-avatar-img" src="" alt="Avatar Preview" style="display: none; width: 100%; height: 100%; object-fit: cover;">
+                <span id="edit-avatar-initial">S</span>
+              </div>
+            </div>
+            <div>
+              <input type="file" id="edit-photo-file-input" accept="image/*" style="display: none;">
+              <button type="button" class="btn btn-secondary" id="btn-change-photo" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+                <i class="fas fa-camera"></i> ছবি পরিবর্তন করুন
+              </button>
+              <span id="photo-selected-name" style="display: block; font-size: 0.78rem; color: var(--text-muted); margin-top: 0.35rem;"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- e) Save & Cancel buttons -->
+        <div style="display: flex; gap: 0.85rem; justify-content: flex-end; margin-top: 1rem;">
+          <button type="button" class="btn btn-secondary btn-modal-cancel" style="padding: 0.65rem 1.25rem;">বাতিল</button>
+          <button type="submit" class="btn btn-primary" id="edit-profile-save-btn" style="padding: 0.65rem 1.5rem;">সংরক্ষণ করুন</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- Floating WhatsApp & Back to Top Buttons -->
   <a href="https://wa.me/8801342697743" target="_blank" rel="noopener noreferrer" class="floating-whatsapp" title="Chat on WhatsApp">
