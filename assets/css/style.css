@@ -1160,7 +1160,8 @@ p {
   right: 0;
   width: 290px;
   max-width: calc(100vw - 24px);
-  max-height: 80vh;
+  height: auto;
+  max-height: calc(100vh - 90px);
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
@@ -1213,23 +1214,6 @@ p {
   scrollbar-color: rgba(56, 189, 248, 0.4) transparent;
 }
 
-/* Signature gradient border highlight */
-.three-dots-dropdown-menu::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: 21px;
-  padding: 1px;
-  background: var(--gradient-primary);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-  opacity: 0.55;
-  transition: opacity var(--transition-fast);
-}
-
 [data-theme="light"] .three-dots-dropdown-menu {
   background: #ffffff;
   border-color: rgba(203, 213, 225, 0.8);
@@ -1239,10 +1223,6 @@ p {
 
 [data-theme="light"] .three-dots-dropdown-menu::-webkit-scrollbar-thumb {
   background: rgba(15, 23, 42, 0.2);
-}
-
-[data-theme="light"] .three-dots-dropdown-menu::before {
-  opacity: 0.45;
 }
 
 .three-dots-dropdown-menu.active {
@@ -1360,22 +1340,6 @@ p {
   font-family: inherit;
 }
 
-/* Explicit reset to prevent unwanted horizontal divider or border line between menu items */
-.three-dots-menu-item[data-menu-id="student-tools-ai"],
-.three-dots-menu-item[data-menu-id="privacy-policy"] {
-  border: none !important;
-  border-top: none !important;
-  border-bottom: none !important;
-  box-shadow: none;
-}
-
-.three-dots-menu-item[data-menu-id="student-tools-ai"]::after,
-.three-dots-menu-item[data-menu-id="student-tools-ai"]::before,
-.three-dots-menu-item[data-menu-id="privacy-policy"]::after,
-.three-dots-menu-item[data-menu-id="privacy-policy"]::before {
-  border: none !important;
-  background: none !important;
-}
 
 /* Soft-tinted squircle icon container */
 .three-dots-icon-box {
@@ -1452,7 +1416,8 @@ p {
   .three-dots-dropdown-menu {
     width: 330px;
     max-width: calc(100vw - 32px);
-    max-height: 80vh;
+    height: auto;
+    max-height: calc(100vh - 90px);
     padding: 0.95rem;
     gap: 0.4rem;
   }
@@ -3184,15 +3149,17 @@ body.lang-bn .hero-intro-text {
 
 @media (max-width: 768px) {
   .three-dots-dropdown-menu {
-    width: 260px;
+    width: 280px;
     max-width: calc(100vw - 20px);
-    max-height: 80vh;
+    height: auto;
+    max-height: calc(100vh - 160px);
     padding: 0.65rem;
+    padding-bottom: 0.85rem;
   }
 
   .three-dots-menu-item {
-    padding: 0.45rem 0.55rem;
-    font-size: 0.85rem;
+    padding: 0.45rem 0.6rem;
+    font-size: 0.875rem;
   }
 
   .three-dots-icon-box {
