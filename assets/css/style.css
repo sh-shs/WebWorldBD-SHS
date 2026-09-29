@@ -1366,6 +1366,14 @@ p {
   transition: color 0.2s ease, transform 0.2s ease;
 }
 
+.three-dots-external-icon {
+  font-size: 0.725rem;
+  margin-left: auto;
+  opacity: 0.65;
+  color: var(--text-muted);
+  transition: opacity 0.2s ease, transform 0.2s ease, color 0.2s ease;
+}
+
 .three-dots-menu-item:hover {
   background: rgba(56, 189, 248, 0.12);
   color: var(--accent-blue);
@@ -1381,6 +1389,12 @@ p {
 .three-dots-menu-item:hover .three-dots-menu-icon {
   color: #ffffff;
   transform: scale(1.1);
+}
+
+.three-dots-menu-item:hover .three-dots-external-icon {
+  opacity: 1;
+  color: var(--accent-blue);
+  transform: translate(2px, -2px);
 }
 
 .three-dots-menu-item.active {
