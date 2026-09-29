@@ -69,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initDashboardUI();
   initAccountDashboardUI();
   initAdminDashboardUI();
+  initEditProfileModalLogic();
 
   // Dynamic Content Rendering
   if (document.getElementById('services-grid')) renderServices();
@@ -412,6 +413,26 @@ document.addEventListener('DOMContentLoaded', () => {
           link.classList.add('active');
         } else {
           link.classList.remove('active');
+        }
+      });
+    }
+
+    // Account Profile Card Logout Handler
+    const accountLogoutBtn = document.getElementById('account-logout-btn');
+    if (accountLogoutBtn) {
+      accountLogoutBtn.addEventListener('click', () => {
+        window.currentUserState = null;
+        if (window.refreshThreeDotsMenu) {
+          window.refreshThreeDotsMenu();
+        }
+        const mod = window.FirebaseModule;
+        if (mod && mod.auth && mod.signOut) {
+          mod.signOut(mod.auth).then(() => {
+            const msg = currentLang === 'bn' ? 'সফলভাবে লগআউট করা হয়েছে।' : 'Logged out successfully.';
+            if (window.showToast) window.showToast(msg, 'info');
+          }).catch(err => {
+            if (window.showToast) window.showToast(err.message || 'Logout error', 'error');
+          });
         }
       });
     }
@@ -1933,9 +1954,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
               if (document.getElementById('account-profile-name')) document.getElementById('account-profile-name').textContent = displayName;
 
-              // Username handle derivation (e.g., from email prefix or lowercased name)
-              const emailPrefix = user.email ? user.email.split('@')[0] : 'client';
-              const usernameHandle = (user.displayName ? user.displayName.toLowerCase().replace(/[^a-z0-9_]/g, '') : emailPrefix) || emailPrefix;
+              // Username handle derivation (e.g., from Firestore user doc or email prefix)
+              let usernameHandle = user.email ? user.email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '') : 'client';
+              const mod = window.FirebaseModule;
+              if (mod && mod.db && mod.doc && mod.getDoc) {
+                const userRef = mod.doc(mod.db, 'users', user.uid);
+                mod.getDoc(userRef).then(docSnap => {
+                  if (docSnap.exists() && docSnap.data().username) {
+                    usernameHandle = docSnap.data().username;
+                    if (document.getElementById('account-profile-username')) {
+                      document.getElementById('account-profile-username').textContent = usernameHandle;
+                    }
+                  }
+                }).catch(e => console.error('Error getting username handle:', e));
+              }
               if (document.getElementById('account-profile-username')) {
                 document.getElementById('account-profile-username').textContent = usernameHandle;
               }
@@ -2332,7 +2364,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (editProfileBtn) {
       editProfileBtn.addEventListener('click', () => {
-        window.location.href = 'settings.html';
+        const editModal = document.getElementById('edit-profile-modal');
+        if (editModal) {
+          openEditProfileModal();
+        } else {
+          window.location.href = 'settings.html';
+        }
       });
     }
 
@@ -2674,6 +2711,402 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     checkAdminAuth();
+  }
+
+  /* --------------------------------------------------------------------------
+     10d. Edit Profile Modal Logic & Firestore Username Uniqueness
+     -------------------------------------------------------------------------- */
+  let currentUserUsername = '';
+  let isUsernameValid = false;
+  let usernameDebounceTimer = null;
+
+  function openEditProfileModal() {
+    const editModal = document.getElementById('edit-profile-modal');
+    if (!editModal) return;
+
+    const user = window.currentUserState;
+    if (!user) return;
+
+    const nameInput = document.getElementById('edit-name-input');
+    const usernameInput = document.getElementById('edit-username-input');
+    const phoneInput = document.getElementById('edit-phone-input');
+    const photoFileInput = document.getElementById('edit-photo-file-input');
+    const avatarImg = document.getElementById('edit-avatar-img');
+    const avatarInitial = document.getElementById('edit-avatar-initial');
+    const selectedNameSpan = document.getElementById('photo-selected-name');
+
+    // Pre-fill name
+    if (nameInput) nameInput.value = user.displayName || '';
+
+    // Fetch existing user doc from Firestore for username and phone
+    const mod = window.FirebaseModule;
+    let initialUsername = (user.displayName ? user.displayName.toLowerCase().replace(/[^a-z0-9]/g, '') : '') || (user.email ? user.email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '') : '');
+    let initialPhone = user.phoneNumber || user.phone || '';
+
+    if (mod && mod.db && mod.doc && mod.getDoc) {
+      const userRef = mod.doc(mod.db, 'users', user.uid);
+      mod.getDoc(userRef).then(docSnap => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          if (data.username) initialUsername = data.username;
+          if (data.phone) initialPhone = data.phone;
+        }
+        currentUserUsername = initialUsername;
+        if (usernameInput) {
+          usernameInput.value = initialUsername;
+          validateUsernameLive(initialUsername);
+        }
+        if (phoneInput) phoneInput.value = initialPhone;
+      }).catch(err => {
+        console.error('Error fetching user profile doc:', err);
+        currentUserUsername = initialUsername;
+        if (usernameInput) {
+          usernameInput.value = initialUsername;
+          validateUsernameLive(initialUsername);
+        }
+        if (phoneInput) phoneInput.value = initialPhone;
+      });
+    } else {
+      currentUserUsername = initialUsername;
+      if (usernameInput) {
+        usernameInput.value = initialUsername;
+        validateUsernameLive(initialUsername);
+      }
+      if (phoneInput) phoneInput.value = initialPhone;
+    }
+
+    // Avatar preview
+    const firstChar = (user.displayName || user.email || 'S').trim().charAt(0).toUpperCase() || 'S';
+    if (avatarInitial) avatarInitial.textContent = firstChar;
+    if (user.photoURL && avatarImg) {
+      avatarImg.src = user.photoURL;
+      avatarImg.style.display = 'block';
+      if (avatarInitial) avatarInitial.style.display = 'none';
+    } else if (avatarImg) {
+      avatarImg.style.display = 'none';
+      if (avatarInitial) avatarInitial.style.display = 'flex';
+    }
+
+    if (photoFileInput) photoFileInput.value = '';
+    if (selectedNameSpan) selectedNameSpan.textContent = '';
+
+    editModal.classList.add('active');
+  }
+
+  function validateUsernameLive(val) {
+    const usernameInput = document.getElementById('edit-username-input');
+    const spinner = document.getElementById('username-status-spinner');
+    const successIcon = document.getElementById('username-status-icon-success');
+    const errorIcon = document.getElementById('username-status-icon-error');
+    const hintMsg = document.getElementById('username-hint-msg');
+    const errorSpan = document.getElementById('edit-username-error');
+    const saveBtn = document.getElementById('edit-profile-save-btn');
+
+    if (!usernameInput) return;
+
+    if (usernameDebounceTimer) clearTimeout(usernameDebounceTimer);
+
+    // Auto-lowercase and filter non-lowercase alphanumeric characters
+    let cleaned = val.toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (usernameInput.value !== cleaned) {
+      usernameInput.value = cleaned;
+    }
+
+    // Reset icons
+    if (spinner) spinner.style.display = 'none';
+    if (successIcon) successIcon.style.display = 'none';
+    if (errorIcon) errorIcon.style.display = 'none';
+    usernameInput.classList.remove('is-invalid');
+    if (errorSpan) { errorSpan.textContent = ''; errorSpan.classList.remove('visible'); }
+
+    if (cleaned.length < 3) {
+      isUsernameValid = false;
+      if (saveBtn) saveBtn.disabled = true;
+      if (cleaned.length > 0) {
+        if (errorIcon) errorIcon.style.display = 'block';
+        usernameInput.classList.add('is-invalid');
+        if (hintMsg) hintMsg.textContent = 'ইউজারনেম কমপক্ষে ৩ অক্ষরের হতে হবে।';
+        if (hintMsg) hintMsg.style.color = '#EF4444';
+      } else {
+        if (hintMsg) hintMsg.textContent = 'শুধুমাত্র ইংরেজি ছোট হাতের অক্ষর (a-z) ও সংখ্যা (0-9) ব্যবহারযোগ্য। (কমপক্ষে ৩ অক্ষর)';
+        if (hintMsg) hintMsg.style.color = 'var(--text-muted)';
+      }
+      return;
+    }
+
+    // Show spinner while checking
+    if (spinner) spinner.style.display = 'block';
+    if (hintMsg) {
+      hintMsg.textContent = 'ইউজারনেম অ্যাভেইলিবিলিটি যাঁচাই করা হচ্ছে...';
+      hintMsg.style.color = 'var(--accent-blue)';
+    }
+
+    usernameDebounceTimer = setTimeout(async () => {
+      const mod = window.FirebaseModule;
+      const user = window.currentUserState;
+
+      // If user's own existing username unchanged
+      if (user && cleaned === currentUserUsername) {
+        if (spinner) spinner.style.display = 'none';
+        if (successIcon) successIcon.style.display = 'block';
+        if (hintMsg) {
+          hintMsg.textContent = 'এই ইউজারনেম ব্যবহারযোগ্য';
+          hintMsg.style.color = '#10B981';
+        }
+        isUsernameValid = true;
+        if (saveBtn) saveBtn.disabled = false;
+        return;
+      }
+
+      if (mod && mod.db && mod.doc && mod.getDoc) {
+        try {
+          const usernameDocRef = mod.doc(mod.db, 'usernames', cleaned);
+          const docSnap = await mod.getDoc(usernameDocRef);
+
+          if (spinner) spinner.style.display = 'none';
+
+          if (docSnap.exists() && docSnap.data().uid !== (user ? user.uid : '')) {
+            // Taken by someone else
+            if (errorIcon) errorIcon.style.display = 'block';
+            usernameInput.classList.add('is-invalid');
+            if (hintMsg) {
+              hintMsg.textContent = 'এই ইউজারনেম ইতিমধ্যে ব্যবহৃত হচ্ছে';
+              hintMsg.style.color = '#EF4444';
+            }
+            isUsernameValid = false;
+            if (saveBtn) saveBtn.disabled = true;
+          } else {
+            // Available
+            if (successIcon) successIcon.style.display = 'block';
+            if (hintMsg) {
+              hintMsg.textContent = 'এই ইউজারনেম ব্যবহারযোগ্য';
+              hintMsg.style.color = '#10B981';
+            }
+            isUsernameValid = true;
+            if (saveBtn) saveBtn.disabled = false;
+          }
+        } catch (err) {
+          console.error('Error checking username availability:', err);
+          if (spinner) spinner.style.display = 'none';
+          // Fallback if network offline/permission check
+          if (successIcon) successIcon.style.display = 'block';
+          if (hintMsg) {
+            hintMsg.textContent = 'এই ইউজারনেম ব্যবহারযোগ্য';
+            hintMsg.style.color = '#10B981';
+          }
+          isUsernameValid = true;
+          if (saveBtn) saveBtn.disabled = false;
+        }
+      } else {
+        if (spinner) spinner.style.display = 'none';
+        if (successIcon) successIcon.style.display = 'block';
+        if (hintMsg) {
+          hintMsg.textContent = 'এই ইউজারনেম ব্যবহারযোগ্য';
+          hintMsg.style.color = '#10B981';
+        }
+        isUsernameValid = true;
+        if (saveBtn) saveBtn.disabled = false;
+      }
+    }, 450);
+  }
+
+  function initEditProfileModalLogic() {
+    const editModal = document.getElementById('edit-profile-modal');
+    if (!editModal) return;
+
+    const usernameInput = document.getElementById('edit-username-input');
+    const changePhotoBtn = document.getElementById('btn-change-photo');
+    const photoFileInput = document.getElementById('edit-photo-file-input');
+    const editForm = document.getElementById('edit-profile-form');
+    const selectedNameSpan = document.getElementById('photo-selected-name');
+
+    // Close modal on cancel or overlay click
+    editModal.querySelectorAll('.btn-modal-cancel').forEach(btn => {
+      btn.addEventListener('click', () => {
+        editModal.classList.remove('active');
+      });
+    });
+
+    // Username input event listener
+    if (usernameInput) {
+      usernameInput.addEventListener('input', (e) => {
+        validateUsernameLive(e.target.value);
+      });
+    }
+
+    // Change photo button triggers hidden file input
+    if (changePhotoBtn && photoFileInput) {
+      changePhotoBtn.addEventListener('click', () => {
+        photoFileInput.click();
+      });
+
+      photoFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          // TODO: wire up to Firebase Storage once connected
+          if (selectedNameSpan) selectedNameSpan.textContent = `নির্বাচিত ছবি: ${file.name}`;
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const avatarImg = document.getElementById('edit-avatar-img');
+            const avatarInitial = document.getElementById('edit-avatar-initial');
+            if (avatarImg) {
+              avatarImg.src = event.target.result;
+              avatarImg.style.display = 'block';
+            }
+            if (avatarInitial) avatarInitial.style.display = 'none';
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
+    // Edit Profile Form submit
+    if (editForm) {
+      editForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const user = window.currentUserState;
+        if (!user) return;
+
+        const nameInput = document.getElementById('edit-name-input');
+        const phoneInput = document.getElementById('edit-phone-input');
+        const nameError = document.getElementById('edit-name-error');
+        const saveBtn = document.getElementById('edit-profile-save-btn');
+
+        const name = nameInput ? nameInput.value.trim() : '';
+        const username = usernameInput ? usernameInput.value.trim().toLowerCase() : '';
+        const phone = phoneInput ? phoneInput.value.trim() : '';
+
+        // Validation rule a: Full name REQUIRED
+        if (!name) {
+          if (nameInput) nameInput.classList.add('is-invalid');
+          if (nameError) {
+            nameError.textContent = 'নাম আবশ্যক';
+            nameError.classList.add('visible');
+          }
+          return;
+        } else {
+          if (nameInput) nameInput.classList.remove('is-invalid');
+          if (nameError) {
+            nameError.textContent = '';
+            nameError.classList.remove('visible');
+          }
+        }
+
+        // Validation rule b: Username REQUIRED and valid
+        if (!username || !isUsernameValid) {
+          validateUsernameLive(username);
+          return;
+        }
+
+        if (saveBtn) {
+          saveBtn.disabled = true;
+          saveBtn.innerHTML = `<span class="btn-spinner"></span> সংরক্ষণ হচ্ছে...`;
+        }
+
+        const mod = window.FirebaseModule;
+
+        try {
+          // Server-side / query check prior to save to prevent race condition
+          if (mod && mod.db && mod.doc && mod.getDoc && username !== currentUserUsername) {
+            const checkRef = mod.doc(mod.db, 'usernames', username);
+            const checkSnap = await mod.getDoc(checkRef);
+            if (checkSnap.exists() && checkSnap.data().uid !== user.uid) {
+              if (saveBtn) {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'সংরক্ষণ করুন';
+              }
+              validateUsernameLive(username);
+              return;
+            }
+          }
+
+          // 1. Update Firebase Auth displayName
+          if (mod && mod.updateProfile) {
+            await mod.updateProfile(user, { displayName: name });
+          }
+
+          // 2. Manage usernames collection doc
+          if (mod && mod.db && mod.doc && mod.setDoc) {
+            if (username !== currentUserUsername) {
+              // Reserve new username
+              await mod.setDoc(mod.doc(mod.db, 'usernames', username), {
+                uid: user.uid,
+                updatedAt: mod.serverTimestamp ? mod.serverTimestamp() : new Date().toISOString()
+              });
+
+              // Release old username if existed
+              if (currentUserUsername && mod.deleteDoc) {
+                try {
+                  await mod.deleteDoc(mod.doc(mod.db, 'usernames', currentUserUsername));
+                } catch (e) {
+                  console.warn('Could not delete old username doc:', e);
+                }
+              }
+            }
+
+            // 3. Save user profile document in Firestore `users/{uid}`
+            await mod.setDoc(mod.doc(mod.db, 'users', user.uid), {
+              displayName: name,
+              username: username,
+              phone: phone,
+              email: user.email || '',
+              updatedAt: mod.serverTimestamp ? mod.serverTimestamp() : new Date().toISOString()
+            }, { merge: true });
+          }
+
+          // Update local state
+          user.displayName = name;
+
+          // Update DOM display on account card & sidebars
+          if (document.getElementById('account-profile-name')) {
+            document.getElementById('account-profile-name').textContent = name;
+          }
+          if (document.getElementById('account-profile-username')) {
+            document.getElementById('account-profile-username').textContent = username;
+          }
+          if (document.getElementById('account-profile-phone-row') && document.getElementById('account-profile-phone')) {
+            const phoneText = document.getElementById('account-profile-phone');
+            if (phone) {
+              phoneText.textContent = phone;
+            } else {
+              const isBn = currentLang === 'bn';
+              const promptLabel = isBn ? '+ ফোন নম্বর যোগ করুন' : '+ Add phone number';
+              phoneText.innerHTML = `<a href="settings.html" style="font-size: 0.88rem; font-weight: 500;">${promptLabel}</a>`;
+            }
+          }
+
+          if (document.getElementById('account-sidebar-name')) document.getElementById('account-sidebar-name').textContent = name;
+          if (document.getElementById('welcome-client-name')) {
+            const firstName = name.trim().split(' ')[0] || 'Client';
+            document.getElementById('welcome-client-name').textContent = firstName;
+          }
+
+          if (window.refreshThreeDotsMenu) window.refreshThreeDotsMenu();
+
+          editModal.classList.remove('active');
+
+          if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'সংরক্ষণ করুন';
+          }
+
+          if (window.showToast) {
+            window.showToast(currentLang === 'bn' ? 'প্রোফাইল সফলভাবে আপডেট করা হয়েছে!' : 'Profile updated successfully!', 'success');
+          }
+
+        } catch (err) {
+          console.error('Error updating profile:', err);
+          if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'সংরক্ষণ করুন';
+          }
+          if (window.showToast) {
+            window.showToast(err.message || 'Error updating profile', 'error');
+          }
+        }
+      });
+    }
   }
 
   /* --------------------------------------------------------------------------
