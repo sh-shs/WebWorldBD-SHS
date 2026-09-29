@@ -66,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initFirebaseAuthObserver();
   initScrollAnimations();
   initSettingsPage();
+  initDashboardUI();
 
   // Dynamic Content Rendering
   if (document.getElementById('services-grid')) renderServices();
@@ -2024,6 +2025,58 @@ document.addEventListener('DOMContentLoaded', () => {
       const waUrl = `https://wa.me/8801342697743?text=${encodeURIComponent(waMessage)}`;
       window.open(waUrl, '_blank', 'noopener,noreferrer');
     });
+  }
+
+  /* --------------------------------------------------------------------------
+     10b. Dashboard UI Interactivity Handlers
+     -------------------------------------------------------------------------- */
+  function initDashboardUI() {
+    const sidebar = document.getElementById('dash-sidebar');
+    const overlay = document.getElementById('dash-sidebar-overlay');
+    const hamburgerBtn = document.getElementById('dash-hamburger-btn');
+    const closeBtn = document.getElementById('dash-sidebar-close');
+
+    if (!sidebar) return;
+
+    function openSidebar() {
+      sidebar.classList.add('active');
+      if (overlay) overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeSidebar() {
+      sidebar.classList.remove('active');
+      if (overlay) overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    if (hamburgerBtn) {
+      hamburgerBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openSidebar();
+      });
+    }
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeSidebar);
+    }
+
+    if (overlay) {
+      overlay.addEventListener('click', closeSidebar);
+    }
+
+    // Update user info from Firebase auth state in dashboard view
+    const clientTopbarName = document.getElementById('client-topbar-name');
+    const clientSidebarName = document.getElementById('client-sidebar-name');
+    const welcomeUserName = document.getElementById('welcome-user-name');
+
+    if (window.currentUserState) {
+      const u = window.currentUserState;
+      const displayName = u.displayName || (u.email ? u.email.split('@')[0] : 'Client');
+      if (clientTopbarName) clientTopbarName.textContent = displayName;
+      if (clientSidebarName) clientSidebarName.textContent = displayName;
+      if (welcomeUserName) welcomeUserName.textContent = displayName;
+    }
   }
 
   /* --------------------------------------------------------------------------
