@@ -67,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollAnimations();
   initSettingsPage();
   initDashboardUI();
+  initAdminDashboardUI();
 
   // Dynamic Content Rendering
   if (document.getElementById('services-grid')) renderServices();
@@ -1989,7 +1990,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* --------------------------------------------------------------------------
-     10. Custom Project Request Form Handlers
+     10. Custom Project Request Form Handlers (Firestore + WhatsApp Integration)
      -------------------------------------------------------------------------- */
   function initStartProjectForm() {
     const form = document.getElementById('start-project-form');
@@ -2007,18 +2008,48 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const name = document.getElementById('project-req-name')?.value.trim() || '';
       const contact = document.getElementById('project-req-contact')?.value.trim() || '';
-      const type = typeSelect ? typeSelect.options[typeSelect.selectedIndex].text : 'Custom Project';
-      const budget = document.getElementById('project-req-budget')?.value || 'Flexible';
+      const serviceType = typeSelect ? typeSelect.options[typeSelect.selectedIndex].text : 'Custom Project';
+      const budget = document.getElementById('project-req-budget')?.value || 'flexible';
       const desc = document.getElementById('project-req-desc')?.value.trim() || '';
 
+      const user = window.currentUserState;
+      const uid = user ? user.uid : 'guest_' + Date.now();
+      const userEmail = user ? user.email : (contact.includes('@') ? contact : '');
+
+      const requestPayload = {
+        requestId: 'REQ-' + Math.floor(100000 + Math.random() * 900000),
+        clientName: name,
+        contactInfo: contact,
+        serviceName: serviceType,
+        budget: budget,
+        description: desc,
+        status: 'pending',
+        userId: uid,
+        userEmail: userEmail,
+        createdAt: new Date().toISOString()
+      };
+
+      const mod = window.FirebaseModule;
+      if (mod && mod.db && mod.collection && mod.addDoc) {
+        try {
+          await mod.addDoc(mod.collection(mod.db, 'project_requests'), requestPayload);
+          if (window.showToast) {
+            window.showToast(currentLang === 'bn' ? 'প্রজেক্ট রিকুয়েস্ট সফলভাবে জমা দেওয়া হয়েছে!' : 'Project request submitted successfully!', 'success');
+          }
+        } catch (err) {
+          console.error('Error saving project request:', err);
+        }
+      }
+
       const waMessage = `*New Custom Project Request — WebWorldBD*\n\n` +
+        `*Request ID:* ${requestPayload.requestId}\n` +
         `*Name:* ${name}\n` +
         `*Contact:* ${contact}\n` +
-        `*Project Type:* ${type}\n` +
+        `*Project Type:* ${serviceType}\n` +
         `*Budget:* ${budget}\n` +
         `*Requirements:* ${desc}`;
 
@@ -2028,7 +2059,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* --------------------------------------------------------------------------
-     10b. Dashboard UI Interactivity Handlers
+     10b. Dashboard UI Interactivity & Client Route Protection Handlers
      -------------------------------------------------------------------------- */
   function initDashboardUI() {
     const sidebar = document.getElementById('dash-sidebar');
@@ -2036,47 +2067,388 @@ document.addEventListener('DOMContentLoaded', () => {
     const hamburgerBtn = document.getElementById('dash-hamburger-btn');
     const closeBtn = document.getElementById('dash-sidebar-close');
 
-    if (!sidebar) return;
+    const isDashboardPage = window.location.pathname.endsWith('dashboard.html');
+    if (!sidebar && !isDashboardPage) return;
 
-    function openSidebar() {
-      sidebar.classList.add('active');
-      if (overlay) overlay.classList.add('active');
-      document.body.style.overflow = 'hidden';
+    if (sidebar) {
+      function openSidebar() {
+        sidebar.classList.add('active');
+        if (overlay) overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeSidebar() {
+        sidebar.classList.remove('active');
+        if (overlay) overlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
+      if (hamburgerBtn) {
+        hamburgerBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openSidebar();
+        });
+      }
+
+      if (closeBtn) {
+        closeBtn.addEventListener('click', closeSidebar);
+      }
+
+      if (overlay) {
+        overlay.addEventListener('click', closeSidebar);
+      }
     }
 
-    function closeSidebar() {
-      sidebar.classList.remove('active');
-      if (overlay) overlay.classList.remove('active');
-      document.body.style.overflow = '';
-    }
+    // Client Dashboard Route Protection & Dynamic Section Switching
+    if (isDashboardPage) {
+      function checkClientAuth() {
+        const mod = window.FirebaseModule;
+        if (!mod || !mod.auth || !mod.onAuthStateChanged) {
+          setTimeout(checkClientAuth, 50);
+          return;
+        }
 
-    if (hamburgerBtn) {
-      hamburgerBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        openSidebar();
+        mod.onAuthStateChanged(mod.auth, (user) => {
+          if (!user) {
+            // Unauthenticated - redirect to account.html
+            window.location.href = 'account.html';
+          } else {
+            // Authenticated Client
+            window.currentUserState = user;
+            const displayName = user.displayName || (user.email ? user.email.split('@')[0] : 'Valued Client');
+
+            const clientTopbarName = document.getElementById('client-topbar-name');
+            const clientSidebarName = document.getElementById('client-sidebar-name');
+            const welcomeUserName = document.getElementById('welcome-user-name');
+            const clientSidebarAvatar = document.getElementById('client-sidebar-avatar');
+            const clientTopbarAvatar = document.getElementById('client-topbar-avatar');
+
+            if (clientTopbarName) clientTopbarName.textContent = displayName;
+            if (clientSidebarName) clientSidebarName.textContent = displayName;
+            if (welcomeUserName) welcomeUserName.textContent = displayName;
+
+            if (user.photoURL) {
+              if (clientSidebarAvatar) clientSidebarAvatar.src = user.photoURL;
+              if (clientTopbarAvatar) clientTopbarAvatar.src = user.photoURL;
+            }
+
+            // Real-time Firestore sync for Client Dashboard
+            initClientFirestoreSync(user.uid);
+          }
+        });
+      }
+
+      function initClientFirestoreSync(uid) {
+        const mod = window.FirebaseModule;
+        if (!mod || !mod.db || !mod.collection || !mod.query || !mod.where || !mod.onSnapshot) return;
+
+        const projectsQuery = mod.query(mod.collection(mod.db, 'projects'), mod.where('userId', '==', uid));
+        mod.onSnapshot(projectsQuery, (snapshot) => {
+          let total = 0;
+          let active = 0;
+          let completed = 0;
+          let pending = 0;
+          const userProjects = [];
+
+          snapshot.forEach((doc) => {
+            const data = doc.data();
+            data.id = doc.id;
+            userProjects.push(data);
+            total++;
+
+            const st = (data.status || '').toLowerCase();
+            if (st === 'completed') completed++;
+            else if (st === 'pending') pending++;
+            else active++;
+          });
+
+          // Update Dashboard Summary Stats Cards
+          const statCards = document.querySelectorAll('.dash-stats-row .dash-stat-card .stat-number');
+          if (statCards.length >= 3) {
+            statCards[0].textContent = total;
+            statCards[1].textContent = active;
+            statCards[2].textContent = completed;
+          }
+
+          // Update Projects Table If Present
+          const tableBody = document.querySelector('.dash-table-card table tbody');
+          if (tableBody) {
+            if (userProjects.length === 0) {
+              tableBody.innerHTML = `
+                <tr>
+                  <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                    <i class="fas fa-folder-open" style="font-size: 2rem; margin-bottom: 0.5rem; display: block; color: var(--accent-blue);"></i>
+                    ${currentLang === 'bn' ? 'কোন সক্রিয় প্রজেক্ট পাওয়া যায়নি।' : 'No active projects found.'}
+                  </td>
+                </tr>
+              `;
+            } else {
+              tableBody.innerHTML = userProjects.map(p => {
+                const progress = p.progress || 0;
+                const status = p.status || 'Pending';
+                let statusBadge = `<span class="badge-status status-active"><i class="fas fa-sync fa-spin"></i> ${status}</span>`;
+                if (status.toLowerCase() === 'completed') {
+                  statusBadge = `<span class="badge-status status-completed"><i class="fas fa-check"></i> Completed</span>`;
+                } else if (status.toLowerCase() === 'pending') {
+                  statusBadge = `<span class="badge-status status-pending"><i class="fas fa-clock"></i> Pending</span>`;
+                }
+
+                return `
+                  <tr>
+                    <td>
+                      <div class="dash-table-project-name">
+                        ${p.projectName || 'Web Development Project'}
+                        <span class="dash-table-project-sub">ID: ${p.projectId || p.id}</span>
+                      </div>
+                    </td>
+                    <td>${p.service || 'Web Development'}</td>
+                    <td>${statusBadge}</td>
+                    <td>
+                      <div class="dash-progress-wrapper">
+                        <div class="dash-progress-bar">
+                          <div class="dash-progress-fill" style="width: ${progress}%;"></div>
+                        </div>
+                        <span class="dash-progress-text">${progress}%</span>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="project-details.html?id=${p.id}" class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">Details</a>
+                    </td>
+                  </tr>
+                `;
+              }).join('');
+            }
+          }
+        }, (error) => {
+          console.error('Error fetching client projects:', error);
+        });
+      }
+
+      checkClientAuth();
+
+      // Dynamic Sidebar Section Navigation Switching
+      const navItems = document.querySelectorAll('.dash-nav-item[data-nav]');
+      navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+          const navTarget = item.getAttribute('data-nav');
+          if (navTarget === 'start-project' || navTarget === 'account' || item.getAttribute('href').endsWith('.html')) {
+            return; // Normal link navigation
+          }
+
+          e.preventDefault();
+          navItems.forEach(i => i.classList.remove('active'));
+          item.classList.add('active');
+
+          if (sidebar) sidebar.classList.remove('active');
+          if (overlay) overlay.classList.remove('active');
+          document.body.style.overflow = '';
+        });
+      });
+    }
+  }
+
+  /* --------------------------------------------------------------------------
+     10c. Admin Dashboard UI & Security Authorization Guard
+     -------------------------------------------------------------------------- */
+  function initAdminDashboardUI() {
+    const isAdminPage = window.location.pathname.endsWith('admin.html');
+    if (!isAdminPage) return;
+
+    function checkAdminAuth() {
+      const mod = window.FirebaseModule;
+      if (!mod || !mod.auth || !mod.onAuthStateChanged) {
+        setTimeout(checkAdminAuth, 50);
+        return;
+      }
+
+      mod.onAuthStateChanged(mod.auth, async (user) => {
+        if (!user) {
+          // Unauthenticated - redirect to account.html
+          window.location.href = 'account.html';
+          return;
+        }
+
+        // Check Admin role in Firestore 'users' collection or user claims
+        let isAdmin = false;
+        try {
+          if (mod.db && mod.doc && mod.getDoc) {
+            const userDocRef = mod.doc(mod.db, 'users', user.uid);
+            const userSnap = await mod.getDoc(userDocRef);
+            if (userSnap.exists() && userSnap.data() && userSnap.data().role === 'admin') {
+              isAdmin = true;
+            }
+          }
+        } catch (e) {
+          console.error('Error fetching admin role document:', e);
+        }
+
+        if (!isAdmin) {
+          alert('Access Denied: You do not have permission to access the Admin Control Panel.');
+          window.location.href = 'account.html';
+          return;
+        }
+
+        // Initialize Real-time Project Requests & Projects Management for Admin
+        initAdminProjectRequestsSync();
+        initAdminProjectsSync();
       });
     }
 
-    if (closeBtn) {
-      closeBtn.addEventListener('click', closeSidebar);
+    function initAdminProjectsSync() {
+      const mod = window.FirebaseModule;
+      if (!mod || !mod.db || !mod.collection || !mod.onSnapshot) return;
+
+      const projectsRef = mod.collection(mod.db, 'projects');
+      mod.onSnapshot(projectsRef, (snapshot) => {
+        let activeCount = 0;
+        let totalProjects = 0;
+
+        snapshot.forEach((doc) => {
+          totalProjects++;
+          const data = doc.data();
+          const st = (data.status || '').toLowerCase();
+          if (st !== 'completed' && st !== 'cancelled') {
+            activeCount++;
+          }
+        });
+
+        const statCards = document.querySelectorAll('.dash-stats-row .dash-stat-card .stat-number');
+        if (statCards.length >= 2) {
+          statCards[1].textContent = activeCount;
+        }
+      }, (error) => {
+        console.error('Error listening to admin projects:', error);
+      });
     }
 
-    if (overlay) {
-      overlay.addEventListener('click', closeSidebar);
+    function initAdminProjectRequestsSync() {
+      const mod = window.FirebaseModule;
+      if (!mod || !mod.db || !mod.collection || !mod.onSnapshot) return;
+
+      const requestsRef = mod.collection(mod.db, 'project_requests');
+      mod.onSnapshot(requestsRef, (snapshot) => {
+        const requests = [];
+        let pendingCount = 0;
+
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          data.id = doc.id;
+          requests.push(data);
+          if ((data.status || 'pending').toLowerCase() === 'pending') {
+            pendingCount++;
+          }
+        });
+
+        // Update Admin Pending Request Stat Number
+        const statCards = document.querySelectorAll('.dash-stats-row .dash-stat-card .stat-number');
+        if (statCards.length >= 3) {
+          statCards[2].textContent = pendingCount;
+        }
+
+        // Render Recent Project Requests Table
+        const tableBody = document.querySelector('.dash-table-card table tbody');
+        if (tableBody) {
+          if (requests.length === 0) {
+            tableBody.innerHTML = `
+              <tr>
+                <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                  <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 0.5rem; display: block; color: var(--accent-blue);"></i>
+                  ${currentLang === 'bn' ? 'কোন প্রজেক্ট রিকুয়েস্ট পাওয়া যায়নি।' : 'No project requests found.'}
+                </td>
+              </tr>
+            `;
+          } else {
+            tableBody.innerHTML = requests.map(req => {
+              const status = req.status || 'pending';
+              let badge = `<span class="badge-status status-pending"><i class="fas fa-clock"></i> Pending Review</span>`;
+              if (status.toLowerCase() === 'approved' || status.toLowerCase() === 'accepted') {
+                badge = `<span class="badge-status status-active"><i class="fas fa-check"></i> Approved</span>`;
+              } else if (status.toLowerCase() === 'rejected') {
+                badge = `<span class="badge-status status-completed"><i class="fas fa-times"></i> Rejected</span>`;
+              }
+
+              const formattedDate = req.createdAt ? new Date(req.createdAt).toLocaleDateString() : 'Recent';
+
+              return `
+                <tr>
+                  <td>
+                    <div class="dash-table-project-name">
+                      ${req.clientName || 'Client Request'}
+                      <span class="dash-table-project-sub">${req.contactInfo || req.userEmail || ''}</span>
+                    </div>
+                  </td>
+                  <td>${req.serviceName || 'Custom Service'}</td>
+                  <td>${req.budget || 'Flexible'}</td>
+                  <td>${badge}</td>
+                  <td>${formattedDate}</td>
+                  <td>
+                    ${status.toLowerCase() === 'pending' ? `
+                      <button type="button" class="btn btn-primary btn-approve-req" data-req-id="${req.id}" style="padding: 0.35rem 0.65rem; font-size: 0.8rem;">Approve</button>
+                      <button type="button" class="btn btn-secondary btn-reject-req" data-req-id="${req.id}" style="padding: 0.35rem 0.65rem; font-size: 0.8rem;">Reject</button>
+                    ` : `
+                      <span style="font-size: 0.8rem; color: var(--text-muted);">${status}</span>
+                    `}
+                  </td>
+                </tr>
+              `;
+            }).join('');
+
+            attachAdminRequestActions(requests);
+          }
+        }
+      }, (error) => {
+        console.error('Error listening to project requests:', error);
+      });
     }
 
-    // Update user info from Firebase auth state in dashboard view
-    const clientTopbarName = document.getElementById('client-topbar-name');
-    const clientSidebarName = document.getElementById('client-sidebar-name');
-    const welcomeUserName = document.getElementById('welcome-user-name');
+    function attachAdminRequestActions(requests) {
+      const mod = window.FirebaseModule;
+      if (!mod || !mod.db || !mod.doc || !mod.updateDoc || !mod.addDoc) return;
 
-    if (window.currentUserState) {
-      const u = window.currentUserState;
-      const displayName = u.displayName || (u.email ? u.email.split('@')[0] : 'Client');
-      if (clientTopbarName) clientTopbarName.textContent = displayName;
-      if (clientSidebarName) clientSidebarName.textContent = displayName;
-      if (welcomeUserName) welcomeUserName.textContent = displayName;
+      document.querySelectorAll('.btn-approve-req').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const reqId = btn.getAttribute('data-req-id');
+          const reqData = requests.find(r => r.id === reqId);
+          if (!reqData) return;
+
+          try {
+            // Update request status to 'approved'
+            await mod.updateDoc(mod.doc(mod.db, 'project_requests', reqId), { status: 'approved' });
+
+            // Create active project entry in 'projects' collection
+            await mod.addDoc(mod.collection(mod.db, 'projects'), {
+              projectId: reqData.requestId || 'PRJ-' + Math.floor(100000 + Math.random() * 900000),
+              projectName: reqData.serviceName + ' - ' + reqData.clientName,
+              service: reqData.serviceName,
+              clientName: reqData.clientName,
+              userId: reqData.userId,
+              userEmail: reqData.userEmail,
+              status: 'In Progress',
+              progress: 10,
+              createdAt: new Date().toISOString()
+            });
+
+            if (window.showToast) window.showToast('Project Request Approved & Project Created!', 'success');
+          } catch (err) {
+            console.error('Error approving request:', err);
+          }
+        });
+      });
+
+      document.querySelectorAll('.btn-reject-req').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const reqId = btn.getAttribute('data-req-id');
+          try {
+            await mod.updateDoc(mod.doc(mod.db, 'project_requests', reqId), { status: 'rejected' });
+            if (window.showToast) window.showToast('Project Request Rejected.', 'info');
+          } catch (err) {
+            console.error('Error rejecting request:', err);
+          }
+        });
+      });
     }
+
+    checkAdminAuth();
   }
 
   /* --------------------------------------------------------------------------
