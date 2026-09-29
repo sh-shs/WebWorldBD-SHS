@@ -653,86 +653,105 @@
 
   <!-- Edit Profile Modal -->
   <div class="settings-modal-overlay" id="edit-profile-modal">
-    <div class="settings-modal-card glass-card" style="max-width: 500px; width: 100%;">
-      <div class="dash-card-header" style="margin-bottom: 1.25rem;">
-        <h3 class="dash-card-title"><i class="fas fa-user-pen"></i> <span data-i18n="modalEditProfileTitle">প্রোফাইল এডিট</span></h3>
-        <button type="button" class="alert-close-btn btn-modal-cancel" aria-label="Close modal">
-          <i class="fas fa-times"></i>
+    <div class="settings-modal-card edit-profile-modal-card">
+      <div class="edit-profile-modal-header">
+        <h3 class="edit-profile-modal-title">
+          <i class="fas fa-user-pen edit-profile-title-icon"></i>
+          <span data-i18n="modalEditProfileTitle">প্রোফাইল এডিট</span>
+        </h3>
+        <button type="button" class="edit-profile-close-btn btn-modal-cancel" aria-label="Close modal">
+          <i class="fas fa-xmark"></i>
         </button>
       </div>
 
-      <form id="edit-profile-form" class="auth-form" style="background: transparent; border: none; padding: 0; box-shadow: none;" novalidate>
+      <form id="edit-profile-form" class="edit-profile-form-body" novalidate>
 
         <!-- a) Full Name -->
         <div class="form-group">
-          <label for="edit-name-input"><span data-i18n="formNameLabel">নাম (Full Name)</span> <span style="color: #EF4444;">*</span></label>
+          <label for="edit-name-input" class="edit-profile-label">
+            <span data-i18n="formNameLabel">নাম (Full Name)</span>
+            <span class="required-star">*</span>
+          </label>
           <div class="input-icon-wrapper">
             <i class="fas fa-user input-icon-left"></i>
-            <input type="text" id="edit-name-input" class="form-control" placeholder="আপনার পূর্ণ নাম লিখুন" required>
+            <input type="text" id="edit-name-input" class="form-control modal-form-control" placeholder="আপনার পূর্ণ নাম লিখুন" required>
           </div>
           <span class="field-error-msg" id="edit-name-error"></span>
         </div>
 
         <!-- b) Username -->
         <div class="form-group">
-          <label for="edit-username-input">ইউজারনেম (Username) <span style="color: #EF4444;">*</span></label>
-          <div class="input-icon-wrapper" style="position: relative;">
+          <label for="edit-username-input" class="edit-profile-label">
+            <span>ইউজারনেম (Username)</span>
+            <span class="required-star">*</span>
+          </label>
+          <div class="input-icon-wrapper username-wrapper">
             <i class="fas fa-at input-icon-left"></i>
-            <input type="text" id="edit-username-input" class="form-control" placeholder="username" autocomplete="off" required style="padding-right: 2.5rem;">
-            <div id="username-status-spinner" class="username-status-icon" style="display: none; position: absolute; right: 0.85rem;">
-              <span class="btn-spinner" style="width: 18px; height: 18px; border-width: 2px; border-top-color: var(--accent-blue);"></span>
+            <input type="text" id="edit-username-input" class="form-control modal-form-control" placeholder="username" autocomplete="off" required>
+            <div id="username-status-spinner" class="username-status-icon" style="display: none;">
+              <span class="btn-spinner"></span>
             </div>
-            <div id="username-status-icon-success" class="username-status-icon" style="display: none; position: absolute; right: 0.85rem; color: #10B981;">
+            <div id="username-status-icon-success" class="username-status-icon username-status-success" style="display: none;">
               <i class="fas fa-circle-check"></i>
             </div>
-            <div id="username-status-icon-error" class="username-status-icon" style="display: none; position: absolute; right: 0.85rem; color: #EF4444;">
+            <div id="username-status-icon-error" class="username-status-icon username-status-error" style="display: none;">
               <i class="fas fa-circle-xmark"></i>
             </div>
           </div>
-          <span id="username-hint-msg" style="font-size: 0.8rem; margin-top: 0.25rem; display: block; color: var(--text-muted);">শুধুমাত্র ইংরেজি ছোট হাতের অক্ষর (a-z) ও সংখ্যা (0-9) ব্যবহারযোগ্য। (কমপক্ষে ৩ অক্ষর)</span>
+          <span id="username-hint-msg" class="edit-profile-hint">শুধুমাত্র ইংরেজি ছোট হাতের অক্ষর (a-z) ও সংখ্যা (0-9) ব্যবহারযোগ্য। (কমপক্ষে ৩ অক্ষর)</span>
           <span class="field-error-msg" id="edit-username-error"></span>
         </div>
 
         <!-- c) Phone Number -->
         <div class="form-group">
-          <label for="edit-phone-input">ফোন নম্বর (Phone Number) <span style="font-size: 0.8rem; color: var(--text-muted);">(ঐচ্ছিক)</span></label>
+          <label for="edit-phone-input" class="edit-profile-label">
+            <span>ফোন নম্বর (Phone Number)</span>
+            <span class="optional-tag">(ঐচ্ছিক)</span>
+          </label>
           <div class="input-icon-wrapper">
             <i class="fas fa-phone input-icon-left"></i>
-            <input type="tel" id="edit-phone-input" class="form-control" placeholder="+8801700000000">
+            <input type="tel" id="edit-phone-input" class="form-control modal-form-control" placeholder="+8801700000000">
           </div>
           <span class="field-error-msg" id="edit-phone-error"></span>
         </div>
 
         <!-- d) Profile Picture UI -->
         <div class="form-group">
-          <label>প্রোফাইল ছবি (Profile Picture) <span style="font-size: 0.8rem; color: var(--text-muted);">(ঐচ্ছিক)</span></label>
-          <div style="display: flex; align-items: center; gap: 1.25rem; margin-top: 0.25rem;">
-            <div style="position: relative; width: 70px; height: 70px; flex-shrink: 0;">
-              <div id="edit-avatar-preview-box" class="user-avatar-inner" style="width: 70px; height: 70px; border-radius: 50%; background: var(--gradient-primary); border: 2px solid var(--accent-blue); overflow: hidden; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 1.75rem;">
-                <img id="edit-avatar-img" src="" alt="Avatar Preview" style="display: none; width: 100%; height: 100%; object-fit: cover;">
-                <span id="edit-avatar-initial">S</span>
+          <label class="edit-profile-label">
+            <span>প্রোফাইল ছবি (Profile Picture)</span>
+            <span class="optional-tag">(ঐচ্ছিক)</span>
+          </label>
+          <div class="avatar-upload-row">
+            <div class="avatar-preview-container">
+              <div id="edit-avatar-preview-box" class="avatar-preview-ring">
+                <img id="edit-avatar-img" src="" alt="Avatar Preview" class="avatar-preview-img" style="display: none;">
+                <span id="edit-avatar-initial" class="avatar-preview-initial">S</span>
               </div>
             </div>
-            <div>
+            <div class="avatar-controls-col">
               <input type="file" id="edit-photo-file-input" accept="image/*" style="display: none;">
-              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                <button type="button" class="btn btn-secondary" id="btn-change-photo" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
-                  <i class="fas fa-camera"></i> ছবি নির্বাচন করুন
+              <div class="avatar-btns-group">
+                <button type="button" class="btn btn-avatar-change" id="btn-change-photo">
+                  <i class="fas fa-camera"></i> <span>ছবি নির্বাচন করুন</span>
                 </button>
-                <button type="button" class="btn btn-danger-outline" id="btn-remove-photo" style="padding: 0.5rem 0.85rem; font-size: 0.85rem; display: none;">
-                  <i class="fas fa-trash"></i> রিমুভ
+                <button type="button" class="btn btn-avatar-remove" id="btn-remove-photo" style="display: none;">
+                  <i class="fas fa-trash-can"></i> <span>রিমুভ</span>
                 </button>
               </div>
-              <span id="photo-selected-name" style="display: block; font-size: 0.78rem; color: var(--text-muted); margin-top: 0.35rem;"></span>
-              <span id="photo-upload-status" style="display: block; font-size: 0.78rem; margin-top: 0.25rem; font-weight: 600;"></span>
+              <span id="photo-selected-name" class="avatar-file-name"></span>
+              <span id="photo-upload-status" class="avatar-upload-status"></span>
             </div>
           </div>
         </div>
 
         <!-- e) Save & Cancel buttons -->
-        <div style="display: flex; gap: 0.85rem; justify-content: flex-end; margin-top: 1rem;">
-          <button type="button" class="btn btn-secondary btn-modal-cancel" style="padding: 0.65rem 1.25rem;">বাতিল</button>
-          <button type="submit" class="btn btn-primary" id="edit-profile-save-btn" style="padding: 0.65rem 1.5rem;">সংরক্ষণ করুন</button>
+        <div class="edit-profile-actions">
+          <button type="button" class="btn btn-modal-cancel-outline btn-modal-cancel">
+            <i class="fas fa-xmark"></i> <span>বাতিল</span>
+          </button>
+          <button type="submit" class="btn btn-save-gradient" id="edit-profile-save-btn">
+            <i class="fas fa-floppy-disk"></i> <span>সংরক্ষণ করুন</span>
+          </button>
         </div>
       </form>
     </div>
