@@ -195,10 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
           : { id: 'about', url: `${p}index.html#about`, icon: 'fas fa-user', i18nKey: 'menuAbout' },
         { id: 'why', url: `${p}why-choose-me.html`, icon: 'fas fa-shield-halved', i18nKey: 'menuWhy' },
         { id: 'process', url: `${p}process.html`, icon: 'fas fa-list-check', i18nKey: 'menuProcess' },
-        { id: 'faq', url: `${p}faq.html`, icon: 'fas fa-circle-question', i18nKey: 'menuFaq' },
-        { id: 'shopping-now', url: 'https://shs-bazar.pages.dev/', icon: 'fas fa-cart-shopping', i18nKey: 'menuShoppingNow', external: true },
-        { id: 'student-tools-ai', url: 'https://student-tools-ai.pages.dev/', icon: 'fas fa-graduation-cap', i18nKey: 'menuStudentToolsAi', external: true },
-        { id: 'privacy-policy', url: 'https://privacy-policy-5dn.pages.dev/', icon: 'fas fa-user-shield', i18nKey: 'menuPrivacyPolicy', external: true }
+        { id: 'faq', url: `${p}faq.html`, icon: 'fas fa-circle-question', i18nKey: 'menuFaq' }
       ];
 
       const group3 = [
@@ -353,6 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const normPath = getNormalizedPath();
       const currentHash = window.location.hash.toLowerCase();
       const menuLinks = menuEl.querySelectorAll('.three-dots-menu-item');
+      const isLoggedInUser = !!window.currentUserState;
 
       let activeMenuId = null;
 
@@ -379,7 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (normPath === '/faq') {
         activeMenuId = 'faq';
       } else if (normPath === '/account') {
-        activeMenuId = isLoggedIn ? 'profile' : 'account-auth';
+        activeMenuId = isLoggedInUser ? 'profile' : 'account-auth';
       }
 
       menuLinks.forEach(link => {
@@ -1625,6 +1623,18 @@ document.addEventListener('DOMContentLoaded', () => {
           return translations[currentLang].errPopupClosed;
         case 'auth/invalid-email':
           return translations[currentLang].errEmailRequired;
+        case 'auth/unauthorized-domain':
+          return currentLang === 'bn'
+            ? 'এই ডোমেইনটি Firebase Auth-এ অনুমোদিত নয় (unauthorized domain)।'
+            : 'This domain is not authorized for Firebase Auth.';
+        case 'auth/network-request-failed':
+          return currentLang === 'bn'
+            ? 'নেটওয়ার্ক সংযোগ পাওয়া যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করুন।'
+            : 'Network request failed. Please check your internet connection.';
+        case 'auth/too-many-requests':
+          return currentLang === 'bn'
+            ? 'অতিরিক্ত চেষ্টার কারণে সাময়িকভাবে ব্লক করা হয়েছে। কিছুক্ষণ পর চেষ্টা করুন।'
+            : 'Access temporarily blocked due to too many requests. Try again later.';
         default:
           return translations[currentLang].errAuthDefault;
       }
@@ -1678,8 +1688,13 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.classList.remove('loading');
             if (btnText) btnText.textContent = originalText;
             if (btnIcon) btnIcon.style.display = 'inline-block';
-            showAlert(getFirebaseErrorMessage(error.code), 'error');
+            showAlert(getFirebaseErrorMessage(error ? error.code : ''), 'error');
           });
+      } else {
+        submitBtn.classList.remove('loading');
+        if (btnText) btnText.textContent = originalText;
+        if (btnIcon) btnIcon.style.display = 'inline-block';
+        showAlert(translations[currentLang].errAuthDefault, 'error');
       }
     });
 
@@ -1736,8 +1751,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (mod && mod.auth && mod.createUserWithEmailAndPassword) {
         mod.createUserWithEmailAndPassword(mod.auth, email, password)
           .then((userCredential) => {
-            const user = userCredential.user;
-            if (mod.updateProfile) {
+            const user = userCredential ? userCredential.user : null;
+            if (user && mod.updateProfile) {
               return mod.updateProfile(user, { displayName: name });
             }
           })
@@ -1751,8 +1766,13 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.classList.remove('loading');
             if (btnText) btnText.textContent = originalText;
             if (btnIcon) btnIcon.style.display = 'inline-block';
-            showAlert(getFirebaseErrorMessage(error.code), 'error');
+            showAlert(getFirebaseErrorMessage(error ? error.code : ''), 'error');
           });
+      } else {
+        submitBtn.classList.remove('loading');
+        if (btnText) btnText.textContent = originalText;
+        if (btnIcon) btnIcon.style.display = 'inline-block';
+        showAlert(translations[currentLang].errAuthDefault, 'error');
       }
     });
 
@@ -1794,8 +1814,13 @@ document.addEventListener('DOMContentLoaded', () => {
               submitBtn.classList.remove('loading');
               if (btnText) btnText.textContent = originalText;
               if (btnIcon) btnIcon.style.display = 'inline-block';
-              showAlert(getFirebaseErrorMessage(error.code), 'error');
+              showAlert(getFirebaseErrorMessage(error ? error.code : ''), 'error');
             });
+        } else {
+          submitBtn.classList.remove('loading');
+          if (btnText) btnText.textContent = originalText;
+          if (btnIcon) btnIcon.style.display = 'inline-block';
+          showAlert(translations[currentLang].errAuthDefault, 'error');
         }
       });
     }
@@ -1813,12 +1838,15 @@ document.addEventListener('DOMContentLoaded', () => {
               showAlert(translations[currentLang].msgGoogleAuthSuccess, 'success');
             })
             .catch((error) => {
-              if (error.code !== 'auth/popup-closed-by-user') {
-                showAlert(getFirebaseErrorMessage(error.code), 'error');
+              const errCode = error ? error.code : '';
+              if (errCode !== 'auth/popup-closed-by-user') {
+                showAlert(getFirebaseErrorMessage(errCode), 'error');
               } else {
                 showAlert(translations[currentLang].errPopupClosed, 'error');
               }
             });
+        } else {
+          showAlert(translations[currentLang].errAuthDefault, 'error');
         }
       }
 
@@ -1956,6 +1984,14 @@ document.addEventListener('DOMContentLoaded', () => {
           if (authLoader) authLoader.style.display = 'none';
           if (infoNotice) infoNotice.style.display = 'flex';
           if (tabsWrapper) tabsWrapper.style.display = 'flex';
+          const activeTab = authCardContainer ? authCardContainer.getAttribute('data-active-tab') : 'register';
+          if (activeTab === 'login') {
+            if (loginForm) loginForm.style.display = 'flex';
+            if (regForm) regForm.style.display = 'none';
+          } else {
+            if (regForm) regForm.style.display = 'flex';
+            if (loginForm) loginForm.style.display = 'none';
+          }
           return;
         }
         setTimeout(checkFirebaseModule, 50);
