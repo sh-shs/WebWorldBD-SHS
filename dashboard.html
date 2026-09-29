@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Dashboard | WebWorldBD</title>
+  <meta name="description" content="WebWorldBD Client Dashboard - Track your active web projects, invoices, messages, and project progress.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/images/logo.png">
+
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <!-- Firebase Module Script -->
+  <script type="module" src="assets/js/firebase-config.js"></script>
+</head>
+<body>
+
+  <!-- Dashboard Container Wrapper -->
+  <div class="dash-wrapper">
+
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div class="dash-sidebar-overlay" id="dash-sidebar-overlay"></div>
+
+    <!-- Sidebar Navigation -->
+    <aside class="dash-sidebar" id="dash-sidebar">
+      <div class="dash-sidebar-header">
+        <a href="index.html" class="logo-brand">
+          <img src="assets/images/logo.png" alt="WebWorldBD Logo">
+          <span>WebWorld<span style="color:var(--accent-blue);">BD</span></span>
+        </a>
+        <button class="dash-sidebar-close" id="dash-sidebar-close" title="Close Sidebar">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+
+      <nav class="dash-nav">
+        <span class="dash-nav-group-title">Menu</span>
+        <a href="#overview" class="dash-nav-item active" data-nav="overview">
+          <i class="fas fa-chart-pie"></i>
+          <span>Overview</span>
+        </a>
+        <a href="start-project.html" class="dash-nav-item" data-nav="start-project">
+          <i class="fas fa-rocket"></i>
+          <span>Start Project</span>
+        </a>
+        <a href="#my-projects" class="dash-nav-item" data-nav="my-projects">
+          <i class="fas fa-folder-open"></i>
+          <span>My Projects</span>
+          <span class="dash-nav-badge">4</span>
+        </a>
+        <a href="#project-tracking" class="dash-nav-item" data-nav="project-tracking">
+          <i class="fas fa-list-check"></i>
+          <span>Project Tracking</span>
+        </a>
+        <a href="#messages" class="dash-nav-item" data-nav="messages">
+          <i class="fas fa-comments"></i>
+          <span>Messages</span>
+          <span class="dash-nav-badge">2</span>
+        </a>
+        <a href="#payments" class="dash-nav-item" data-nav="payments">
+          <i class="fas fa-credit-card"></i>
+          <span>Payments</span>
+        </a>
+        <a href="#notifications" class="dash-nav-item" data-nav="notifications">
+          <i class="fas fa-bell"></i>
+          <span>Notifications</span>
+        </a>
+
+        <span class="dash-nav-group-title">Account & Site</span>
+        <a href="account.html" class="dash-nav-item" data-nav="account">
+          <i class="fas fa-user-gear"></i>
+          <span>Account</span>
+        </a>
+        <a href="index.html" class="dash-nav-item">
+          <i class="fas fa-house"></i>
+          <span>Back to Main Site</span>
+        </a>
+      </nav>
+
+      <div class="dash-sidebar-footer">
+        <div class="dash-sidebar-user">
+          <img src="profile.jpg" alt="Client Avatar" class="dash-sidebar-avatar" id="client-sidebar-avatar">
+          <div class="dash-sidebar-user-info">
+            <span class="dash-sidebar-user-name" id="client-sidebar-name">Client User</span>
+            <span class="dash-sidebar-user-role">Valued Client</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Layout -->
+    <div class="dash-main">
+
+      <!-- Top Header Bar -->
+      <header class="dash-topbar">
+        <div class="dash-topbar-left">
+          <button class="dash-hamburger-btn" id="dash-hamburger-btn" title="Toggle Navigation">
+            <i class="fas fa-bars"></i>
+          </button>
+          <h1 class="dash-page-title">Client Dashboard</h1>
+        </div>
+
+        <div class="dash-topbar-right">
+          <!-- Dark/Light Theme Toggle -->
+          <button class="toggle-btn" id="theme-toggle-btn" title="Toggle Theme">
+            <i class="fas fa-moon"></i>
+          </button>
+
+          <!-- Notification Bell -->
+          <button class="toggle-btn" style="position: relative;" title="Notifications">
+            <i class="fas fa-bell"></i>
+            <span style="position: absolute; top: 6px; right: 6px; width: 9px; height: 9px; background: #EF4444; border-radius: 50%; border: 2px solid var(--bg-card);"></span>
+          </button>
+
+          <!-- User Profile Brief -->
+          <a href="account.html" class="dash-topbar-user">
+            <img src="profile.jpg" alt="User Profile Photo" class="dash-topbar-avatar" id="client-topbar-avatar">
+            <span class="dash-topbar-name" id="client-topbar-name">Client User</span>
+          </a>
+        </div>
+      </header>
+
+      <!-- Main Overview Page Content -->
+      <main class="dash-content">
+
+        <!-- Welcome Banner Section -->
+        <div class="dash-welcome-card">
+          <div class="dash-welcome-text">
+            <h2>Welcome back, <span class="text-gradient" id="welcome-user-name">Client</span>! 👋</h2>
+            <p>Here is a real-time overview of your web development projects, milestones, and active requests.</p>
+          </div>
+          <a href="start-project.html" class="btn btn-primary">
+            <i class="fas fa-plus-circle"></i> Start New Project
+          </a>
+        </div>
+
+        <!-- Summary Cards Row -->
+        <div class="dash-stats-row">
+          <div class="dash-stat-card">
+            <div class="dash-stat-info">
+              <h4>Total Projects</h4>
+              <div class="stat-number">4</div>
+            </div>
+            <div class="dash-stat-icon-box icon-blue">
+              <i class="fas fa-diagram-project"></i>
+            </div>
+          </div>
+
+          <div class="dash-stat-card">
+            <div class="dash-stat-info">
+              <h4>Active Projects</h4>
+              <div class="stat-number">2</div>
+            </div>
+            <div class="dash-stat-icon-box icon-emerald">
+              <i class="fas fa-spinner"></i>
+            </div>
+          </div>
+
+          <div class="dash-stat-card">
+            <div class="dash-stat-info">
+              <h4>Completed Projects</h4>
+              <div class="stat-number">2</div>
+            </div>
+            <div class="dash-stat-icon-box icon-purple">
+              <i class="fas fa-circle-check"></i>
+            </div>
+          </div>
+
+          <div class="dash-stat-card">
+            <div class="dash-stat-info">
+              <h4>Unread Messages</h4>
+              <div class="stat-number">2</div>
+            </div>
+            <div class="dash-stat-icon-box icon-orange">
+              <i class="fas fa-envelope"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Action Buttons -->
+        <div class="dash-actions-card">
+          <div class="dash-card-header">
+            <h3 class="dash-card-title"><i class="fas fa-bolt"></i> Quick Actions</h3>
+          </div>
+          <div class="dash-quick-btns">
+            <a href="start-project.html" class="btn btn-primary">
+              <i class="fas fa-rocket"></i> Start New Project
+            </a>
+            <a href="contact.html" class="btn btn-secondary">
+              <i class="fas fa-message"></i> View Messages
+            </a>
+            <a href="https://wa.me/8801342697743" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp">
+              <i class="fab fa-whatsapp"></i> Chat Support
+            </a>
+          </div>
+        </div>
+
+        <!-- Recent Projects Table Section -->
+        <div class="dash-table-card">
+          <div class="dash-card-header">
+            <h3 class="dash-card-title"><i class="fas fa-clock-rotate-left"></i> Recent Projects</h3>
+            <a href="projects.html" class="btn btn-secondary" style="padding: 0.45rem 1rem; font-size: 0.85rem;">View All</a>
+          </div>
+
+          <div class="dash-table-responsive">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>Project Name</th>
+                  <th>Category</th>
+                  <th>Status</th>
+                  <th>Progress %</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="dash-table-project-name">
+                      SHS Bazar E-Commerce
+                      <span class="dash-table-project-sub">Target: Full E-commerce Redesign</span>
+                    </div>
+                  </td>
+                  <td>E-Commerce</td>
+                  <td><span class="badge-status status-active"><i class="fas fa-sync fa-spin"></i> Active</span></td>
+                  <td>
+                    <div class="dash-progress-wrapper">
+                      <div class="dash-progress-bar">
+                        <div class="dash-progress-fill" style="width: 85%;"></div>
+                      </div>
+                      <span class="dash-progress-text">85%</span>
+                    </div>
+                  </td>
+                  <td>
+                    <a href="project-details.html?id=shs-bazar" class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">Details</a>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>
+                    <div class="dash-table-project-name">
+                      Student Tools & AI Platform
+                      <span class="dash-table-project-sub">Target: AI Academic Tools Suite</span>
+                    </div>
+                  </td>
+                  <td>AI & Education</td>
+                  <td><span class="badge-status status-completed"><i class="fas fa-check"></i> Completed</span></td>
+                  <td>
+                    <div class="dash-progress-wrapper">
+                      <div class="dash-progress-bar">
+                        <div class="dash-progress-fill" style="width: 100%;"></div>
+                      </div>
+                      <span class="dash-progress-text">100%</span>
+                    </div>
+                  </td>
+                  <td>
+                    <a href="project-details.html?id=student-tools-ai" class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">Details</a>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>
+                    <div class="dash-table-project-name">
+                      Corporate Business Web Portal
+                      <span class="dash-table-project-sub">Target: Responsive Company Site</span>
+                    </div>
+                  </td>
+                  <td>Business Web</td>
+                  <td><span class="badge-status status-in-progress"><i class="fas fa-code"></i> In Progress</span></td>
+                  <td>
+                    <div class="dash-progress-wrapper">
+                      <div class="dash-progress-bar">
+                        <div class="dash-progress-fill" style="width: 45%;"></div>
+                      </div>
+                      <span class="dash-progress-text">45%</span>
+                    </div>
+                  </td>
+                  <td>
+                    <a href="contact.html" class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">Contact</a>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>
+                    <div class="dash-table-project-name">
+                      Happy Birthday Wish Greeting App
+                      <span class="dash-table-project-sub">Target: Interactive Web App</span>
+                    </div>
+                  </td>
+                  <td>Creative App</td>
+                  <td><span class="badge-status status-completed"><i class="fas fa-check"></i> Completed</span></td>
+                  <td>
+                    <div class="dash-progress-wrapper">
+                      <div class="dash-progress-bar">
+                        <div class="dash-progress-fill" style="width: 100%;"></div>
+                      </div>
+                      <span class="dash-progress-text">100%</span>
+                    </div>
+                  </td>
+                  <td>
+                    <a href="project-details.html?id=happy-birthday-wish" class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">Details</a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Application Scripts -->
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/translations.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
