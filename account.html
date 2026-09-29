@@ -344,35 +344,33 @@
                     </div>
                   </div>
 
-                  <!-- User Profile Card (Redesigned) -->
+                  <!-- Simplified User Profile Card -->
                   <div class="profile-card-container glass-card">
-                    <div class="profile-card-header-bg"></div>
                     <div class="profile-card-body">
                       <div class="profile-avatar-wrapper">
-                        <div class="user-avatar-ring">
-                          <div class="user-avatar-inner">
-                            <img id="account-user-avatar-img" src="profile.jpg" alt="User Profile" style="display: none;">
-                            <div id="account-user-avatar-initial" class="user-avatar-initial">S</div>
-                          </div>
+                        <div class="user-avatar-inner">
+                          <img id="account-user-avatar-img" src="profile.jpg" alt="User Profile" style="display: none;">
+                          <div id="account-user-avatar-initial" class="user-avatar-initial">S</div>
                         </div>
-                        <span class="profile-status-badge" title="Online Client"><i class="fas fa-circle"></i> Active</span>
                       </div>
 
                       <div class="profile-details-info">
                         <div class="profile-name-row">
                           <h3 id="account-profile-name" class="user-display-name">SHAFAET HOSSEN SARIP</h3>
-                          <span class="client-badge"><i class="fas fa-shield-halved"></i> Verified Client</span>
+                          <span class="client-badge" id="account-profile-badge" data-i18n="clientBadge">CLIENT</span>
                         </div>
-                        <p id="account-profile-email" class="user-display-email"><i class="fas fa-envelope"></i> saripofficialsupport@gmail.com</p>
-                      </div>
-
-                      <div class="profile-actions-wrapper">
-                        <button type="button" class="btn btn-secondary profile-edit-btn" id="account-edit-profile-btn">
-                          <i class="fas fa-user-pen"></i> Edit Profile
-                        </button>
-                        <button type="button" class="btn btn-secondary profile-logout-btn" id="logout-btn">
-                          <i class="fas fa-sign-out-alt"></i> Log Out
-                        </button>
+                        <div class="profile-info-row" id="account-profile-username-row">
+                          <i class="fas fa-at profile-info-icon"></i>
+                          <span id="account-profile-username" class="user-display-username">shafaet</span>
+                        </div>
+                        <div class="profile-info-row" id="account-profile-email-row">
+                          <i class="fas fa-envelope profile-info-icon"></i>
+                          <span id="account-profile-email" class="user-display-email">saripofficialsupport@gmail.com</span>
+                        </div>
+                        <div class="profile-info-row" id="account-profile-phone-row" style="display: none;">
+                          <i class="fas fa-phone profile-info-icon"></i>
+                          <span id="account-profile-phone" class="user-display-phone"></span>
+                        </div>
                       </div>
                     </div>
                   </div>

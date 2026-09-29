@@ -1932,7 +1932,30 @@ document.addEventListener('DOMContentLoaded', () => {
               if (document.getElementById('user-display-email')) document.getElementById('user-display-email').textContent = user.email || '';
 
               if (document.getElementById('account-profile-name')) document.getElementById('account-profile-name').textContent = displayName;
-              if (document.getElementById('account-profile-email')) document.getElementById('account-profile-email').innerHTML = `<i class="fas fa-envelope"></i> ${user.email || ''}`;
+
+              // Username handle derivation (e.g., from email prefix or lowercased name)
+              const emailPrefix = user.email ? user.email.split('@')[0] : 'client';
+              const usernameHandle = (user.displayName ? user.displayName.toLowerCase().replace(/[^a-z0-9_]/g, '') : emailPrefix) || emailPrefix;
+              if (document.getElementById('account-profile-username')) {
+                document.getElementById('account-profile-username').textContent = usernameHandle;
+              }
+
+              if (document.getElementById('account-profile-email')) {
+                document.getElementById('account-profile-email').textContent = user.email || '';
+              }
+
+              const phoneRow = document.getElementById('account-profile-phone-row');
+              const phoneText = document.getElementById('account-profile-phone');
+              const userPhone = user.phoneNumber || user.phone || '';
+              if (phoneRow && phoneText) {
+                if (userPhone) {
+                  phoneText.textContent = userPhone;
+                  phoneRow.style.display = 'flex';
+                } else {
+                  phoneRow.style.display = 'none';
+                }
+              }
+
               if (document.getElementById('account-sidebar-name')) document.getElementById('account-sidebar-name').textContent = displayName;
               if (document.getElementById('account-topbar-name')) document.getElementById('account-topbar-name').textContent = displayName;
               if (document.getElementById('welcome-client-name')) document.getElementById('welcome-client-name').textContent = firstName;

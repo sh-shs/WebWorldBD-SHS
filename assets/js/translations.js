@@ -82,6 +82,7 @@ const translations = {
     langEn: "English",
 
     /* 2. Account */
+    clientBadge: "CLIENT",
     secAccountTitle: "Account",
     accountLoggedOutTitle: "Not Logged In",
     accountLoggedOutSub: "Sign in or register to access project tracking, invoice management, and profile features.",
@@ -412,6 +413,7 @@ const translations = {
     langEn: "English",
 
     /* 2. Account */
+    clientBadge: "ক্লায়েন্ট",
     secAccountTitle: "অ্যাকাউন্ট",
     accountLoggedOutTitle: "লগইন করা নেই",
     accountLoggedOutSub: "প্রজেক্ট ট্র্যাকিং, ইনভয়েস ও প্রোফাইল সার্ভিস পেতে লগইন অথবা রেজিস্ট্রেশন করুন।",
