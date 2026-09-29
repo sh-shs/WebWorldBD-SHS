@@ -2225,56 +2225,6 @@ document.addEventListener('DOMContentLoaded', () => {
             statCards[1].textContent = active;
             statCards[2].textContent = completed;
           }
-
-          // Update Projects Table If Present
-          const tableBody = document.querySelector('.dash-table-card table tbody');
-          if (tableBody) {
-            if (userProjects.length === 0) {
-              tableBody.innerHTML = `
-                <tr>
-                  <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2rem;">
-                    <i class="fas fa-folder-open" style="font-size: 2rem; margin-bottom: 0.5rem; display: block; color: var(--accent-blue);"></i>
-                    ${currentLang === 'bn' ? 'কোন সক্রিয় প্রজেক্ট পাওয়া যায়নি।' : 'No active projects found.'}
-                  </td>
-                </tr>
-              `;
-            } else {
-              tableBody.innerHTML = userProjects.map(p => {
-                const progress = p.progress || 0;
-                const status = p.status || 'Pending';
-                let statusBadge = `<span class="badge-status status-active"><i class="fas fa-sync fa-spin"></i> ${status}</span>`;
-                if (status.toLowerCase() === 'completed') {
-                  statusBadge = `<span class="badge-status status-completed"><i class="fas fa-check"></i> Completed</span>`;
-                } else if (status.toLowerCase() === 'pending') {
-                  statusBadge = `<span class="badge-status status-pending"><i class="fas fa-clock"></i> Pending</span>`;
-                }
-
-                return `
-                  <tr>
-                    <td>
-                      <div class="dash-table-project-name">
-                        ${p.projectName || 'Web Development Project'}
-                        <span class="dash-table-project-sub">ID: ${p.projectId || p.id}</span>
-                      </div>
-                    </td>
-                    <td>${p.service || 'Web Development'}</td>
-                    <td>${statusBadge}</td>
-                    <td>
-                      <div class="dash-progress-wrapper">
-                        <div class="dash-progress-bar">
-                          <div class="dash-progress-fill" style="width: ${progress}%;"></div>
-                        </div>
-                        <span class="dash-progress-text">${progress}%</span>
-                      </div>
-                    </td>
-                    <td>
-                      <a href="project-details.html?id=${p.id}" class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">Details</a>
-                    </td>
-                  </tr>
-                `;
-              }).join('');
-            }
-          }
         }, (error) => {
           console.error('Error fetching client projects:', error);
         });
