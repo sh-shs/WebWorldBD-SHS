@@ -3873,36 +3873,39 @@ document.addEventListener('DOMContentLoaded', () => {
           }
 
           // 2. Manage usernames collection doc
-          if (mod && mod.db && mod.doc && mod.setDoc) {
+          if (mod && mod.db && mod.doc) {
             if (username !== currentUserUsername) {
-              // Reserve new username
-              await mod.setDoc(mod.doc(mod.db, 'usernames', username), {
-                uid: user.uid,
-                updatedAt: mod.serverTimestamp ? mod.serverTimestamp() : new Date().toISOString()
-              });
+              const usernameDocRef = mod.doc(mod.db, 'usernames', username);
+              const usernameSnap = await mod.getDoc(usernameDocRef);
 
-              // Release old username if existed
-              if (currentUserUsername && mod.deleteDoc) {
+              if (usernameSnap.exists() && usernameSnap.data().uid !== user.uid) {
+                throw new Error('Username is already taken.');
+              }
+
+              if (!usernameSnap.exists()) {
+                await mod.setDoc(usernameDocRef, {
+                  uid: user.uid,
+                  updatedAt: mod.serverTimestamp ? mod.serverTimestamp() : new Date().toISOString()
+                });
+              }
+
+              if (currentUserUsername && currentUserUsername !== username && mod.deleteDoc) {
                 try {
                   await mod.deleteDoc(mod.doc(mod.db, 'usernames', currentUserUsername));
                 } catch (e) {
                   console.warn('Could not delete old username doc:', e);
                 }
               }
+              currentUserUsername = username;
             }
+          }
 
-            // 3. Verify currentUser.uid matches uid in sarip/sarip and save profile fields to `sarip/sarip`
+          // 3. Update existing profile document(s) in Firestore preserving existing profile fields and uid
+          if (mod && mod.db && mod.doc) {
             const saripRef = mod.doc(mod.db, 'sarip', 'sarip');
             const saripSnap = await mod.getDoc(saripRef);
 
-            if (saripSnap.exists()) {
-              const saripData = saripSnap.data();
-              if (saripData.uid && saripData.uid !== user.uid) {
-                throw new Error('Unauthorized: Profile uid mismatch.');
-              }
-            }
-
-            await mod.setDoc(saripRef, {
+            const saripPayload = {
               uid: user.uid,
               fullName: name,
               displayName: name,
@@ -3913,7 +3916,40 @@ document.addEventListener('DOMContentLoaded', () => {
               profilePicture: photoURLToSave,
               photoURL: photoURLToSave,
               updatedAt: mod.serverTimestamp ? mod.serverTimestamp() : new Date().toISOString()
-            }, { merge: true });
+            };
+
+            if (saripSnap.exists()) {
+              if (saripSnap.data().uid && saripSnap.data().uid !== user.uid) {
+                throw new Error('Unauthorized: Profile uid mismatch.');
+              }
+              if (mod.updateDoc) {
+                await mod.updateDoc(saripRef, saripPayload);
+              } else {
+                await mod.setDoc(saripRef, saripPayload, { merge: true });
+              }
+            } else {
+              await mod.setDoc(saripRef, saripPayload);
+            }
+
+            // 4. Also update users/{user.uid} document if present
+            const userRef = mod.doc(mod.db, 'users', user.uid);
+            const userSnap = await mod.getDoc(userRef);
+
+            if (userSnap.exists()) {
+              const userPayload = {
+                displayName: name,
+                username: username,
+                phoneNumber: phone,
+                phone: phone,
+                photoURL: photoURLToSave,
+                updatedAt: mod.serverTimestamp ? mod.serverTimestamp() : new Date().toISOString()
+              };
+              if (mod.updateDoc) {
+                await mod.updateDoc(userRef, userPayload);
+              } else {
+                await mod.setDoc(userRef, userPayload, { merge: true });
+              }
+            }
           }
 
           // Update local state
