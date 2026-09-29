@@ -347,6 +347,7 @@
                   <!-- Simplified User Profile Card -->
                   <div class="profile-card-container glass-card">
                     <div class="profile-card-body">
+                      <!-- 1. Profile Avatar -->
                       <div class="profile-avatar-wrapper">
                         <div class="user-avatar-inner">
                           <img id="account-user-avatar-img" src="profile.jpg" alt="User Profile" style="display: none;">
@@ -355,22 +356,33 @@
                       </div>
 
                       <div class="profile-details-info">
-                        <div class="profile-name-row">
-                          <h3 id="account-profile-name" class="user-display-name">SHAFAET HOSSEN SARIP</h3>
+                        <!-- 2. User Full Name -->
+                        <h3 id="account-profile-name" class="user-display-name">SHAFAET HOSSEN SARIP</h3>
+
+                        <!-- 3. CLIENT Badge -->
+                        <div class="profile-badge-wrapper">
                           <span class="client-badge" id="account-profile-badge" data-i18n="clientBadge">CLIENT</span>
                         </div>
+
+                        <!-- 4. Username -->
                         <div class="profile-info-row" id="account-profile-username-row">
                           <i class="fas fa-at profile-info-icon"></i>
                           <span id="account-profile-username" class="user-display-username">shafaet</span>
                         </div>
+
+                        <!-- 5. Email -->
                         <div class="profile-info-row" id="account-profile-email-row">
                           <i class="fas fa-envelope profile-info-icon"></i>
                           <span id="account-profile-email" class="user-display-email">saripofficialsupport@gmail.com</span>
                         </div>
+
+                        <!-- 6. Phone number / Add phone number -->
                         <div class="profile-info-row" id="account-profile-phone-row">
                           <i class="fas fa-phone profile-info-icon"></i>
                           <span id="account-profile-phone" class="user-display-phone"><a href="settings.html" style="font-size: 0.88rem; font-weight: 500;">+ phone number add/edit</a></span>
                         </div>
+
+                        <!-- 7 & 8. Edit Profile button and Logout button -->
                         <div class="profile-card-actions">
                           <button type="button" class="btn btn-secondary" id="account-edit-profile-btn">
                             <i class="fas fa-user-pen"></i> <span data-i18n="btnEditProfile">প্রোফাইল এডিট</span>
