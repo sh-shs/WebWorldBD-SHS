@@ -1967,19 +1967,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
               const mod = window.FirebaseModule;
               if (mod && mod.db && mod.doc && mod.getDoc) {
-                const userRef = mod.doc(mod.db, 'users', user.uid);
-                mod.getDoc(userRef).then(docSnap => {
+                const profileRef = mod.doc(mod.db, 'sarip', 'sarip');
+                mod.getDoc(profileRef).then(docSnap => {
                   if (docSnap.exists()) {
-                    const userData = docSnap.data();
-                    if (userData.username) {
-                      usernameHandle = userData.username;
+                    const profileData = docSnap.data();
+                    if (profileData.username) {
+                      usernameHandle = profileData.username;
                       if (document.getElementById('account-profile-username')) {
                         document.getElementById('account-profile-username').textContent = usernameHandle;
                       }
                     }
-                    if (phoneRow && phoneText && userData.phone !== undefined) {
-                      if (userData.phone) {
-                        phoneText.textContent = userData.phone;
+                    const userPhone = profileData.phoneNumber || profileData.phone;
+                    if (phoneRow && phoneText && userPhone !== undefined) {
+                      if (userPhone) {
+                        phoneText.textContent = userPhone;
                       } else {
                         const isBn = currentLang === 'bn';
                         const promptLabel = isBn ? '+ ফোন নম্বর যোগ করুন' : '+ Add phone number';
@@ -3475,12 +3476,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let initialPhone = user.phoneNumber || user.phone || '';
 
     if (mod && mod.db && mod.doc && mod.getDoc) {
-      const userRef = mod.doc(mod.db, 'users', user.uid);
-      mod.getDoc(userRef).then(docSnap => {
+      const profileRef = mod.doc(mod.db, 'sarip', 'sarip');
+      mod.getDoc(profileRef).then(docSnap => {
         if (docSnap.exists()) {
           const data = docSnap.data();
           if (data.username) initialUsername = data.username;
-          if (data.phone !== undefined) initialPhone = data.phone;
+          const userPhone = data.phoneNumber || data.phone;
+          if (userPhone !== undefined) initialPhone = userPhone;
         }
         currentUserUsername = initialUsername;
         if (usernameInput) {
@@ -3889,12 +3891,25 @@ document.addEventListener('DOMContentLoaded', () => {
               }
             }
 
-            // 3. Save user profile document in Firestore `users/{uid}`
-            await mod.setDoc(mod.doc(mod.db, 'users', user.uid), {
+            // 3. Verify currentUser.uid matches uid in sarip/sarip and save profile fields to `sarip/sarip`
+            const saripRef = mod.doc(mod.db, 'sarip', 'sarip');
+            const saripSnap = await mod.getDoc(saripRef);
+
+            if (saripSnap.exists()) {
+              const saripData = saripSnap.data();
+              if (saripData.uid && saripData.uid !== user.uid) {
+                throw new Error('Unauthorized: Profile uid mismatch.');
+              }
+            }
+
+            await mod.setDoc(saripRef, {
+              fullName: name,
               displayName: name,
               username: username,
+              phoneNumber: phone,
               phone: phone,
               email: user.email || '',
+              profilePicture: photoURLToSave,
               photoURL: photoURLToSave,
               updatedAt: mod.serverTimestamp ? mod.serverTimestamp() : new Date().toISOString()
             }, { merge: true });
