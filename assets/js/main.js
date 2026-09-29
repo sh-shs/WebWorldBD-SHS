@@ -195,7 +195,9 @@ document.addEventListener('DOMContentLoaded', () => {
           : { id: 'about', url: `${p}index.html#about`, icon: 'fas fa-user', i18nKey: 'menuAbout' },
         { id: 'why', url: `${p}why-choose-me.html`, icon: 'fas fa-shield-halved', i18nKey: 'menuWhy' },
         { id: 'process', url: `${p}process.html`, icon: 'fas fa-list-check', i18nKey: 'menuProcess' },
-        { id: 'faq', url: `${p}faq.html`, icon: 'fas fa-circle-question', i18nKey: 'menuFaq' }
+        { id: 'faq', url: `${p}faq.html`, icon: 'fas fa-circle-question', i18nKey: 'menuFaq' },
+        { id: 'shopping-now', url: 'https://shs-bazar.pages.dev/', icon: 'fas fa-bag-shopping', i18nKey: 'menuShoppingNow', external: true },
+        { id: 'student-tools-ai', url: 'https://student-tools-ai.pages.dev/', icon: 'fas fa-graduation-cap', i18nKey: 'menuStudentToolsAi', external: true }
       ];
 
       const group3 = [
@@ -270,12 +272,13 @@ document.addEventListener('DOMContentLoaded', () => {
           }
 
           const targetAttr = item.external ? 'target="_blank" rel="noopener noreferrer"' : '';
+          const externalIconHtml = item.external ? ' <i class="fas fa-arrow-up-right-from-square three-dots-external-icon"></i>' : '';
           return `
-            <a href="${item.url}" ${targetAttr} class="three-dots-menu-item" data-menu-id="${item.id}">
+            <a href="${item.url}" ${targetAttr} class="three-dots-menu-item${item.external ? ' three-dots-external-item' : ''}" data-menu-id="${item.id}">
               <div class="three-dots-icon-box">
                 <i class="${item.icon} three-dots-menu-icon"></i>
               </div>
-              <span data-i18n="${item.i18nKey}">${label}</span>
+              <span data-i18n="${item.i18nKey}">${label}</span>${externalIconHtml}
             </a>
           `;
         }).join('');
