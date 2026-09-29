@@ -21,10 +21,24 @@
   <!-- Firebase Module Script -->
   <script type="module" src="assets/js/firebase-config.js"></script>
 </head>
-<body>
+<body class="dash-body">
+
+  <!-- Admin Protection Guard Notice (shown if not authorized) -->
+  <div id="admin-access-denied" class="container" style="display: none; padding-top: 5rem; text-align: center;">
+    <div class="glass-card" style="max-width: 550px; margin: 0 auto; padding: 3rem;">
+      <i class="fas fa-shield-cat" style="font-size: 3.5rem; color: #EF4444; margin-bottom: 1rem;"></i>
+      <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 0.75rem;">Admin Access Restricted</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.6;">
+        You must be logged in as an authorized WebWorldBD Administrator (<strong>saripofficialsupport@gmail.com</strong>) to access this control panel.
+      </p>
+      <a href="account.html" class="btn btn-primary">
+        <i class="fas fa-right-to-bracket"></i> Login as Administrator
+      </a>
+    </div>
+  </div>
 
   <!-- Dashboard Container Wrapper -->
-  <div class="dash-wrapper">
+  <div class="dash-wrapper" id="admin-wrapper" style="display: none;">
 
     <!-- Mobile Sidebar Backdrop Overlay -->
     <div class="dash-sidebar-overlay" id="dash-sidebar-overlay"></div>
@@ -41,58 +55,59 @@
         </button>
       </div>
 
-      <nav class="dash-nav">
+      <nav class="dash-nav" id="admin-dash-nav">
         <span class="dash-nav-group-title">Main Panel</span>
-        <a href="#dashboard" class="dash-nav-item active" data-nav="dashboard">
+        <a href="#dashboard" class="dash-nav-item active" data-admin-nav="dashboard">
           <i class="fas fa-chart-line"></i>
           <span>Dashboard</span>
         </a>
-        <a href="#project-requests" class="dash-nav-item" data-nav="project-requests">
+        <a href="#project-requests" class="dash-nav-item" data-admin-nav="project-requests">
           <i class="fas fa-inbox"></i>
           <span>Project Requests</span>
-          <span class="dash-nav-badge">5</span>
+          <span class="dash-nav-badge" id="admin-badge-requests">0</span>
         </a>
-        <a href="#projects" class="dash-nav-item" data-nav="projects">
+        <a href="#projects" class="dash-nav-item" data-admin-nav="projects">
           <i class="fas fa-diagram-project"></i>
           <span>Projects</span>
+          <span class="dash-nav-badge" id="admin-badge-projects">0</span>
         </a>
-        <a href="#clients" class="dash-nav-item" data-nav="clients">
+        <a href="#clients" class="dash-nav-item" data-admin-nav="clients">
           <i class="fas fa-users"></i>
           <span>Clients</span>
         </a>
-        <a href="#services" class="dash-nav-item" data-nav="services">
+        <a href="#services" class="dash-nav-item" data-admin-nav="services">
           <i class="fas fa-layer-group"></i>
           <span>Services</span>
         </a>
 
         <span class="dash-nav-group-title">Finance & Support</span>
-        <a href="#payments" class="dash-nav-item" data-nav="payments">
+        <a href="#payments" class="dash-nav-item" data-admin-nav="payments">
           <i class="fas fa-wallet"></i>
           <span>Payments</span>
         </a>
-        <a href="#messages" class="dash-nav-item" data-nav="messages">
+        <a href="#messages" class="dash-nav-item" data-admin-nav="messages">
           <i class="fas fa-comments"></i>
           <span>Messages</span>
         </a>
-        <a href="#support-tickets" class="dash-nav-item" data-nav="support-tickets">
+        <a href="#support-tickets" class="dash-nav-item" data-admin-nav="support-tickets">
           <i class="fas fa-headset"></i>
           <span>Support Tickets</span>
         </a>
-        <a href="#notifications" class="dash-nav-item" data-nav="notifications">
+        <a href="#notifications" class="dash-nav-item" data-admin-nav="notifications">
           <i class="fas fa-bell"></i>
           <span>Notifications</span>
         </a>
-        <a href="#files" class="dash-nav-item" data-nav="files">
+        <a href="#files" class="dash-nav-item" data-admin-nav="files">
           <i class="fas fa-folder-tree"></i>
           <span>Files</span>
         </a>
 
         <span class="dash-nav-group-title">Configuration</span>
-        <a href="settings.html" class="dash-nav-item" data-nav="website-settings">
+        <a href="#website-settings" class="dash-nav-item" data-admin-nav="website-settings">
           <i class="fas fa-sliders"></i>
           <span>Website Settings</span>
         </a>
-        <a href="account.html" class="dash-nav-item" data-nav="admin-profile">
+        <a href="#admin-profile" class="dash-nav-item" data-admin-nav="admin-profile">
           <i class="fas fa-user-shield"></i>
           <span>Admin Profile</span>
         </a>
@@ -106,7 +121,7 @@
         <div class="dash-sidebar-user">
           <img src="profile.jpg" alt="Admin Avatar" class="dash-sidebar-avatar">
           <div class="dash-sidebar-user-info">
-            <span class="dash-sidebar-user-name">SHAFAET HOSSEN SARIP</span>
+            <span class="dash-sidebar-user-name" id="admin-sidebar-name">SHAFAET HOSSEN SARIP</span>
             <span class="dash-sidebar-user-role">Super Admin</span>
           </div>
         </div>
@@ -122,7 +137,7 @@
           <button class="dash-hamburger-btn" id="dash-hamburger-btn" title="Toggle Navigation">
             <i class="fas fa-bars"></i>
           </button>
-          <h1 class="dash-page-title">Admin Control Panel</h1>
+          <h1 class="dash-page-title" id="admin-current-title">Admin Control Panel</h1>
         </div>
 
         <div class="dash-topbar-right">
@@ -131,192 +146,544 @@
             <i class="fas fa-moon"></i>
           </button>
 
-          <!-- Notification Bell -->
-          <button class="toggle-btn" style="position: relative;" title="Admin Alerts">
-            <i class="fas fa-bell"></i>
-            <span style="position: absolute; top: 6px; right: 6px; width: 9px; height: 9px; background: var(--accent-emerald); border-radius: 50%; border: 2px solid var(--bg-card);"></span>
+          <!-- Language Toggle Button -->
+          <button class="lang-switch-btn" id="lang-switch-btn">
+            <i class="fas fa-globe"></i> BN
           </button>
 
+          <!-- Admin Alerts Bell -->
+          <a href="#notifications" class="toggle-btn" style="position: relative; display: inline-flex; align-items: center; justify-content: center; text-decoration: none;" title="Admin Alerts">
+            <i class="fas fa-bell"></i>
+            <span style="position: absolute; top: 6px; right: 6px; width: 9px; height: 9px; background: var(--accent-emerald); border-radius: 50%; border: 2px solid var(--bg-card);"></span>
+          </a>
+
           <!-- Admin Profile Brief -->
-          <a href="account.html" class="dash-topbar-user">
+          <a href="#admin-profile" class="dash-topbar-user">
             <img src="profile.jpg" alt="Admin Photo" class="dash-topbar-avatar">
-            <span class="dash-topbar-name">SHAFAET HOSSEN SARIP</span>
+            <span class="dash-topbar-name" id="admin-topbar-name">SHAFAET HOSSEN SARIP</span>
           </a>
         </div>
       </header>
 
-      <!-- Main Dashboard Page Content -->
-      <main class="dash-content">
+      <!-- Main Admin Dashboard Content Area -->
+      <main class="dash-content" id="admin-content-area">
 
-        <!-- Welcome Banner Section -->
-        <div class="dash-welcome-card">
-          <div class="dash-welcome-text">
-            <h2>System Overview & Analytics 🚀</h2>
-            <p>Welcome to WebWorldBD Central Admin Panel. Monitor client requests, earnings, and project execution in real-time.</p>
+        <!-- SECTION 1: ADMIN DASHBOARD HOME -->
+        <section id="admin-section-dashboard" class="admin-section active">
+          <div class="dash-welcome-card">
+            <div class="dash-welcome-text">
+              <h2>System Overview & Analytics 🚀</h2>
+              <p>Welcome to WebWorldBD Central Admin Panel. Monitor client requests, active developments, earnings, and system updates in real-time.</p>
+            </div>
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+              <button type="button" class="btn btn-primary" id="btn-admin-add-project-top">
+                <i class="fas fa-plus-circle"></i> Create Project
+              </button>
+              <button type="button" class="btn btn-secondary" id="btn-admin-broadcast-top">
+                <i class="fas fa-paper-plane"></i> Send Notification
+              </button>
+            </div>
           </div>
-          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-            <a href="start-project.html" class="btn btn-primary">
-              <i class="fas fa-plus-circle"></i> Add New Project
-            </a>
-            <button type="button" class="btn btn-secondary" onclick="alert('Notification composer opened!');">
-              <i class="fas fa-paper-plane"></i> Send Notification
+
+          <!-- Summary Cards Row -->
+          <div class="dash-stats-row">
+            <div class="dash-stat-card">
+              <div class="dash-stat-info">
+                <h4>Total Clients</h4>
+                <div class="stat-number" id="adm-stat-clients">86</div>
+              </div>
+              <div class="dash-stat-icon-box icon-blue">
+                <i class="fas fa-users"></i>
+              </div>
+            </div>
+
+            <div class="dash-stat-card">
+              <div class="dash-stat-info">
+                <h4>Total Projects</h4>
+                <div class="stat-number" id="adm-stat-total-projects">108</div>
+              </div>
+              <div class="dash-stat-icon-box icon-purple">
+                <i class="fas fa-diagram-project"></i>
+              </div>
+            </div>
+
+            <div class="dash-stat-card">
+              <div class="dash-stat-info">
+                <h4>Pending Requests</h4>
+                <div class="stat-number" id="adm-stat-pending">5</div>
+              </div>
+              <div class="dash-stat-icon-box icon-orange">
+                <i class="fas fa-clock"></i>
+              </div>
+            </div>
+
+            <div class="dash-stat-card">
+              <div class="dash-stat-info">
+                <h4>Active Projects</h4>
+                <div class="stat-number" id="adm-stat-active">12</div>
+              </div>
+              <div class="dash-stat-icon-box icon-emerald">
+                <i class="fas fa-bars-progress"></i>
+              </div>
+            </div>
+
+            <div class="dash-stat-card">
+              <div class="dash-stat-info">
+                <h4>Completed Projects</h4>
+                <div class="stat-number" id="adm-stat-completed">96</div>
+              </div>
+              <div class="dash-stat-icon-box icon-blue">
+                <i class="fas fa-circle-check"></i>
+              </div>
+            </div>
+
+            <div class="dash-stat-card">
+              <div class="dash-stat-info">
+                <h4>Total Revenue</h4>
+                <div class="stat-number" id="adm-stat-revenue">৳4,85,000</div>
+              </div>
+              <div class="dash-stat-icon-box icon-purple">
+                <i class="fas fa-sack-dollar"></i>
+              </div>
+            </div>
+
+            <div class="dash-stat-card">
+              <div class="dash-stat-info">
+                <h4>Unread Messages</h4>
+                <div class="stat-number" id="adm-stat-messages">2</div>
+              </div>
+              <div class="dash-stat-icon-box icon-orange">
+                <i class="fas fa-comments"></i>
+              </div>
+            </div>
+
+            <div class="dash-stat-card">
+              <div class="dash-stat-info">
+                <h4>Open Support Tickets</h4>
+                <div class="stat-number" id="adm-stat-tickets">1</div>
+              </div>
+              <div class="dash-stat-icon-box icon-emerald">
+                <i class="fas fa-headset"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="dash-actions-card">
+            <div class="dash-card-header">
+              <h3 class="dash-card-title"><i class="fas fa-bolt"></i> Admin Quick Actions</h3>
+            </div>
+            <div class="dash-quick-btns">
+              <button type="button" class="btn btn-primary" id="btn-admin-add-project-quick">
+                <i class="fas fa-plus"></i> Add New Project
+              </button>
+              <button type="button" class="btn btn-secondary" id="btn-admin-broadcast-quick">
+                <i class="fas fa-bullhorn"></i> Broadcast Notification
+              </button>
+              <a href="#services" class="btn btn-secondary admin-nav-trigger" data-target-admin="services">
+                <i class="fas fa-layer-group"></i> Manage Services
+              </a>
+              <a href="https://wa.me/8801342697743" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp">
+                <i class="fab fa-whatsapp"></i> Client WhatsApp Line
+              </a>
+            </div>
+          </div>
+
+          <!-- Pending Requests Table Section -->
+          <div class="dash-table-card">
+            <div class="dash-card-header">
+              <h3 class="dash-card-title"><i class="fas fa-list-check"></i> Pending Project Requests</h3>
+              <a href="#project-requests" class="btn btn-secondary admin-nav-trigger" data-target-admin="project-requests" style="font-size: 0.8rem; padding: 0.35rem 0.75rem;">View All Requests</a>
+            </div>
+
+            <div class="dash-table-responsive">
+              <table class="dash-table">
+                <thead>
+                  <tr>
+                    <th>Client Name</th>
+                    <th>Service Requested</th>
+                    <th>Budget</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="adm-overview-requests-tbody">
+                  <!-- Dynamic Rows Rendered by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 2: PROJECT REQUESTS MANAGEMENT -->
+        <section id="admin-section-project-requests" class="admin-section" style="display: none;">
+          <div class="dash-card-header" style="margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 0.25rem;">Project Request Management</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Review client custom project proposals, accept/reject, add notes, and convert into active projects.</p>
+          </div>
+
+          <div class="dash-table-card">
+            <div class="dash-table-responsive">
+              <table class="dash-table">
+                <thead>
+                  <tr>
+                    <th>Request ID</th>
+                    <th>Client Name / Contact</th>
+                    <th>Service Type</th>
+                    <th>Budget</th>
+                    <th>Deadline</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="adm-all-requests-tbody">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 3: PROJECT MANAGEMENT -->
+        <section id="admin-section-projects" class="admin-section" style="display: none;">
+          <div class="dash-card-header" style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <h2 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 0.25rem;">Project Management</h2>
+              <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Create, edit, change status/progress %, set deadlines, upload files, and update payment records.</p>
+            </div>
+            <button type="button" class="btn btn-primary" id="btn-admin-create-project-modal">
+              <i class="fas fa-plus"></i> Create New Project
             </button>
           </div>
-        </div>
 
-        <!-- Summary Cards Row -->
-        <div class="dash-stats-row">
-          <div class="dash-stat-card">
-            <div class="dash-stat-info">
-              <h4>Total Clients</h4>
-              <div class="stat-number">86+</div>
-            </div>
-            <div class="dash-stat-icon-box icon-blue">
-              <i class="fas fa-users"></i>
+          <div class="dash-table-card">
+            <div class="dash-table-responsive">
+              <table class="dash-table">
+                <thead>
+                  <tr>
+                    <th>Project Name / ID</th>
+                    <th>Client Email</th>
+                    <th>Service Type</th>
+                    <th>Status</th>
+                    <th>Progress %</th>
+                    <th>Cost / Paid</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="adm-all-projects-tbody">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
             </div>
           </div>
+        </section>
 
-          <div class="dash-stat-card">
-            <div class="dash-stat-info">
-              <h4>Active Projects</h4>
-              <div class="stat-number">12</div>
-            </div>
-            <div class="dash-stat-icon-box icon-emerald">
-              <i class="fas fa-bars-progress"></i>
-            </div>
+        <!-- SECTION 4: CLIENT MANAGEMENT -->
+        <section id="admin-section-clients" class="admin-section" style="display: none;">
+          <div class="dash-card-header" style="margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 0.25rem;">Client Directory</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Inspect registered client accounts, contact details, total projects, and activity history.</p>
           </div>
 
-          <div class="dash-stat-card">
-            <div class="dash-stat-info">
-              <h4>Pending Requests</h4>
-              <div class="stat-number">5</div>
-            </div>
-            <div class="dash-stat-icon-box icon-orange">
-              <i class="fas fa-clock"></i>
+          <div class="dash-table-card">
+            <div class="dash-table-responsive">
+              <table class="dash-table">
+                <thead>
+                  <tr>
+                    <th>Client Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Active Projects</th>
+                    <th>Completed</th>
+                    <th>Created Date</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="adm-clients-tbody">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
             </div>
           </div>
+        </section>
 
-          <div class="dash-stat-card">
-            <div class="dash-stat-info">
-              <h4>Total Earnings</h4>
-              <div class="stat-number">৳4,85,000</div>
+        <!-- SECTION 5: SERVICE MANAGEMENT -->
+        <section id="admin-section-services" class="admin-section" style="display: none;">
+          <div class="dash-card-header" style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <h2 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 0.25rem;">Service Management</h2>
+              <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Manage WebWorldBD service catalog offerings, descriptions, starting prices, and active statuses.</p>
             </div>
-            <div class="dash-stat-icon-box icon-purple">
-              <i class="fas fa-sack-dollar"></i>
-            </div>
-          </div>
-        </div>
-
-        <!-- Quick Action Buttons -->
-        <div class="dash-actions-card">
-          <div class="dash-card-header">
-            <h3 class="dash-card-title"><i class="fas fa-bolt"></i> Admin Quick Actions</h3>
-          </div>
-          <div class="dash-quick-btns">
-            <a href="start-project.html" class="btn btn-primary">
-              <i class="fas fa-plus"></i> Add New Project
-            </a>
-            <button type="button" class="btn btn-secondary" onclick="alert('Notification dispatch system ready!');">
-              <i class="fas fa-bullhorn"></i> Send Broadcast Notification
+            <button type="button" class="btn btn-primary" id="btn-admin-add-service-modal">
+              <i class="fas fa-plus"></i> Add New Service
             </button>
-            <a href="settings.html" class="btn btn-secondary">
-              <i class="fas fa-sliders"></i> Site Settings
-            </a>
-            <a href="contact.html" class="btn btn-whatsapp">
-              <i class="fab fa-whatsapp"></i> Client WhatsApp Line
-            </a>
-          </div>
-        </div>
-
-        <!-- Recent Project Requests Table Section -->
-        <div class="dash-table-card">
-          <div class="dash-card-header">
-            <h3 class="dash-card-title"><i class="fas fa-list-check"></i> Recent Project Requests</h3>
-            <span class="badge-pill"><i class="fas fa-bell"></i> 5 New Pending</span>
           </div>
 
-          <div class="dash-table-responsive">
-            <table class="dash-table">
-              <thead>
-                <tr>
-                  <th>Client Name</th>
-                  <th>Service Requested</th>
-                  <th>Budget Range</th>
-                  <th>Status</th>
-                  <th>Date Submitted</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <div class="dash-table-project-name">
-                      Tanvir Rahman
-                      <span class="dash-table-project-sub">tanvir@example.com | 01712345678</span>
-                    </div>
-                  </td>
-                  <td>E-Commerce Platform</td>
-                  <td>৳20,000 - ৳50,000</td>
-                  <td><span class="badge-status status-pending"><i class="fas fa-clock"></i> Pending Review</span></td>
-                  <td>Oct 24, 2026</td>
-                  <td>
-                    <button type="button" class="btn btn-primary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;" onclick="alert('Accepting project request...');">Approve</button>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>
-                    <div class="dash-table-project-name">
-                      Nusrat Jahan
-                      <span class="dash-table-project-sub">nusrat@company.bd | 01898765432</span>
-                    </div>
-                  </td>
-                  <td>Business Corporate Site</td>
-                  <td>৳10,000 - ৳20,000</td>
-                  <td><span class="badge-status status-review"><i class="fas fa-magnifying-glass"></i> Under Review</span></td>
-                  <td>Oct 23, 2026</td>
-                  <td>
-                    <button type="button" class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;" onclick="alert('Viewing inquiry details...');">View</button>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>
-                    <div class="dash-table-project-name">
-                      Kushtia IT Solutions
-                      <span class="dash-table-project-sub">contact@kushtia-it.com</span>
-                    </div>
-                  </td>
-                  <td>Custom AI Web Application</td>
-                  <td>৳50,000 - ৳1,00,000+</td>
-                  <td><span class="badge-status status-active"><i class="fas fa-check"></i> Approved</span></td>
-                  <td>Oct 21, 2026</td>
-                  <td>
-                    <a href="project-details.html?id=student-tools-ai" class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">Manage</a>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>
-                    <div class="dash-table-project-name">
-                      Sabbir Ahmed
-                      <span class="dash-table-project-sub">sabbir@gmail.com</span>
-                    </div>
-                  </td>
-                  <td>Personal Portfolio Site</td>
-                  <td>৳10,000 - ৳20,000</td>
-                  <td><span class="badge-status status-completed"><i class="fas fa-flag-checkered"></i> Deployed</span></td>
-                  <td>Oct 18, 2026</td>
-                  <td>
-                    <a href="projects.html" class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">Live</a>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;" id="adm-services-grid">
+            <!-- Rendered dynamically -->
           </div>
-        </div>
+        </section>
+
+        <!-- SECTION 6: PAYMENTS MANAGEMENT -->
+        <section id="admin-section-payments" class="admin-section" style="display: none;">
+          <div class="dash-card-header" style="margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 0.25rem;">Payments & Revenue Management</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Track revenue, update paid/due amounts, and issue payment confirmations.</p>
+          </div>
+
+          <div class="dash-table-card">
+            <div class="dash-table-responsive">
+              <table class="dash-table">
+                <thead>
+                  <tr>
+                    <th>Project Name</th>
+                    <th>Client</th>
+                    <th>Total Cost</th>
+                    <th>Paid</th>
+                    <th>Due</th>
+                    <th>Payment Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="adm-payments-tbody">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 7: MESSAGES MANAGEMENT -->
+        <section id="admin-section-messages" class="admin-section" style="display: none;">
+          <div class="dash-card-header" style="margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 0.25rem;">Messages & Contact Inquiries</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Review inquiries received from public site contact form.</p>
+          </div>
+
+          <div id="adm-messages-container" style="display: flex; flex-direction: column; gap: 1rem;">
+            <!-- Rendered dynamically -->
+          </div>
+        </section>
+
+        <!-- SECTION 8: SUPPORT TICKETS MANAGEMENT -->
+        <section id="admin-section-support-tickets" class="admin-section" style="display: none;">
+          <div class="dash-card-header" style="margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 0.25rem;">Support Tickets Management</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Respond to client support requests and update ticket statuses.</p>
+          </div>
+
+          <div id="adm-tickets-container" style="display: flex; flex-direction: column; gap: 1.25rem;">
+            <!-- Rendered dynamically -->
+          </div>
+        </section>
+
+        <!-- SECTION 9: NOTIFICATIONS DISPATCH -->
+        <section id="admin-section-notifications" class="admin-section" style="display: none;">
+          <div class="dash-card-header" style="margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 0.25rem;">Notification Dispatch Hub</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Send broadcast notifications or targeted project alerts to clients.</p>
+          </div>
+
+          <div class="glass-card" style="padding: 2rem; max-width: 650px;">
+            <form id="adm-broadcast-form" style="display: flex; flex-direction: column; gap: 1.25rem;">
+              <div>
+                <label class="form-label">Notification Title *</label>
+                <input type="text" id="adm-notif-title" class="form-control" placeholder="e.g. Important System Announcement or Project Update" required>
+              </div>
+
+              <div>
+                <label class="form-label">Target Audience</label>
+                <select id="adm-notif-target" class="form-control">
+                  <option value="all">All Clients (Broadcast)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="form-label">Message *</label>
+                <textarea id="adm-notif-message" rows="4" class="form-control" placeholder="Enter message text..." required></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-paper-plane"></i> Dispatch Notification
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <!-- SECTION 10: FILES MANAGEMENT -->
+        <section id="admin-section-files" class="admin-section" style="display: none;">
+          <div class="dash-card-header" style="margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 0.25rem;">Project Files Vault</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Centralized repository of project attachment links and assets.</p>
+          </div>
+
+          <div class="glass-card" style="padding: 2rem;">
+            <div id="adm-files-list" style="display: flex; flex-direction: column; gap: 0.85rem;">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 11: WEBSITE SETTINGS -->
+        <section id="admin-section-website-settings" class="admin-section" style="display: none;">
+          <div class="dash-card-header" style="margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 0.25rem;">Website Configuration</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Configure global WebWorldBD brand settings and contact phone numbers.</p>
+          </div>
+
+          <div class="glass-card" style="padding: 2rem; max-width: 650px;">
+            <form id="adm-site-settings-form" style="display: flex; flex-direction: column; gap: 1.25rem;">
+              <div>
+                <label class="form-label">Brand Name</label>
+                <input type="text" class="form-control" value="WebWorldBD" readonly>
+              </div>
+
+              <div>
+                <label class="form-label">Super Admin Name</label>
+                <input type="text" class="form-control" value="SHAFAET HOSSEN SARIP" readonly>
+              </div>
+
+              <div>
+                <label class="form-label">Support Email</label>
+                <input type="email" class="form-control" value="saripofficialsupport@gmail.com" readonly>
+              </div>
+
+              <div>
+                <label class="form-label">WhatsApp Number</label>
+                <input type="text" class="form-control" value="+8801342697743" readonly>
+              </div>
+
+              <div>
+                <label class="form-label">Hotline</label>
+                <input type="text" class="form-control" value="+8809658183506" readonly>
+              </div>
+
+              <div style="background: rgba(56, 189, 248, 0.1); padding: 1rem; border-radius: var(--radius-md); font-size: 0.85rem; color: var(--accent-blue);">
+                <i class="fas fa-circle-check"></i> System configuration is connected with portfolio data store.
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- SECTION 12: ADMIN PROFILE -->
+        <section id="admin-section-admin-profile" class="admin-section" style="display: none;">
+          <div class="dash-card-header" style="margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 0.25rem;">Admin Profile</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Super Admin Credentials & System Information.</p>
+          </div>
+
+          <div class="glass-card" style="padding: 2.25rem; max-width: 600px;">
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+              <img src="profile.jpg" alt="Admin Photo" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent-blue); margin-bottom: 0.75rem;">
+              <h3 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 0.25rem;">SHAFAET HOSSEN SARIP</h3>
+              <p style="color: var(--accent-blue); font-weight: 600; font-size: 0.9rem;">WebWorldBD Founder & Lead Developer</p>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 0.85rem; font-size: 0.95rem; border-top: 1px solid var(--border-glass); padding-top: 1.25rem;">
+              <div><strong>Email:</strong> saripofficialsupport@gmail.com</div>
+              <div><strong>Role:</strong> Super Admin</div>
+              <div><strong>Location:</strong> Kushtia, Khulna, Bangladesh</div>
+              <div><strong>Institution:</strong> Kushtia Government Polytechnic Institute</div>
+            </div>
+          </div>
+        </section>
 
       </main>
+    </div>
+  </div>
+
+  <!-- ADMIN CREATE/EDIT PROJECT MODAL -->
+  <div class="dash-modal-overlay" id="adm-project-modal">
+    <div class="dash-modal-card" style="max-width: 650px;">
+      <div class="dash-modal-header">
+        <h3 id="adm-project-modal-title"><i class="fas fa-diagram-project" style="color: var(--accent-blue);"></i> Create / Edit Project</h3>
+        <button type="button" class="dash-modal-close" id="adm-project-modal-close"><i class="fas fa-xmark"></i></button>
+      </div>
+      <form id="adm-project-form" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem;">
+        <input type="hidden" id="adm-form-project-id">
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;">
+          <div>
+            <label class="form-label">Project Name *</label>
+            <input type="text" id="adm-form-project-name" class="form-control" required>
+          </div>
+
+          <div>
+            <label class="form-label">Client Email *</label>
+            <input type="email" id="adm-form-client-email" class="form-control" required placeholder="client@example.com">
+          </div>
+
+          <div>
+            <label class="form-label">Service Type *</label>
+            <select id="adm-form-service-type" class="form-control" required>
+              <option value="Business Website">Business Website</option>
+              <option value="E-commerce Website">E-commerce Website</option>
+              <option value="Portfolio Website">Portfolio Website</option>
+              <option value="Blog Website">Blog Website</option>
+              <option value="News Website">News Website</option>
+              <option value="Educational Website">Educational Website</option>
+              <option value="Social Media Website">Social Media Website</option>
+              <option value="Web App / SaaS">Web App / SaaS</option>
+              <option value="Booking Website">Booking Website</option>
+              <option value="Marketplace Website">Marketplace Website</option>
+              <option value="Forum / Community">Forum / Community</option>
+              <option value="Entertainment Website">Entertainment Website</option>
+              <option value="Landing Page">Landing Page</option>
+              <option value="AI Website">AI Website</option>
+              <option value="Custom App Development">Custom App Development</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="form-label">Status *</label>
+            <select id="adm-form-status" class="form-control" required>
+              <option value="Pending">Pending</option>
+              <option value="Confirmed">Confirmed</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Testing">Testing</option>
+              <option value="Client Review">Client Review</option>
+              <option value="Completed">Completed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="form-label">Progress %</label>
+            <input type="number" id="adm-form-progress" class="form-control" min="0" max="100" value="0">
+          </div>
+
+          <div>
+            <label class="form-label">Deadline</label>
+            <input type="text" id="adm-form-deadline" class="form-control" placeholder="15 Nov 2026">
+          </div>
+
+          <div>
+            <label class="form-label">Total Cost (৳)</label>
+            <input type="number" id="adm-form-cost" class="form-control" value="15000">
+          </div>
+
+          <div>
+            <label class="form-label">Paid Amount (৳)</label>
+            <input type="number" id="adm-form-paid" class="form-control" value="0">
+          </div>
+        </div>
+
+        <div>
+          <label class="form-label">Requirements / Scope</label>
+          <textarea id="adm-form-requirements" rows="3" class="form-control" placeholder="Project requirements..."></textarea>
+        </div>
+
+        <div>
+          <label class="form-label">Project File / URL Attachments</label>
+          <input type="url" id="adm-form-file-url" class="form-control" placeholder="https://example.com or live preview link">
+        </div>
+
+        <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 0.5rem;">
+          <button type="button" class="btn btn-secondary" id="adm-project-modal-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Project</button>
+        </div>
+      </form>
     </div>
   </div>
 

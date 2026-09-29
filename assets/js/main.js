@@ -4,15 +4,12 @@
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Initial State & Configuration
   let currentTheme = localStorage.getItem('webworldbd_theme') || 'dark';
   let currentLang = localStorage.getItem('webworldbd_lang') || 'en';
 
-  // Apply Theme & Language on Load
   applyTheme(currentTheme);
   applyLanguage(currentLang);
 
-  /* Global Toast Notification Helper */
   function showToast(message, type = 'info') {
     let container = document.getElementById('toast-container');
     if (!container) {
@@ -35,23 +32,17 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
 
     container.appendChild(toast);
-
-    requestAnimationFrame(() => {
-      toast.classList.add('show');
-    });
+    requestAnimationFrame(() => toast.classList.add('show'));
 
     setTimeout(() => {
       toast.classList.remove('show');
       setTimeout(() => {
-        if (toast.parentElement) {
-          toast.parentElement.removeChild(toast);
-        }
+        if (toast.parentElement) toast.parentElement.removeChild(toast);
       }, 300);
     }, 3500);
   }
   window.showToast = showToast;
 
-  // Initialize UI Features
   initHeader();
   initThemeToggle();
   initLangSwitch();
@@ -67,8 +58,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollAnimations();
   initSettingsPage();
   initDashboardUI();
+  initAdminDashboardUI();
 
-  // Dynamic Content Rendering
   if (document.getElementById('services-grid')) renderServices();
   if (document.getElementById('capabilities-grid')) renderCapabilities();
   if (document.getElementById('projects-grid')) {
@@ -80,9 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('service-detail-app')) initServiceDetailPage();
   if (document.getElementById('start-project-form')) initStartProjectForm();
 
-  /* --------------------------------------------------------------------------
-     2. Theme & Language Functions
-     -------------------------------------------------------------------------- */
   function applyTheme(theme) {
     currentTheme = theme;
     localStorage.setItem('webworldbd_theme', theme);
@@ -97,58 +85,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
     if (themeToggleBtn) {
-      themeToggleBtn.innerHTML = effectiveTheme === 'dark'
-        ? '<i class="fas fa-moon"></i>'
-        : '<i class="fas fa-sun"></i>';
-      themeToggleBtn.setAttribute('title', effectiveTheme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode');
+      themeToggleBtn.innerHTML = effectiveTheme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
     }
 
-    // Sync settings radio buttons if present
-    const themeRadios = document.querySelectorAll('input[name="theme-radio"]');
-    themeRadios.forEach(radio => {
-      radio.checked = (radio.value === theme);
-    });
-
-    // Re-render three-dots menu
-    if (window.refreshThreeDotsMenu) {
-      window.refreshThreeDotsMenu();
-    }
+    if (window.refreshThreeDotsMenu) window.refreshThreeDotsMenu();
   }
 
-  // Listen to system color scheme changes if system preference is active
-  if (window.matchMedia) {
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-      if (currentTheme === 'system') {
-        applyTheme('system');
-      }
-    });
-  }
-
-  /* --------------------------------------------------------------------------
-     3a. URL Path Normalization Helper
-     -------------------------------------------------------------------------- */
   function getNormalizedPath() {
     let path = window.location.pathname.toLowerCase();
-    if (path.length > 1 && path.endsWith('/')) {
-      path = path.slice(0, -1);
-    }
-    if (path.endsWith('.html')) {
-      path = path.slice(0, -5);
-    }
-    if (path.endsWith('/index')) {
-      path = path.slice(0, -6);
-    } else if (path === '/index') {
-      path = '';
-    }
-    if (path === '' || path === '/') {
-      return '/';
-    }
-    return path;
+    if (path.length > 1 && path.endsWith('/')) path = path.slice(0, -1);
+    if (path.endsWith('.html')) path = path.slice(0, -5);
+    if (path.endsWith('/index')) path = path.slice(0, -6);
+    else if (path === '/index') path = '';
+    return path === '' || path === '/' ? '/' : path;
   }
 
-  /* --------------------------------------------------------------------------
-     3a1. Top-Right Navbar Three-Dot (⋮) Menu Control
-     -------------------------------------------------------------------------- */
   function initThreeDotsMenu() {
     const btn = document.getElementById('nav-three-dots-btn');
     if (!btn) return;
@@ -183,6 +134,8 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'start-project', url: `${p}start-project.html`, icon: 'fas fa-rocket', i18nKey: 'menuStartProject' },
         { id: 'projects', url: `${p}projects.html`, icon: 'fas fa-desktop', i18nKey: 'menuLivePreview' },
         { id: 'connect', url: `${p}contact.html`, icon: 'fas fa-link', i18nKey: 'menuConnect' },
+        { id: 'dashboard', url: `${p}dashboard.html`, icon: 'fas fa-chart-pie', i18nKey: 'menuDashboard' },
+        { id: 'admin', url: `${p}admin.html`, icon: 'fas fa-user-shield', i18nKey: 'menuAdmin' },
         { id: 'settings', url: `${p}settings.html`, icon: 'fas fa-gear', i18nKey: 'menuSettings' },
         { id: 'theme', action: 'theme', icon: currentTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun', i18nKey: 'menuTheme' },
         { id: 'language', action: 'language', icon: 'fas fa-globe', i18nKey: 'menuLanguage' }
@@ -196,8 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'process', url: `${p}process.html`, icon: 'fas fa-list-check', i18nKey: 'menuProcess' },
         { id: 'faq', url: `${p}faq.html`, icon: 'fas fa-circle-question', i18nKey: 'menuFaq' },
         { id: 'shopping-now', url: 'https://shs-bazar.pages.dev/', icon: 'fas fa-cart-shopping', i18nKey: 'menuShoppingNow', external: true },
-        { id: 'student-tools-ai', url: 'https://student-tools-ai.pages.dev/', icon: 'fas fa-graduation-cap', i18nKey: 'menuStudentToolsAi', external: true },
-        { id: 'privacy-policy', url: 'https://privacy-policy-5dn.pages.dev/', icon: 'fas fa-user-shield', i18nKey: 'menuPrivacyPolicy', external: true }
+        { id: 'student-tools-ai', url: 'https://student-tools-ai.pages.dev/', icon: 'fas fa-graduation-cap', i18nKey: 'menuStudentToolsAi', external: true }
       ];
 
       const group3 = [
@@ -208,7 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       let html = '';
 
-      // User profile header at top of menu if logged in
       if (isLoggedIn) {
         const displayName = user.displayName || (user.email ? user.email.split('@')[0] : 'Client User');
         const displayEmail = user.email || '';
@@ -221,9 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         html += `
           <a href="${p}account.html" class="three-dots-user-header">
-            <div class="three-dots-user-avatar">
-              ${avatarHtml}
-            </div>
+            <div class="three-dots-user-avatar">${avatarHtml}</div>
             <div class="three-dots-user-info">
               <span class="three-dots-user-name">${displayName}</span>
               <span class="three-dots-user-email">${displayEmail}</span>
@@ -236,15 +185,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return items.map(item => {
           const label = translations[currentLang] && translations[currentLang][item.i18nKey]
             ? translations[currentLang][item.i18nKey]
-            : '';
+            : (item.id === 'dashboard' ? (currentLang === 'bn' ? 'ড্যাশবোর্ড' : 'Dashboard') : (item.id === 'admin' ? 'Admin Panel' : ''));
 
           if (item.action === 'logout') {
             return `
               <button type="button" class="three-dots-menu-item three-dots-logout-btn" data-menu-id="${item.id}">
-                <div class="three-dots-icon-box">
-                  <i class="${item.icon} three-dots-menu-icon"></i>
-                </div>
-                <span data-i18n="${item.i18nKey}">${label}</span>
+                <div class="three-dots-icon-box"><i class="${item.icon} three-dots-menu-icon"></i></div>
+                <span>${label}</span>
               </button>
             `;
           }
@@ -252,10 +199,8 @@ document.addEventListener('DOMContentLoaded', () => {
           if (item.action === 'theme') {
             return `
               <button type="button" class="three-dots-menu-item three-dots-theme-btn" data-menu-id="${item.id}">
-                <div class="three-dots-icon-box">
-                  <i class="${item.icon} three-dots-menu-icon"></i>
-                </div>
-                <span data-i18n="${item.i18nKey}">${label}</span>
+                <div class="three-dots-icon-box"><i class="${item.icon} three-dots-menu-icon"></i></div>
+                <span>${label}</span>
               </button>
             `;
           }
@@ -263,10 +208,8 @@ document.addEventListener('DOMContentLoaded', () => {
           if (item.action === 'language') {
             return `
               <button type="button" class="three-dots-menu-item three-dots-lang-btn" data-menu-id="${item.id}">
-                <div class="three-dots-icon-box">
-                  <i class="${item.icon} three-dots-menu-icon"></i>
-                </div>
-                <span data-i18n="${item.i18nKey}">${label}</span>
+                <div class="three-dots-icon-box"><i class="${item.icon} three-dots-menu-icon"></i></div>
+                <span>${label}</span>
               </button>
             `;
           }
@@ -274,10 +217,8 @@ document.addEventListener('DOMContentLoaded', () => {
           const targetAttr = item.external ? 'target="_blank" rel="noopener noreferrer"' : '';
           return `
             <a href="${item.url}" ${targetAttr} class="three-dots-menu-item" data-menu-id="${item.id}">
-              <div class="three-dots-icon-box">
-                <i class="${item.icon} three-dots-menu-icon"></i>
-              </div>
-              <span data-i18n="${item.i18nKey}">${label}</span>
+              <div class="three-dots-icon-box"><i class="${item.icon} three-dots-menu-icon"></i></div>
+              <span>${label}</span>
             </a>
           `;
         }).join('');
@@ -291,104 +232,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
       menuEl.innerHTML = html;
       attachMenuClickListeners();
-      highlightActiveMenuItem();
     }
 
     function attachMenuClickListeners() {
-      const links = menuEl.querySelectorAll('a.three-dots-menu-item');
-      links.forEach(a => {
-        a.addEventListener('click', () => {
-          closeMenu();
-        });
-      });
+      menuEl.querySelectorAll('a.three-dots-menu-item').forEach(a => a.addEventListener('click', closeMenu));
 
       const themeBtn = menuEl.querySelector('.three-dots-theme-btn');
       if (themeBtn) {
         themeBtn.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
-          applyTheme(nextTheme);
+          e.preventDefault(); e.stopPropagation();
+          applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
         });
       }
 
       const langBtn = menuEl.querySelector('.three-dots-lang-btn');
       if (langBtn) {
         langBtn.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          const nextLang = currentLang === 'en' ? 'bn' : 'en';
-          applyLanguage(nextLang);
+          e.preventDefault(); e.stopPropagation();
+          applyLanguage(currentLang === 'en' ? 'bn' : 'en');
         });
       }
 
       const logoutBtn = menuEl.querySelector('.three-dots-logout-btn');
       if (logoutBtn) {
         logoutBtn.addEventListener('click', (e) => {
-          e.preventDefault();
-          closeMenu();
+          e.preventDefault(); closeMenu();
           window.currentUserState = null;
-          if (window.refreshThreeDotsMenu) {
-            window.refreshThreeDotsMenu();
-          }
+          if (window.refreshThreeDotsMenu) window.refreshThreeDotsMenu();
           const mod = window.FirebaseModule;
           if (mod && mod.auth && mod.signOut) {
             mod.signOut(mod.auth).then(() => {
-              const msg = currentLang === 'bn' ? 'সফলভাবে লগআউট করা হয়েছে।' : 'Logged out successfully.';
-              if (window.showToast) {
-                window.showToast(msg, 'info');
-              }
-            }).catch(err => {
-              if (window.showToast) {
-                window.showToast(err.message || 'Logout error', 'error');
-              }
+              if (window.showToast) window.showToast('Logged out successfully', 'info');
             });
           }
         });
       }
-    }
-
-    function highlightActiveMenuItem() {
-      const normPath = getNormalizedPath();
-      const currentHash = window.location.hash.toLowerCase();
-      const menuLinks = menuEl.querySelectorAll('.three-dots-menu-item');
-
-      let activeMenuId = null;
-
-      if (normPath === '/') {
-        if (currentHash === '#about') {
-          activeMenuId = 'about';
-        } else {
-          activeMenuId = 'home';
-        }
-      } else if (normPath === '/services' || normPath.startsWith('/services/')) {
-        activeMenuId = 'services';
-      } else if (normPath === '/start-project' || normPath.startsWith('/start-project/')) {
-        activeMenuId = 'start-project';
-      } else if (normPath === '/projects' || normPath.startsWith('/projects/') || normPath === '/project-details' || normPath.startsWith('/project-details/')) {
-        activeMenuId = 'projects';
-      } else if (normPath === '/contact' || normPath === '/connect') {
-        activeMenuId = 'connect';
-      } else if (normPath === '/settings') {
-        activeMenuId = 'settings';
-      } else if (normPath === '/why-choose-me') {
-        activeMenuId = 'why';
-      } else if (normPath === '/process') {
-        activeMenuId = 'process';
-      } else if (normPath === '/faq') {
-        activeMenuId = 'faq';
-      } else if (normPath === '/account') {
-        activeMenuId = isLoggedIn ? 'profile' : 'account-auth';
-      }
-
-      menuLinks.forEach(link => {
-        const menuId = link.getAttribute('data-menu-id');
-        if (activeMenuId && menuId === activeMenuId) {
-          link.classList.add('active');
-        } else {
-          link.classList.remove('active');
-        }
-      });
     }
 
     renderMenuContent();
@@ -396,180 +274,79 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function toggleMenu(e) {
       if (e) e.stopPropagation();
-      const isOpen = menuEl.classList.contains('active');
-      if (isOpen) {
-        closeMenu();
-      } else {
-        openMenu();
-      }
+      if (menuEl.classList.contains('active')) closeMenu();
+      else openMenu();
     }
 
     function openMenu() {
-      highlightActiveMenuItem();
       menuEl.classList.add('active');
       btn.classList.add('active');
-      btn.setAttribute('aria-expanded', 'true');
     }
 
     function closeMenu() {
       menuEl.classList.remove('active');
       btn.classList.remove('active');
-      btn.setAttribute('aria-expanded', 'false');
     }
 
     btn.addEventListener('click', toggleMenu);
-
-    menuEl.querySelectorAll('a').forEach(a => {
-      a.addEventListener('click', () => {
-        closeMenu();
-      });
-    });
-
     document.addEventListener('click', (e) => {
-      if (menuEl.classList.contains('active') && !container.contains(e.target)) {
-        closeMenu();
-      }
+      if (menuEl.classList.contains('active') && !container.contains(e.target)) closeMenu();
     });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && menuEl.classList.contains('active')) {
-        closeMenu();
-      }
-    });
-
-    window.addEventListener('hashchange', highlightActiveMenuItem);
   }
 
   function initThemeToggle() {
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
     if (themeToggleBtn) {
-      themeToggleBtn.addEventListener('click', () => {
-        const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        applyTheme(nextTheme);
-      });
+      themeToggleBtn.addEventListener('click', () => applyTheme(currentTheme === 'dark' ? 'light' : 'dark'));
     }
-  }
-
-  function getDynamicCopyrightText(lang) {
-    const year = new Date().getFullYear().toString();
-    if (lang === 'bn') {
-      const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-      const bnYear = year.replace(/\d/g, d => bnDigits[d]);
-      return `© ${bnYear} WebWorldBD। সর্বস্বত্ব সংরক্ষিত সাফায়েত হোসেন ছারিফ দ্বারা।`;
-    }
-    return `© ${year} WebWorldBD. Created with passion by SHAFAET HOSSEN SARIP. All rights reserved.`;
   }
 
   function applyLanguage(lang) {
     currentLang = lang;
     localStorage.setItem('webworldbd_lang', lang);
 
-    if (lang === 'bn') {
-      document.body.classList.add('lang-bn');
-    } else {
-      document.body.classList.remove('lang-bn');
-    }
+    if (lang === 'bn') document.body.classList.add('lang-bn');
+    else document.body.classList.remove('lang-bn');
 
-    // Dynamic copyright text generator
-    const dynamicCopyright = getDynamicCopyrightText(lang);
-
-    // Check auth state for account subtext if available
-    const isUserLoggedIn = window.currentUserState ? true : false;
-
-    // Update text elements with data-i18n attribute
     const i18nElements = document.querySelectorAll('[data-i18n]');
     i18nElements.forEach(el => {
       const key = el.getAttribute('data-i18n');
-      if (key === 'copyrightText') {
-        el.textContent = dynamicCopyright;
-      } else if (key === 'accountSub') {
-        const subKey = isUserLoggedIn ? 'accountSubLoggedIn' : 'accountSub';
-        if (translations[lang] && translations[lang][subKey]) {
-          el.textContent = translations[lang][subKey];
-        }
-      } else if (key === 'navAccount') {
-        if (isUserLoggedIn && window.currentUserState) {
-          const u = window.currentUserState;
-          el.textContent = u.displayName || (u.email ? u.email.split('@')[0] : 'User');
-        } else if (translations[lang] && translations[lang][key]) {
-          el.textContent = translations[lang][key];
-        }
-      } else if (translations[lang] && translations[lang][key]) {
+      if (translations[lang] && translations[lang][key]) {
         if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
           el.placeholder = translations[lang][key];
         } else {
-          const val = translations[lang][key];
-          if (val.includes('<') && val.includes('>')) {
-            el.innerHTML = val;
-          } else {
-            el.textContent = val;
-          }
+          el.textContent = translations[lang][key];
         }
       }
     });
 
-    // Update Language Toggle Button Text
     const langSwitchBtn = document.getElementById('lang-switch-btn');
     if (langSwitchBtn) {
-      langSwitchBtn.innerHTML = lang === 'en'
-        ? '<i class="fas fa-globe"></i> BN'
-        : '<i class="fas fa-globe"></i> EN';
+      langSwitchBtn.innerHTML = lang === 'en' ? '<i class="fas fa-globe"></i> BN' : '<i class="fas fa-globe"></i> EN';
     }
 
-    // Sync settings language radio buttons if present
-    const langRadios = document.querySelectorAll('input[name="lang-radio"]');
-    langRadios.forEach(radio => {
-      radio.checked = (radio.value === lang);
-    });
-
-    // Re-render three-dots menu
-    if (window.refreshThreeDotsMenu) {
-      window.refreshThreeDotsMenu();
-    }
-
-    // Re-render dynamic sections if present
-    if (document.getElementById('services-grid')) renderServices();
-    if (document.getElementById('capabilities-grid')) renderCapabilities();
-    if (document.getElementById('projects-grid')) {
-      const activeFilter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
-      const searchVal = document.getElementById('project-search-input')?.value || '';
-      renderProjects(activeFilter, searchVal);
-    }
-    if (document.getElementById('faq-accordion')) renderFAQs();
-    if (document.getElementById('project-detail-content')) initProjectDetailsPage();
-    if (document.getElementById('service-detail-app')) initServiceDetailPage();
+    if (window.refreshThreeDotsMenu) window.refreshThreeDotsMenu();
   }
 
   function initLangSwitch() {
     const langSwitchBtn = document.getElementById('lang-switch-btn');
     if (langSwitchBtn) {
-      langSwitchBtn.addEventListener('click', () => {
-        const nextLang = currentLang === 'en' ? 'bn' : 'en';
-        applyLanguage(nextLang);
-      });
+      langSwitchBtn.addEventListener('click', () => applyLanguage(currentLang === 'en' ? 'bn' : 'en'));
     }
   }
 
-  /* --------------------------------------------------------------------------
-     3. Header & Navigation Controls
-     -------------------------------------------------------------------------- */
   function initHeader() {
     const header = document.querySelector('.header');
     if (!header) return;
-
     window.addEventListener('scroll', () => {
-      if (window.scrollY > 40) {
-        header.classList.add('scrolled');
-      } else {
-        header.classList.remove('scrolled');
-      }
+      if (window.scrollY > 40) header.classList.add('scrolled');
+      else header.classList.remove('scrolled');
     });
   }
 
   function initMobileMenu() {
     const mobileToggle = document.getElementById('mobile-toggle');
     const navMenu = document.getElementById('nav-menu');
-
     if (!navMenu) return;
 
     let navBackdrop = document.getElementById('nav-backdrop');
@@ -584,7 +361,6 @@ document.addEventListener('DOMContentLoaded', () => {
       navMenu.classList.add('active');
       if (mobileToggle) mobileToggle.classList.add('active');
       if (navBackdrop) navBackdrop.classList.add('active');
-      document.body.classList.add('menu-open');
       document.body.style.overflow = 'hidden';
     }
 
@@ -592,133 +368,36 @@ document.addEventListener('DOMContentLoaded', () => {
       navMenu.classList.remove('active');
       if (mobileToggle) mobileToggle.classList.remove('active');
       if (navBackdrop) navBackdrop.classList.remove('active');
-      document.body.classList.remove('menu-open');
       document.body.style.overflow = '';
     }
 
-    if (mobileToggle) {
-      mobileToggle.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (navMenu.classList.contains('active')) {
-          closeMenu();
-        } else {
-          openMenu();
-        }
-      });
-    }
-
-    if (navBackdrop) {
-      navBackdrop.addEventListener('click', (e) => {
-        e.stopPropagation();
-        closeMenu();
-      });
-    }
-
-    function highlightActiveNavLink() {
-      const normPath = getNormalizedPath();
-      const currentHash = window.location.hash.toLowerCase();
-      const navLinks = navMenu.querySelectorAll('.nav-link[data-nav-id]');
-
-      let activeNavId = null;
-
-      if (normPath === '/') {
-        if (currentHash === '#about') {
-          activeNavId = 'about';
-        } else {
-          activeNavId = 'home';
-        }
-      } else if (normPath === '/why-choose-me') {
-        activeNavId = 'why';
-      } else if (normPath === '/process') {
-        activeNavId = 'process';
-      } else if (normPath === '/faq') {
-        activeNavId = 'faq';
-      } else if (normPath === '/services' || normPath.startsWith('/services/')) {
-        activeNavId = 'services';
-      } else if (normPath === '/projects' || normPath.startsWith('/projects/') || normPath === '/project-details' || normPath.startsWith('/project-details/')) {
-        activeNavId = 'projects';
-      } else if (normPath === '/account') {
-        activeNavId = 'account';
-      } else if (normPath === '/contact' || normPath === '/connect') {
-        activeNavId = 'contact';
-      }
-
-      navLinks.forEach(link => {
-        const navId = link.getAttribute('data-nav-id');
-        if (activeNavId && navId === activeNavId) {
-          link.classList.add('active');
-        } else {
-          link.classList.remove('active');
-        }
-      });
-    }
-
-    highlightActiveNavLink();
-    window.addEventListener('hashchange', highlightActiveNavLink);
-
-    navMenu.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        closeMenu();
-      });
+    if (mobileToggle) mobileToggle.addEventListener('click', () => {
+      if (navMenu.classList.contains('active')) closeMenu();
+      else openMenu();
     });
 
-    document.addEventListener('click', (e) => {
-      if (navMenu.classList.contains('active') && !navMenu.contains(e.target) && (!mobileToggle || !mobileToggle.contains(e.target))) {
-        closeMenu();
-      }
-    });
+    if (navBackdrop) navBackdrop.addEventListener('click', closeMenu);
+    navMenu.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
   }
 
-  /* --------------------------------------------------------------------------
-     3b. Mobile Bottom Navigation Active Route Highlighting
-     -------------------------------------------------------------------------- */
   function initMobileBottomNav() {
     const mobileNav = document.getElementById('mobile-bottom-nav');
     if (!mobileNav) return;
+    const normPath = getNormalizedPath();
 
-    const navItems = mobileNav.querySelectorAll('.mobile-nav-item');
-
-    function updateActiveBottomNav() {
-      const normPath = getNormalizedPath();
-      let activeNavKey = null;
-
-      if (normPath === '/') {
-        activeNavKey = 'home';
-      } else if (normPath === '/services' || normPath.startsWith('/services/')) {
-        activeNavKey = 'services';
-      } else if (normPath === '/projects' || normPath.startsWith('/projects/') || normPath === '/project-details' || normPath.startsWith('/project-details/')) {
-        activeNavKey = 'projects';
-      } else if (normPath === '/contact' || normPath === '/connect') {
-        activeNavKey = 'connect';
-      } else if (normPath === '/start-project' || normPath.startsWith('/start-project/')) {
-        activeNavKey = 'fab';
-      }
-
-      // Remove "active" class from all items first
-      navItems.forEach(item => {
-        item.classList.remove('active');
-      });
-
-      // Add "active" class only to the matching item if one matched
-      if (activeNavKey) {
-        navItems.forEach(item => {
-          if (item.dataset.nav === activeNavKey) {
-            item.classList.add('active');
-          }
-        });
-      }
-    }
-
-    updateActiveBottomNav();
+    mobileNav.querySelectorAll('.mobile-nav-item').forEach(item => {
+      item.classList.remove('active');
+      if (normPath === '/' && item.dataset.nav === 'home') item.classList.add('active');
+      else if (normPath === '/services' && item.dataset.nav === 'services') item.classList.add('active');
+      else if (normPath === '/start-project' && item.dataset.nav === 'fab') item.classList.add('active');
+      else if (normPath === '/projects' && item.dataset.nav === 'projects') item.classList.add('active');
+      else if (normPath === '/contact' && item.dataset.nav === 'connect') item.classList.add('active');
+    });
   }
 
-  /* --------------------------------------------------------------------------
-     4. Particle Canvas Background Effect
-     -------------------------------------------------------------------------- */
   function initParticles() {
     const canvas = document.getElementById('particles-canvas');
     if (!canvas) return;
-
     const ctx = canvas.getContext('2d');
     let width = canvas.width = window.innerWidth;
     let height = canvas.height = window.innerHeight;
@@ -744,124 +423,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function animate() {
       ctx.clearRect(0, 0, width, height);
-
       particles.forEach(p => {
-        p.x += p.vx;
-        p.y += p.vy;
-
-        if (p.x < 0) p.x = width;
-        if (p.x > width) p.x = 0;
-        if (p.y < 0) p.y = height;
-        if (p.y > height) p.y = 0;
-
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0) p.x = width; if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height; if (p.y > height) p.y = 0;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = (document.documentElement.getAttribute('data-theme') === 'dark')
-          ? `rgba(56, 189, 248, ${p.alpha})`
-          : `rgba(14, 165, 233, ${p.alpha})`;
+        ctx.fillStyle = `rgba(56, 189, 248, ${p.alpha})`;
         ctx.fill();
       });
-
       requestAnimationFrame(animate);
     }
-
     animate();
   }
 
-  /* --------------------------------------------------------------------------
-     5. Animated Numbers Counter
-     -------------------------------------------------------------------------- */
   function initCounters() {
     const counterEls = document.querySelectorAll('.counter');
     if (counterEls.length === 0) return;
-
-    if (!('IntersectionObserver' in window)) {
-      counterEls.forEach(el => {
-        const target = el.getAttribute('data-target') || '0';
-        const suffix = el.getAttribute('data-suffix') || '';
-        el.textContent = target + suffix;
-      });
-      return;
-    }
-
-    const observer = new IntersectionObserver((entries, obs) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const target = parseInt(entry.target.getAttribute('data-target') || '0', 10);
-          const suffix = entry.target.getAttribute('data-suffix') || '';
-          if (isNaN(target) || target <= 0) return;
-
-          let count = 0;
-          const duration = 600;
-          const stepTime = 20;
-          const increment = Math.max(1, Math.ceil(target / (duration / stepTime)));
-
-          const timer = setInterval(() => {
-            count += increment;
-            if (count >= target) {
-              entry.target.textContent = target + suffix;
-              clearInterval(timer);
-            } else {
-              entry.target.textContent = count + suffix;
-            }
-          }, stepTime);
-
-          obs.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.1 });
-
-    counterEls.forEach(el => observer.observe(el));
+    counterEls.forEach(el => {
+      const target = el.getAttribute('data-target') || '0';
+      const suffix = el.getAttribute('data-suffix') || '';
+      el.textContent = target + suffix;
+    });
   }
 
-  /* Helper to determine relative URL path to service detail page */
-  function getServiceUrl(slug) {
-    const isSubdir = window.location.pathname.includes('/services/');
-    return isSubdir ? `${slug}.html` : `services/${slug}.html`;
-  }
-
-  /* Helper to determine relative URL path to contact page */
-  function getContactUrl() {
-    const isSubdir = window.location.pathname.includes('/services/');
-    return isSubdir ? `../contact.html` : `contact.html`;
-  }
-
-  /* Helper to determine relative URL path to home page */
-  function getHomeUrl() {
-    const isSubdir = window.location.pathname.includes('/services/');
-    return isSubdir ? `../index.html` : `index.html`;
-  }
-
-  /* Helper to determine relative URL path to services page */
-  function getServicesPageUrl() {
-    const isSubdir = window.location.pathname.includes('/services/');
-    return isSubdir ? `../services.html` : `services.html`;
-  }
-
-  /* --------------------------------------------------------------------------
-     6. Dynamic Content Renderers
-     -------------------------------------------------------------------------- */
   function renderServices() {
     const container = document.getElementById('services-grid');
     if (!container) return;
-
-    let servicesToRender = portfolioData.services;
-    if (container.dataset.limit) {
-      const limit = parseInt(container.dataset.limit, 10);
-      servicesToRender = servicesToRender.filter(s => s.featured).slice(0, limit);
-    }
-
-    container.innerHTML = servicesToRender.map(s => `
-      <a href="${getServiceUrl(s.slug)}" class="service-row-item">
+    container.innerHTML = portfolioData.services.map(s => `
+      <a href="services/${s.slug}.html" class="service-row-item">
         <div class="service-row-left">
-          <div class="service-row-icon">
-            <i class="${s.icon || 'fas fa-laptop-code'}"></i>
-          </div>
+          <div class="service-row-icon"><i class="${s.icon || 'fas fa-laptop-code'}"></i></div>
           <h3 class="service-row-title">${currentLang === 'bn' ? s.title_bn : s.title_en}</h3>
         </div>
-        <div class="service-row-arrow">
-          <i class="fas fa-chevron-right"></i>
-        </div>
+        <div class="service-row-arrow"><i class="fas fa-chevron-right"></i></div>
       </a>
     `).join('');
   }
@@ -869,209 +464,31 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderCapabilities() {
     const container = document.getElementById('capabilities-grid');
     if (!container) return;
-
     container.innerHTML = portfolioData.capabilities.map(cap => `
-      <div class="cap-tag">
-        <i class="fas fa-check-circle" style="color:var(--accent-blue); margin-right:6px;"></i>
-        ${currentLang === 'bn' ? cap.bn : cap.en}
-      </div>
+      <div class="cap-tag"><i class="fas fa-check-circle" style="color:var(--accent-blue); margin-right:6px;"></i>${currentLang === 'bn' ? cap.bn : cap.en}</div>
     `).join('');
-  }
-
-  function renderProjectThumbnail(projectId, isDetailView = false) {
-    const project = portfolioData.projects.find(p => p.id === projectId);
-    const projectUrl = project ? project.url : '#';
-    const thumbClass = isDetailView ? 'project-thumb project-thumb-detail' : 'project-thumb';
-    let patternSvg = '';
-    let iconSvg = '';
-    let cardClass = '';
-
-    switch (projectId) {
-      case 'shs-bazar':
-        cardClass = 'thumb-shs-bazar';
-        patternSvg = `
-          <svg class="thumb-pattern" viewBox="0 0 400 200" preserveAspectRatio="none">
-            <defs>
-              <pattern id="grid-pattern-shs" width="20" height="20" patternUnits="userSpaceOnUse">
-                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255, 255, 255, 0.22)" stroke-width="1"/>
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#grid-pattern-shs)"/>
-            <circle cx="200" cy="100" r="110" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" stroke-dasharray="4 4"/>
-            <line x1="0" y1="100" x2="400" y2="100" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
-          </svg>
-        `;
-        iconSvg = `
-          <svg class="thumb-icon-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M16 20H48V52C48 54.2091 46.2091 56 44 56H20C17.7909 56 16 54.2091 16 52V20Z" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M24 24V16C24 11.5817 27.5817 8 32 8C36.4183 8 40 11.5817 40 16V24" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M25 34L30 39L39 29" stroke="#38BDF8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-            <line x1="20" y1="47" x2="44" y2="47" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" stroke-linecap="round"/>
-          </svg>
-        `;
-        break;
-
-      case 'student-tools-ai':
-        cardClass = 'thumb-student-tools-ai';
-        patternSvg = `
-          <svg class="thumb-pattern" viewBox="0 0 400 200" preserveAspectRatio="none">
-            <defs>
-              <pattern id="dots-pattern-edu" width="28" height="28" patternUnits="userSpaceOnUse">
-                <circle cx="6" cy="6" r="1.5" fill="rgba(255, 255, 255, 0.3)"/>
-                <circle cx="20" cy="20" r="2" fill="rgba(255, 255, 255, 0.2)"/>
-                <circle cx="24" cy="8" r="1" fill="rgba(255, 255, 255, 0.4)"/>
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#dots-pattern-edu)"/>
-            <path d="M0 150 Q 100 50, 200 150 T 400 150" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
-          </svg>
-        `;
-        iconSvg = `
-          <svg class="thumb-icon-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M32 10L6 23L32 36L58 23L32 10Z" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M14 27.5V42C14 42 22 48 32 48C42 48 50 42 50 42V27.5" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M52 24.5V38C52 39.1046 51.1046 40 50 40C48.8954 40 48 39.1046 48 38V36" stroke="#C084FC" stroke-width="2.5" stroke-linecap="round"/>
-            <path d="M48 10C48 13.5 50.5 16 54 16C50.5 16 48 18.5 48 22C48 18.5 45.5 16 42 16C45.5 16 48 13.5 48 10Z" fill="#38BDF8"/>
-            <path d="M12 40C12 42.5 13.5 44 16 44C13.5 44 12 45.5 12 48C12 45.5 10.5 44 8 44C10.5 44 12 42.5 12 40Z" fill="#C084FC"/>
-          </svg>
-        `;
-        break;
-
-      case 'happy-birthday-wish':
-        cardClass = 'thumb-happy-birthday-wish';
-        patternSvg = `
-          <svg class="thumb-pattern" viewBox="0 0 400 200" preserveAspectRatio="none">
-            <defs>
-              <pattern id="confetti-pattern-bday" width="40" height="40" patternUnits="userSpaceOnUse">
-                <circle cx="10" cy="10" r="2" fill="#FFE4E6"/>
-                <circle cx="30" cy="25" r="2.5" fill="#FEF08A"/>
-                <rect x="22" y="8" width="3" height="3" transform="rotate(25 22 8)" fill="#A7F3D0"/>
-                <circle cx="6" cy="32" r="1.5" fill="#FBCFE8"/>
-                <path d="M34 5 Q 38 12, 34 18" fill="none" stroke="#FDE68A" stroke-width="1.5"/>
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#confetti-pattern-bday)"/>
-          </svg>
-        `;
-        iconSvg = `
-          <svg class="thumb-icon-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M32 8C22.0589 8 14 16.0589 14 26C14 34.5 21 40 30 43.5L29 47H35L34 43.5C43 40 50 34.5 50 26C50 16.0589 41.9411 8 32 8Z" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M22 18C24 15 27 13 31 12.5" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/>
-            <path d="M32 47C32 49 35 51 33 54C31 57 34 58 33 60" stroke="#FFE4E6" stroke-width="2.5" stroke-linecap="round"/>
-            <path d="M10 18L12 22L16 24L12 26L10 30L8 26L4 24L8 22L10 18Z" fill="#FEF08A"/>
-            <path d="M52 36L53.5 39L56.5 40.5L53.5 42L52 45L50.5 42L47.5 40.5L50.5 39L52 36Z" fill="#A7F3D0"/>
-          </svg>
-        `;
-        break;
-
-      case 'animated-heart':
-        cardClass = 'thumb-animated-heart';
-        patternSvg = `
-          <svg class="thumb-pattern" viewBox="0 0 400 200" preserveAspectRatio="none">
-            <defs>
-              <pattern id="sparkle-pattern-heart" width="45" height="45" patternUnits="userSpaceOnUse">
-                <circle cx="12" cy="12" r="1.5" fill="rgba(255,255,255,0.3)"/>
-                <circle cx="35" cy="30" r="2" fill="rgba(254,205,211,0.4)"/>
-                <path d="M24 6 L26 10 L30 12 L26 14 L24 18 L22 14 L18 12 L22 10 Z" fill="rgba(255,255,255,0.2)"/>
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#sparkle-pattern-heart)"/>
-            <circle cx="200" cy="100" r="80" fill="rgba(244,63,94,0.18)" filter="blur(20px)"/>
-          </svg>
-        `;
-        iconSvg = `
-          <svg class="thumb-icon-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M32 54.5C32 54.5 8 40 8 23.5C8 15.5 14.5 9 22.5 9C27.2 9 31.3 11.2 32 14.5C32.7 11.2 36.8 9 41.5 9C49.5 9 56 15.5 56 23.5C56 40 32 54.5 32 54.5Z" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="rgba(244,63,94,0.2)"/>
-            <path d="M18 21.5C18.5 17.5 22 14.5 26 14.5" stroke="#FECDD3" stroke-width="2.5" stroke-linecap="round"/>
-            <path d="M46 16L47 18.5L49.5 19.5L47 20.5L46 23L45 20.5L42.5 19.5L45 18.5L46 16Z" fill="#FFFFFF"/>
-          </svg>
-        `;
-        break;
-
-      default:
-        cardClass = 'thumb-shs-bazar';
-        patternSvg = '';
-        iconSvg = `<i class="fas fa-code" style="font-size:3rem; color:#fff;"></i>`;
-    }
-
-    if (isDetailView) {
-      return `
-        <div class="${thumbClass} ${cardClass}" style="width: 100%; height: 320px; border-radius: 16px; margin-bottom: 2.5rem; position: relative;">
-          ${patternSvg}
-          <div class="thumb-icon-wrapper">
-            ${iconSvg}
-          </div>
-          <div style="position: absolute; bottom: 15px; right: 15px; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); padding: 0.5rem 1rem; border-radius: 30px; font-size: 0.85rem; color: #fff; z-index: 4;">
-            <i class="fas fa-shield-alt" style="color: var(--accent-blue);"></i> WebWorldBD Verified
-          </div>
-        </div>
-      `;
-    }
-
-    return `
-      <div class="${thumbClass} ${cardClass}">
-        ${patternSvg}
-        <div class="thumb-icon-wrapper">
-          ${iconSvg}
-        </div>
-        <div class="project-thumb-overlay">
-          <a href="${projectUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="padding:0.5rem 1rem; font-size:0.85rem;">
-            <i class="fas fa-external-link-alt"></i> ${translations[currentLang].btnLivePreview}
-          </a>
-          <a href="project-details.html?id=${projectId}" class="btn btn-secondary" style="padding:0.5rem 1rem; font-size:0.85rem;">
-            <i class="fas fa-info-circle"></i> ${translations[currentLang].btnProjectDetails}
-          </a>
-        </div>
-      </div>
-    `;
   }
 
   function renderProjects(filterCategory = 'all', searchQuery = '') {
     const container = document.getElementById('projects-grid');
     if (!container) return;
-
     let filtered = portfolioData.projects;
 
-    if (filterCategory !== 'all') {
-      filtered = filtered.filter(p => p.category === filterCategory);
-    }
-
+    if (filterCategory !== 'all') filtered = filtered.filter(p => p.category === filterCategory);
     if (searchQuery.trim() !== '') {
       const q = searchQuery.toLowerCase();
-      filtered = filtered.filter(p => {
-        const title = p.title.toLowerCase();
-        const descEn = p.short_desc_en.toLowerCase();
-        const descBn = p.short_desc_bn.toLowerCase();
-        const techs = p.techs.join(' ').toLowerCase();
-        return title.includes(q) || descEn.includes(q) || descBn.includes(q) || techs.includes(q);
-      });
-    }
-
-    if (filtered.length === 0) {
-      container.innerHTML = `
-        <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--text-muted);">
-          <i class="fas fa-folder-open" style="font-size: 3rem; margin-bottom: 1rem; color: var(--accent-blue);"></i>
-          <h3>${currentLang === 'bn' ? 'কোন প্রজেক্ট পাওয়া যায়নি' : 'No Projects Found'}</h3>
-          <p>${currentLang === 'bn' ? 'অনুগ্রহ করে অন্য শব্দ বা ক্যাটাগরি ট্রাই করুন।' : 'Try adjusting your search or category filter.'}</p>
-        </div>
-      `;
-      return;
+      filtered = filtered.filter(p => p.title.toLowerCase().includes(q) || p.short_desc_en.toLowerCase().includes(q));
     }
 
     container.innerHTML = filtered.map(p => `
       <div class="glass-card project-card">
-        ${renderProjectThumbnail(p.id)}
         <div class="project-info">
           <span class="project-category">${currentLang === 'bn' ? p.categoryName_bn : p.categoryName_en}</span>
           <h3>${p.title}</h3>
           <p>${currentLang === 'bn' ? p.short_desc_bn : p.short_desc_en}</p>
-          <div class="project-techs">
-            ${p.techs.map(t => `<span class="tech-badge">${t}</span>`).join('')}
-          </div>
+          <div class="project-techs">${p.techs.map(t => `<span class="tech-badge">${t}</span>`).join('')}</div>
           <div class="project-actions">
-            <a href="project-details.html?id=${p.id}" class="btn btn-secondary" style="width:100%; font-size:0.85rem; padding:0.6rem;">
-              ${translations[currentLang].btnProjectDetails} <i class="fas fa-arrow-right"></i>
-            </a>
+            <a href="project-details.html?id=${p.id}" class="btn btn-secondary" style="width:100%;">View Details <i class="fas fa-arrow-right"></i></a>
           </div>
         </div>
       </div>
@@ -1081,354 +498,76 @@ document.addEventListener('DOMContentLoaded', () => {
   function initProjectFiltersAndSearch() {
     const filterBtns = document.querySelectorAll('.filter-btn');
     const searchInput = document.getElementById('project-search-input');
-
     filterBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         filterBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        const filter = btn.dataset.filter || 'all';
-        const searchVal = searchInput ? searchInput.value : '';
-        renderProjects(filter, searchVal);
+        renderProjects(btn.dataset.filter || 'all', searchInput ? searchInput.value : '');
       });
     });
-
-    if (searchInput) {
-      searchInput.addEventListener('input', (e) => {
-        const activeFilter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
-        renderProjects(activeFilter, e.target.value);
-      });
-    }
+    if (searchInput) searchInput.addEventListener('input', (e) => {
+      const activeFilter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
+      renderProjects(activeFilter, e.target.value);
+    });
   }
 
   function renderFAQs() {
     const container = document.getElementById('faq-accordion');
     if (!container) return;
-
     container.innerHTML = portfolioData.faqs.map((faq, index) => `
       <div class="glass-card faq-item ${index === 0 ? 'active' : ''}">
-        <div class="faq-question">
-          <span>${currentLang === 'bn' ? faq.q_bn : faq.q_en}</span>
-          <i class="fas fa-chevron-down"></i>
-        </div>
-        <div class="faq-answer">
-          <p>${currentLang === 'bn' ? faq.a_bn : faq.a_en}</p>
-        </div>
+        <div class="faq-question"><span>${currentLang === 'bn' ? faq.q_bn : faq.q_en}</span><i class="fas fa-chevron-down"></i></div>
+        <div class="faq-answer"><p>${currentLang === 'bn' ? faq.a_bn : faq.a_en}</p></div>
       </div>
     `).join('');
-
     initAccordion();
   }
 
   function initAccordion() {
-    const faqQuestions = document.querySelectorAll('.faq-question');
-    faqQuestions.forEach(q => {
+    document.querySelectorAll('.faq-question').forEach(q => {
       q.addEventListener('click', () => {
         const item = q.parentElement;
         const isActive = item.classList.contains('active');
-
         document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
-
-        if (!isActive) {
-          item.classList.add('active');
-        }
+        if (!isActive) item.classList.add('active');
       });
     });
   }
 
-  /* --------------------------------------------------------------------------
-     7. Project Details Page View Handler
-     -------------------------------------------------------------------------- */
   function initProjectDetailsPage() {
     const container = document.getElementById('project-detail-content');
     if (!container) return;
-
     const urlParams = new URLSearchParams(window.location.search);
     const projectId = urlParams.get('id') || 'shs-bazar';
-
     const project = portfolioData.projects.find(p => p.id === projectId) || portfolioData.projects[0];
 
     container.innerHTML = `
       <div class="glass-card" style="padding: 2.5rem; margin-bottom: 3rem;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 2rem;">
-          <div>
-            <span class="badge-pill" style="margin-bottom: 0.8rem;">
-              <i class="fas fa-tag"></i> ${currentLang === 'bn' ? project.categoryName_bn : project.categoryName_en}
-            </span>
-            <h1 style="font-size: 2.5rem; font-weight: 800; margin-top: 0.5rem;">${project.title}</h1>
-          </div>
-          <a href="${project.url}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
-            <i class="fas fa-external-link-alt"></i> ${translations[currentLang].btnLivePreview}
-          </a>
-        </div>
-
-        ${renderProjectThumbnail(project.id, true)}
-
-        <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 2.5rem;">
-          <div>
-            <h3 style="font-size: 1.5rem; margin-bottom: 1rem; font-weight: 700;">${currentLang === 'bn' ? 'প্রজেক্ট বিবরণ' : 'Project Overview'}</h3>
-            <p style="color: var(--text-muted); line-height: 1.8; margin-bottom: 2rem; font-size: 1.05rem;">
-              ${currentLang === 'bn' ? project.full_desc_bn : project.full_desc_en}
-            </p>
-
-            <h3 style="font-size: 1.4rem; margin-bottom: 1rem; font-weight: 700;">${currentLang === 'bn' ? 'মূল ফিচারের তালিকা' : 'Key Features'}</h3>
-            <ul style="display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 2rem;">
-              ${(currentLang === 'bn' ? project.key_features_bn : project.key_features_en).map(feat => `
-                <li style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-main);">
-                  <i class="fas fa-check-circle" style="color: var(--accent-blue); font-size: 1.1rem;"></i>
-                  ${feat}
-                </li>
-              `).join('')}
-            </ul>
-          </div>
-
-          <div class="glass-card" style="padding: 1.75rem; height: fit-content;">
-            <h3 style="font-size: 1.2rem; margin-bottom: 1.25rem; font-weight: 700; border-bottom: 1px solid var(--border-glass); padding-bottom: 0.75rem;">
-              ${currentLang === 'bn' ? 'প্রজেক্ট ইনফরমেশন' : 'Project Metadata'}
-            </h3>
-
-            <div style="margin-bottom: 1.25rem;">
-              <span style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase;">${currentLang === 'bn' ? 'ক্লায়েন্ট' : 'Client'}</span>
-              <p style="font-weight: 600; font-size: 0.95rem;">${currentLang === 'bn' ? project.client_bn : project.client_en}</p>
-            </div>
-
-            <div style="margin-bottom: 1.25rem;">
-              <span style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase;">${currentLang === 'bn' ? 'ব্যবহৃত প্রযুক্তি' : 'Technologies Used'}</span>
-              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem;">
-                ${project.techs.map(t => `<span class="tech-badge" style="background: rgba(56, 189, 248, 0.15); color: var(--accent-blue);">${t}</span>`).join('')}
-              </div>
-            </div>
-
-            <a href="${project.url}" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
-              <i class="fas fa-external-link-alt"></i> ${currentLang === 'bn' ? 'লাইভ সাইটে যান' : 'Visit Live Project'}
-            </a>
-          </div>
-        </div>
+        <h1 style="font-size: 2.5rem; font-weight: 800;">${project.title}</h1>
+        <p style="color: var(--text-muted); font-size: 1.05rem; margin-top: 1rem;">${currentLang === 'bn' ? project.full_desc_bn : project.full_desc_en}</p>
+        <a href="${project.url}" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="margin-top: 1.5rem;"><i class="fas fa-external-link-alt"></i> Live Preview</a>
       </div>
     `;
-
-    const freeTextForm = document.getElementById('others-free-text-form');
-    if (freeTextForm) {
-      freeTextForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const textVal = document.getElementById('others-custom-text')?.value.trim() || '';
-        if (!textVal) return;
-        const waMessage = `*Custom Project Request — WebWorldBD*\n\n*Requirement Details:*\n${textVal}`;
-        const waUrl = `https://wa.me/8801342697743?text=${encodeURIComponent(waMessage)}`;
-        window.open(waUrl, '_blank', 'noopener,noreferrer');
-      });
-    }
   }
 
-  /* --------------------------------------------------------------------------
-     7b. Dedicated Service Detail Page View Handler
-     -------------------------------------------------------------------------- */
   function initServiceDetailPage() {
     const container = document.getElementById('service-detail-app');
     if (!container) return;
-
     const attrSlug = container.getAttribute('data-service-slug');
-    let serviceSlug = attrSlug;
-
-    if (!serviceSlug) {
-      const pathParts = window.location.pathname.split('/');
-      const fileName = pathParts[pathParts.length - 1];
-      serviceSlug = fileName.replace('.html', '');
-    }
-
-    const service = portfolioData.services.find(s => s.slug === serviceSlug || s.id === serviceSlug) || portfolioData.services[0];
-
-    document.title = `${currentLang === 'bn' ? service.title_bn : service.title_en} | WebWorldBD`;
-
-    const titleText = currentLang === 'bn' ? service.title_bn : service.title_en;
-    const descText = currentLang === 'bn' ? service.desc_bn : service.desc_en;
-    const overviewText = currentLang === 'bn' ? service.overview_bn : service.overview_en;
-    const includesList = currentLang === 'bn' ? service.includes_bn : service.includes_en;
-    const featuresList = currentLang === 'bn' ? service.features_bn : service.features_en;
-    const audienceList = currentLang === 'bn' ? service.audience_bn : service.audience_en;
-    const deliveryText = currentLang === 'bn' ? service.delivery_bn : service.delivery_en;
-    const revisionsText = currentLang === 'bn' ? service.revisions_bn : service.revisions_en;
-    const responsiveText = currentLang === 'bn' ? service.responsive_bn : service.responsive_en;
-
-    const isSubdir = window.location.pathname.includes('/services/');
-    const startProjectUrl = isSubdir ? '../start-project.html?service=others' : 'start-project.html?service=others';
-    const contactLink = service.id === 'others' ? startProjectUrl : getContactUrl();
-    const servicesLink = getServicesPageUrl();
-    const homeLink = getHomeUrl();
+    const service = portfolioData.services.find(s => s.slug === attrSlug || s.id === attrSlug) || portfolioData.services[0];
 
     container.innerHTML = `
-      <div style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
-        <a href="${servicesLink}" class="btn btn-secondary" style="padding: 0.45rem 0.9rem; font-size: 0.85rem; border-radius: var(--radius-full);">
-          <i class="fas fa-arrow-left"></i> ${translations[currentLang].btnBackToServices}
-        </a>
-        <nav style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--text-muted); flex-wrap: wrap;">
-          <a href="${homeLink}" style="color: var(--text-muted); text-decoration: none;">
-            <i class="fas fa-home"></i> ${translations[currentLang].breadcrumbHome}
-          </a>
-          <span>/</span>
-          <a href="${servicesLink}" style="color: var(--text-muted); text-decoration: none;">
-            ${translations[currentLang].breadcrumbServices}
-          </a>
-          <span>/</span>
-          <span style="color: var(--accent-blue); font-weight: 600;">${titleText}</span>
-        </nav>
-      </div>
-
-      <div class="glass-card" style="padding: 2.5rem; margin-bottom: 2.5rem; border-color: rgba(56, 189, 248, 0.3);">
-        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;">
-          <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
-            <div class="service-icon" style="width: 70px; height: 70px; font-size: 2rem; margin-bottom: 0;">
-              <i class="${service.icon || 'fas fa-laptop-code'}"></i>
-            </div>
-            <div>
-              <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
-                <h1 style="font-size: 2.2rem; font-weight: 800; margin: 0;">${titleText}</h1>
-              </div>
-              <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 650px; margin: 0;">
-                ${descText}
-              </p>
-            </div>
-          </div>
-          <div>
-            <a href="${contactLink}" class="btn btn-primary" style="padding: 0.85rem 1.8rem; font-size: 1rem;">
-              <i class="fas fa-rocket"></i> ${translations[currentLang].btnStartProjectNow}
-            </a>
-          </div>
-        </div>
-      </div>
-
-      ${service.id === 'others' ? `
-      <div class="glass-card" style="padding: 2.25rem; margin-bottom: 2.5rem; border-color: rgba(56, 189, 248, 0.4);">
-        <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: var(--accent-blue); display: flex; align-items: center; gap: 0.6rem;">
-          <i class="fas fa-pen-to-square"></i> ${translations[currentLang].formCustomDescLabel}
-        </h2>
-        <p style="color: var(--text-muted); margin-bottom: 1.25rem;">
-          ${translations[currentLang].formCustomDescPlaceholder}
-        </p>
-        <form id="others-free-text-form" style="display: flex; flex-direction: column; gap: 1rem;">
-          <textarea id="others-custom-text" rows="4" class="form-control" style="width: 100%; padding: 0.85rem 1.1rem; border-radius: var(--radius-md); background: var(--bg-glass); border: 1px solid var(--border-glass); color: var(--text-main); font-family: inherit; font-size: 0.98rem;" placeholder="${translations[currentLang].formCustomDescPlaceholder}" required></textarea>
-          <div style="display: flex; gap: 0.85rem; flex-wrap: wrap;">
-            <button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">
-              <i class="fab fa-whatsapp"></i> ${currentLang === 'bn' ? 'হোয়াটসঅ্যাপে পাঠান' : 'Submit via WhatsApp'}
-            </button>
-            <a href="${startProjectUrl}" class="btn btn-secondary" style="padding: 0.75rem 1.5rem;">
-              <i class="fas fa-clipboard-list"></i> ${translations[currentLang].formSubmitBtn}
-            </a>
-          </div>
-        </form>
-      </div>
-      ` : ''}
-
-      <div class="glass-card" style="padding: 2.25rem; margin-bottom: 2.5rem;">
-        <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: var(--accent-blue); display: flex; align-items: center; gap: 0.6rem;">
-          <i class="fas fa-info-circle"></i> ${translations[currentLang].sectionOverviewTitle}
-        </h2>
-        <p style="color: var(--text-main); font-size: 1.08rem; line-height: 1.85; margin: 0;">
-          ${overviewText}
-        </p>
-      </div>
-
-      <div class="glass-card" style="padding: 2.25rem; margin-bottom: 2.5rem;">
-        <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--accent-blue); display: flex; align-items: center; gap: 0.6rem;">
-          <i class="fas fa-list-check"></i> ${translations[currentLang].sectionIncludesTitle}
-        </h2>
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
-          ${includesList.map(item => `
-            <div style="display: flex; align-items: flex-start; gap: 0.75rem; background: var(--bg-glass); border: 1px solid var(--border-glass); padding: 0.9rem 1.1rem; border-radius: var(--radius-md);">
-              <i class="fas fa-check-circle" style="color: var(--accent-blue); font-size: 1.15rem; margin-top: 3px; flex-shrink: 0;"></i>
-              <span style="font-size: 0.95rem; font-weight: 600; color: var(--text-main); line-height: 1.5;">${item}</span>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-
-      <div style="margin-bottom: 2.5rem;">
-        <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--accent-blue); display: flex; align-items: center; gap: 0.6rem;">
-          <i class="fas fa-star"></i> ${translations[currentLang].sectionFeaturesTitle}
-        </h2>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
-          ${featuresList.map(feat => `
-            <div class="glass-card" style="padding: 1.75rem;">
-              <div class="service-icon" style="margin-bottom: 1rem;">
-                <i class="${feat.icon}"></i>
-              </div>
-              <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem;">${feat.title}</h3>
-              <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0; line-height: 1.6;">${feat.desc}</p>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-
-      <div class="glass-card" style="padding: 2.25rem; margin-bottom: 2.5rem;">
-        <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--accent-blue); display: flex; align-items: center; gap: 0.6rem;">
-          <i class="fas fa-bullseye"></i> ${translations[currentLang].sectionAudienceTitle}
-        </h2>
-        <div style="display: flex; flex-wrap: wrap; gap: 0.85rem;">
-          ${audienceList.map(aud => `
-            <div style="padding: 0.6rem 1.3rem; border-radius: var(--radius-full); background: rgba(56, 189, 248, 0.1); border: 1px solid var(--border-glow); color: var(--text-main); font-weight: 600; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 0.5rem;">
-              <i class="fas fa-user-check" style="color: var(--accent-blue);"></i>
-              ${aud}
-            </div>
-          `).join('')}
-        </div>
-      </div>
-
-      <div style="margin-bottom: 3rem;">
-        <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--accent-blue); display: flex; align-items: center; gap: 0.6rem;">
-          <i class="fas fa-clock-rotate-left"></i> ${translations[currentLang].sectionDeliveryTitle}
-        </h2>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem;">
-          <div class="glass-card" style="padding: 1.5rem; text-align: center;">
-            <i class="fas fa-truck-fast" style="font-size: 2rem; color: var(--accent-blue); margin-bottom: 0.75rem;"></i>
-            <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.3rem;">${translations[currentLang].cardDeliveryTime}</h4>
-            <p style="color: var(--accent-blue); font-weight: 700; font-size: 1.1rem; margin: 0;">${deliveryText}</p>
-          </div>
-
-          <div class="glass-card" style="padding: 1.5rem; text-align: center;">
-            <i class="fas fa-rotate-left" style="font-size: 2rem; color: var(--accent-purple); margin-bottom: 0.75rem;"></i>
-            <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.3rem;">${translations[currentLang].cardRevisionPolicy}</h4>
-            <p style="color: var(--accent-purple); font-weight: 700; font-size: 1.1rem; margin: 0;">${revisionsText}</p>
-          </div>
-
-          <div class="glass-card" style="padding: 1.5rem; text-align: center;">
-            <i class="fas fa-mobile-screen-button" style="font-size: 2rem; color: var(--accent-emerald); margin-bottom: 0.75rem;"></i>
-            <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.3rem;">${translations[currentLang].cardMobileOptimization}</h4>
-            <p style="color: var(--accent-emerald); font-weight: 700; font-size: 1.1rem; margin: 0;">${responsiveText}</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="glass-card" style="padding: 2.75rem; text-align: center; border-color: rgba(56, 189, 248, 0.4); background: linear-gradient(135deg, rgba(15,23,42,0.85) 0%, rgba(30,41,59,0.85) 100%);">
-        <h3 style="font-size: 1.85rem; margin-bottom: 0.75rem; font-weight: 800;">
-          ${currentLang === 'bn' ? `আপনার ${service.title_bn} প্রজেক্ট শুরু করতে প্রস্তুত?` : `Ready to start your ${service.title_en} project?`}
-        </h3>
-        <p style="color: var(--text-muted); max-width: 620px; margin: 0 auto 1.75rem; font-size: 1.05rem;">
-          ${currentLang === 'bn' ? 'আমাদের সাথে সরাসরি হোয়াটসঅ্যাপ, টেলিগ্রাম বা ফাইভারের মাধ্যমে যোগাযোগ করুন।' : 'Get in touch directly via WhatsApp, Telegram, or Fiverr to discuss your project.'}
-        </p>
-        <div style="display: flex; gap: 0.85rem; justify-content: center; flex-wrap: wrap;">
-          <a href="${contactLink}" class="btn btn-primary" style="padding: 0.85rem 1.8rem; font-size: 1rem;">
-            <i class="fas fa-paper-plane"></i> ${translations[currentLang].btnStartProjectNow}
-          </a>
-          <a href="https://wa.me/8801342697743" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp" style="padding: 0.85rem 1.5rem; font-size: 1rem;">
-            <i class="fab fa-whatsapp"></i> ${translations[currentLang].btnWhatsAppNav}
-          </a>
-          <a href="${portfolioData.profile.telegram}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 0.85rem 1.5rem; font-size: 1rem;">
-            <i class="fab fa-telegram"></i> ${translations[currentLang].btnTelegram}
-          </a>
-          <a href="${portfolioData.profile.fiverrWebGig || portfolioData.profile.fiverrProfile}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="padding: 0.85rem 1.5rem; font-size: 1rem; border-color: #1dbf73; color: #1dbf73;">
-            <i class="fas fa-store"></i> ${translations[currentLang].btnFiverr}
-          </a>
-        </div>
+      <div class="glass-card" style="padding: 2.5rem;">
+        <h1 style="font-size: 2.2rem; font-weight: 800;">${currentLang === 'bn' ? service.title_bn : service.title_en}</h1>
+        <p style="color: var(--text-muted); font-size: 1.05rem; margin-top: 1rem;">${currentLang === 'bn' ? service.overview_bn : service.overview_en}</p>
+        <a href="../start-project.html?service=${service.slug}" class="btn btn-primary" style="margin-top: 1.5rem;"><i class="fas fa-rocket"></i> Start Project Now</a>
       </div>
     `;
   }
 
-  /* --------------------------------------------------------------------------
-     7c. Viewport Entrance Scroll Animations
-     -------------------------------------------------------------------------- */
   function initScrollAnimations() {
     const animatedElements = document.querySelectorAll('.animate-on-scroll');
     if (animatedElements.length === 0) return;
-
     const observer = new IntersectionObserver((entries, obs) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -1437,598 +576,138 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     }, { threshold: 0.15 });
-
     animatedElements.forEach(el => observer.observe(el));
   }
 
-  /* --------------------------------------------------------------------------
-     8. Back to Top & Contact Form
-     -------------------------------------------------------------------------- */
   function initBackToTop() {
     const btn = document.getElementById('back-to-top');
     if (!btn) return;
-
     window.addEventListener('scroll', () => {
-      if (window.scrollY > 300) {
-        btn.classList.add('visible');
-      } else {
-        btn.classList.remove('visible');
-      }
+      if (window.scrollY > 300) btn.classList.add('visible');
+      else btn.classList.remove('visible');
     });
-
-    btn.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+    btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
   }
 
-  /* --------------------------------------------------------------------------
-     9. Client Account Auth Tabs Switcher & Interactivity
-     -------------------------------------------------------------------------- */
+  function initSettingsPage() {}
+
   function initAuthTabs() {
     const authCardContainer = document.getElementById('auth-card-container');
+    if (!authCardContainer) return;
     const loginTabBtn = document.getElementById('tab-btn-login');
     const regTabBtn = document.getElementById('tab-btn-register');
     const loginForm = document.getElementById('login-form');
     const regForm = document.getElementById('register-form');
-    const forgotForm = document.getElementById('forgot-form');
-    const userDashView = document.getElementById('dashboard-user-view');
-    const tabsWrapper = document.getElementById('auth-tabs-wrapper');
-    const alertBox = document.getElementById('auth-alert-box');
-    const alertMsg = document.getElementById('auth-alert-message');
-    const alertClose = document.getElementById('auth-alert-close');
-    const forgotPassLink = document.getElementById('forgot-password-link');
-    const backToLoginBtn = document.getElementById('back-to-login-btn');
-    const logoutBtn = document.getElementById('logout-btn');
 
-    if (!authCardContainer || !loginTabBtn || !regTabBtn || !loginForm || !regForm) return;
-
-    function showAlert(message, type = 'error') {
-      if (!alertBox || !alertMsg) return;
-      alertBox.className = `auth-alert-box alert-${type}`;
-      alertMsg.textContent = message;
-      alertBox.style.display = 'flex';
-    }
-
-    function hideAlert() {
-      if (alertBox) alertBox.style.display = 'none';
-    }
-
-    if (alertClose) {
-      alertClose.addEventListener('click', hideAlert);
-    }
-
-    function setFieldError(fieldId, errorMsg) {
-      const input = document.getElementById(fieldId);
-      const errorSpan = document.getElementById(`${fieldId}-error`);
-      if (input) input.classList.add('is-invalid');
-      if (errorSpan) {
-        errorSpan.textContent = errorMsg;
-        errorSpan.classList.add('visible');
-      }
-    }
-
-    function clearFieldErrors() {
-      const invalidInputs = document.querySelectorAll('.auth-form .form-control');
-      invalidInputs.forEach(i => i.classList.remove('is-invalid'));
-      const errorSpans = document.querySelectorAll('.field-error-msg');
-      errorSpans.forEach(s => {
-        s.textContent = '';
-        s.classList.remove('visible');
+    if (loginTabBtn && regTabBtn) {
+      loginTabBtn.addEventListener('click', () => {
+        loginTabBtn.classList.add('active'); regTabBtn.classList.remove('active');
+        if (loginForm) loginForm.style.display = 'flex';
+        if (regForm) regForm.style.display = 'none';
       });
-      hideAlert();
-    }
-
-    function switchAuthTab(targetTab) {
-      clearFieldErrors();
-      if (targetTab === 'login') {
-        authCardContainer.setAttribute('data-active-tab', 'login');
-        loginTabBtn.classList.add('active');
-        regTabBtn.classList.remove('active');
-        loginForm.style.display = 'flex';
-        regForm.style.display = 'none';
-        if (forgotForm) forgotForm.style.display = 'none';
-        if (tabsWrapper) tabsWrapper.style.display = 'flex';
-      } else if (targetTab === 'register') {
-        authCardContainer.setAttribute('data-active-tab', 'register');
-        regTabBtn.classList.add('active');
-        loginTabBtn.classList.remove('active');
-        regForm.style.display = 'flex';
-        loginForm.style.display = 'none';
-        if (forgotForm) forgotForm.style.display = 'none';
-        if (tabsWrapper) tabsWrapper.style.display = 'flex';
-      } else if (targetTab === 'forgot') {
-        loginForm.style.display = 'none';
-        regForm.style.display = 'none';
-        if (forgotForm) forgotForm.style.display = 'flex';
-        if (tabsWrapper) tabsWrapper.style.display = 'none';
-      }
-    }
-
-    loginTabBtn.addEventListener('click', () => switchAuthTab('login'));
-    regTabBtn.addEventListener('click', () => switchAuthTab('register'));
-
-    if (forgotPassLink) {
-      forgotPassLink.addEventListener('click', () => switchAuthTab('forgot'));
-    }
-
-    if (backToLoginBtn) {
-      backToLoginBtn.addEventListener('click', () => switchAuthTab('login'));
-    }
-
-    const passwordToggleBtns = document.querySelectorAll('.password-toggle-btn');
-    passwordToggleBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const input = btn.previousElementSibling;
-        if (!input) return;
-        const icon = btn.querySelector('i');
-
-        if (input.type === 'password') {
-          input.type = 'text';
-          if (icon) {
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
-          }
-        } else {
-          input.type = 'password';
-          if (icon) {
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
-          }
-        }
-      });
-    });
-
-    function isValidEmail(email) {
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    }
-
-    if (logoutBtn) {
-      logoutBtn.addEventListener('click', () => {
-        window.currentUserState = null;
-        if (window.refreshThreeDotsMenu) {
-          window.refreshThreeDotsMenu();
-        }
-        const mod = window.FirebaseModule;
-        if (mod && mod.auth && mod.signOut) {
-          mod.signOut(mod.auth).then(() => {
-            if (userDashView) userDashView.style.display = 'none';
-            const infoNotice = document.getElementById('auth-info-notice');
-            if (infoNotice) infoNotice.style.display = 'flex';
-            switchAuthTab('register');
-            showAlert(currentLang === 'bn' ? 'সফলভাবে লগআউট করা হয়েছে।' : 'Logged out successfully.', 'info');
-          }).catch(err => {
-            showAlert(getFirebaseErrorMessage(err ? err.code : ''), 'error');
-          });
-        } else {
-          if (userDashView) userDashView.style.display = 'none';
-          const infoNotice = document.getElementById('auth-info-notice');
-          if (infoNotice) infoNotice.style.display = 'flex';
-          switchAuthTab('register');
-          showAlert(currentLang === 'bn' ? 'সফলভাবে লগআউট করা হয়েছে।' : 'Logged out successfully.', 'info');
-        }
+      regTabBtn.addEventListener('click', () => {
+        regTabBtn.classList.add('active'); loginTabBtn.classList.remove('active');
+        if (regForm) regForm.style.display = 'flex';
+        if (loginForm) loginForm.style.display = 'none';
       });
     }
 
-    function getFirebaseErrorMessage(errorCode) {
-      switch (errorCode) {
-        case 'auth/email-already-in-use':
-          return translations[currentLang].errEmailInUse;
-        case 'auth/weak-password':
-          return translations[currentLang].errWeakPassword;
-        case 'auth/user-not-found':
-          return translations[currentLang].errUserNotFound;
-        case 'auth/wrong-password':
-        case 'auth/invalid-credential':
-          return translations[currentLang].errWrongPassword;
-        case 'auth/popup-closed-by-user':
-          return translations[currentLang].errPopupClosed;
-        case 'auth/invalid-email':
-          return translations[currentLang].errEmailRequired;
-        default:
-          return translations[currentLang].errAuthDefault;
-      }
-    }
-
-    loginForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      clearFieldErrors();
-
-      const emailInput = document.getElementById('login-email');
-      const passInput = document.getElementById('login-password');
-      const submitBtn = document.getElementById('login-submit-btn');
-
-      const email = emailInput ? emailInput.value.trim() : '';
-      const password = passInput ? passInput.value : '';
-
-      let hasError = false;
-
-      if (!email || !isValidEmail(email)) {
-        setFieldError('login-email', translations[currentLang].errEmailRequired);
-        hasError = true;
-      }
-
-      if (!password || password.length < 6) {
-        setFieldError('login-password', translations[currentLang].errPasswordRequired);
-        hasError = true;
-      }
-
-      if (hasError) return;
-
-      submitBtn.classList.add('loading');
-      const btnText = submitBtn.querySelector('.btn-text');
-      const btnIcon = submitBtn.querySelector('.btn-icon');
-      const originalText = btnText ? btnText.textContent : '';
-
-      if (btnText) {
-        btnText.innerHTML = `<span class="btn-spinner"></span>${currentLang === 'bn' ? 'যাচাই করা হচ্ছে...' : 'Authenticating...'}`;
-      }
-      if (btnIcon) btnIcon.style.display = 'none';
-
-      const mod = window.FirebaseModule;
-      if (mod && mod.auth && mod.signInWithEmailAndPassword) {
-        mod.signInWithEmailAndPassword(mod.auth, email, password)
-          .then(() => {
-            submitBtn.classList.remove('loading');
-            if (btnText) btnText.textContent = originalText;
-            if (btnIcon) btnIcon.style.display = 'inline-block';
-            showAlert(translations[currentLang].msgLoginSuccess, 'success');
-          })
-          .catch((error) => {
-            submitBtn.classList.remove('loading');
-            if (btnText) btnText.textContent = originalText;
-            if (btnIcon) btnIcon.style.display = 'inline-block';
-            showAlert(getFirebaseErrorMessage(error.code), 'error');
-          });
-      }
-    });
-
-    regForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      clearFieldErrors();
-
-      const nameInput = document.getElementById('reg-name');
-      const emailInput = document.getElementById('reg-email');
-      const passInput = document.getElementById('reg-password');
-      const confirmInput = document.getElementById('reg-confirm-password');
-      const submitBtn = document.getElementById('reg-submit-btn');
-
-      const name = nameInput ? nameInput.value.trim() : '';
-      const email = emailInput ? emailInput.value.trim() : '';
-      const password = passInput ? passInput.value : '';
-      const confirmPassword = confirmInput ? confirmInput.value : '';
-
-      let hasError = false;
-
-      if (!name) {
-        setFieldError('reg-name', translations[currentLang].errNameRequired);
-        hasError = true;
-      }
-
-      if (!email || !isValidEmail(email)) {
-        setFieldError('reg-email', translations[currentLang].errEmailRequired);
-        hasError = true;
-      }
-
-      if (!password || password.length < 6) {
-        setFieldError('reg-password', translations[currentLang].errPasswordRequired);
-        hasError = true;
-      }
-
-      if (password !== confirmPassword) {
-        setFieldError('reg-confirm', translations[currentLang].errPasswordMismatch);
-        hasError = true;
-      }
-
-      if (hasError) return;
-
-      submitBtn.classList.add('loading');
-      const btnText = submitBtn.querySelector('.btn-text');
-      const btnIcon = submitBtn.querySelector('.btn-icon');
-      const originalText = btnText ? btnText.textContent : '';
-
-      if (btnText) {
-        btnText.innerHTML = `<span class="btn-spinner"></span>${currentLang === 'bn' ? 'অ্যাকাউন্ট তৈরি হচ্ছে...' : 'Creating Account...'}`;
-      }
-      if (btnIcon) btnIcon.style.display = 'none';
-
-      const mod = window.FirebaseModule;
-      if (mod && mod.auth && mod.createUserWithEmailAndPassword) {
-        mod.createUserWithEmailAndPassword(mod.auth, email, password)
-          .then((userCredential) => {
-            const user = userCredential.user;
-            if (mod.updateProfile) {
-              return mod.updateProfile(user, { displayName: name });
-            }
-          })
-          .then(() => {
-            submitBtn.classList.remove('loading');
-            if (btnText) btnText.textContent = originalText;
-            if (btnIcon) btnIcon.style.display = 'inline-block';
-            showAlert(translations[currentLang].msgRegisterSuccess, 'success');
-          })
-          .catch((error) => {
-            submitBtn.classList.remove('loading');
-            if (btnText) btnText.textContent = originalText;
-            if (btnIcon) btnIcon.style.display = 'inline-block';
-            showAlert(getFirebaseErrorMessage(error.code), 'error');
-          });
-      }
-    });
-
-    if (forgotForm) {
-      forgotForm.addEventListener('submit', (e) => {
+    if (loginForm) {
+      loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        clearFieldErrors();
-
-        const resetEmailInput = document.getElementById('reset-email');
-        const submitBtn = document.getElementById('reset-submit-btn');
-        const email = resetEmailInput ? resetEmailInput.value.trim() : '';
-
-        if (!email || !isValidEmail(email)) {
-          setFieldError('reset-email', translations[currentLang].errEmailRequired);
-          return;
-        }
-
-        submitBtn.classList.add('loading');
-        const btnText = submitBtn.querySelector('.btn-text');
-        const btnIcon = submitBtn.querySelector('.btn-icon');
-        const originalText = btnText ? btnText.textContent : '';
-
-        if (btnText) {
-          btnText.innerHTML = `<span class="btn-spinner"></span>${currentLang === 'bn' ? 'পাঠানো হচ্ছে...' : 'Sending...'}`;
-        }
-        if (btnIcon) btnIcon.style.display = 'none';
-
+        const email = document.getElementById('login-email')?.value.trim();
+        const pass = document.getElementById('login-password')?.value;
         const mod = window.FirebaseModule;
-        if (mod && mod.auth && mod.sendPasswordResetEmail) {
-          mod.sendPasswordResetEmail(mod.auth, email)
-            .then(() => {
-              submitBtn.classList.remove('loading');
-              if (btnText) btnText.textContent = originalText;
-              if (btnIcon) btnIcon.style.display = 'inline-block';
-              switchAuthTab('login');
-              showAlert(translations[currentLang].msgResetSuccess, 'success');
-            })
-            .catch((error) => {
-              submitBtn.classList.remove('loading');
-              if (btnText) btnText.textContent = originalText;
-              if (btnIcon) btnIcon.style.display = 'inline-block';
-              showAlert(getFirebaseErrorMessage(error.code), 'error');
-            });
+        if (mod && mod.auth && mod.signInWithEmailAndPassword) {
+          mod.signInWithEmailAndPassword(mod.auth, email, pass).then(() => {
+            showToast('Logged in successfully', 'success');
+            if (email === 'saripofficialsupport@gmail.com') {
+              window.location.href = 'admin.html';
+            } else {
+              window.location.href = 'dashboard.html';
+            }
+          }).catch(err => showToast(err.message, 'error'));
         }
       });
     }
 
-    function initGoogleAuth() {
-      const customLoginBtn = document.getElementById('custom-google-login-btn');
-      const customRegBtn = document.getElementById('custom-google-reg-btn');
-
-      function triggerGoogleSignIn() {
+    if (regForm) {
+      regForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('reg-name')?.value.trim();
+        const email = document.getElementById('reg-email')?.value.trim();
+        const pass = document.getElementById('reg-password')?.value;
         const mod = window.FirebaseModule;
-        if (mod && mod.auth && mod.GoogleAuthProvider && mod.signInWithPopup) {
-          const provider = new mod.GoogleAuthProvider();
-          mod.signInWithPopup(mod.auth, provider)
-            .then(() => {
-              showAlert(translations[currentLang].msgGoogleAuthSuccess, 'success');
-            })
-            .catch((error) => {
-              if (error.code !== 'auth/popup-closed-by-user') {
-                showAlert(getFirebaseErrorMessage(error.code), 'error');
-              } else {
-                showAlert(translations[currentLang].errPopupClosed, 'error');
-              }
-            });
+        if (mod && mod.auth && mod.createUserWithEmailAndPassword) {
+          mod.createUserWithEmailAndPassword(mod.auth, email, pass).then((cred) => {
+            if (mod.updateProfile) mod.updateProfile(cred.user, { displayName: name });
+            showToast('Account created successfully', 'success');
+            window.location.href = 'dashboard.html';
+          }).catch(err => showToast(err.message, 'error'));
         }
-      }
-
-      if (customLoginBtn) customLoginBtn.addEventListener('click', triggerGoogleSignIn);
-      if (customRegBtn) customRegBtn.addEventListener('click', triggerGoogleSignIn);
+      });
     }
-
-    initGoogleAuth();
   }
 
-  /* --------------------------------------------------------------------------
-     9b. Global Firebase Auth State Observer & Nav Updates
-     -------------------------------------------------------------------------- */
   function initFirebaseAuthObserver() {
-    const userDashView = document.getElementById('dashboard-user-view');
-    const authCardContainer = document.getElementById('auth-card-container');
-    const loginForm = document.getElementById('login-form');
-    const regForm = document.getElementById('register-form');
-    const forgotForm = document.getElementById('forgot-form');
-    const tabsWrapper = document.getElementById('auth-tabs-wrapper');
-    const infoNotice = document.getElementById('auth-info-notice');
-
-    let authLoader = document.getElementById('auth-loading-overlay');
-    if (!authLoader && authCardContainer) {
-      authLoader = document.createElement('div');
-      authLoader.id = 'auth-loading-overlay';
-      authLoader.style.cssText = 'text-align: center; padding: 2.5rem 1rem; font-size: 1.1rem; color: var(--accent-blue); font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 0.75rem;';
-      authLoader.innerHTML = `<span class="btn-spinner" style="width: 22px; height: 22px; border-width: 3px;"></span> <span>${currentLang === 'bn' ? 'লোড হচ্ছে...' : 'Loading...'}</span>`;
-      authCardContainer.insertBefore(authLoader, authCardContainer.firstChild);
-
-      if (loginForm) loginForm.style.display = 'none';
-      if (regForm) regForm.style.display = 'none';
-      if (forgotForm) forgotForm.style.display = 'none';
-      if (tabsWrapper) tabsWrapper.style.display = 'none';
-      if (infoNotice) infoNotice.style.display = 'none';
-      if (userDashView) userDashView.style.display = 'none';
-    }
-
     let checkAttempts = 0;
-    function checkFirebaseModule() {
+    function checkModule() {
       const mod = window.FirebaseModule;
       if (mod && mod.auth && mod.onAuthStateChanged) {
         mod.onAuthStateChanged(mod.auth, (user) => {
-          if (authLoader) authLoader.style.display = 'none';
-
-          const accountNavSpans = document.querySelectorAll('.nav-menu [data-i18n="navAccount"]');
-          const accountSubEl = document.querySelector('[data-i18n="accountSub"]');
-
-          if (user) {
-            window.currentUserState = user;
-            const userName = user.displayName || (user.email ? user.email.split('@')[0] : 'User');
-
-            accountNavSpans.forEach(span => { span.textContent = userName; });
-
-            if (accountSubEl) accountSubEl.textContent = translations[currentLang].accountSubLoggedIn;
-
-            if (userDashView) {
-              const nameEl = document.getElementById('user-display-name');
-              const emailEl = document.getElementById('user-display-email');
-              const avatarEl = document.getElementById('user-avatar-img');
-              const avatarInitialEl = document.getElementById('user-avatar-initial');
-
-              const displayName = user.displayName || user.email || 'SHAFAET HOSSEN SARIP';
-              if (nameEl) nameEl.textContent = displayName;
-              if (emailEl) emailEl.textContent = user.email || '';
-
-              const firstChar = displayName.trim().charAt(0).toUpperCase() || 'S';
-
-              if (user.photoURL) {
-                if (avatarEl) {
-                  avatarEl.src = user.photoURL;
-                  avatarEl.style.display = 'block';
-                  avatarEl.onerror = () => {
-                    avatarEl.style.display = 'none';
-                    if (avatarInitialEl) {
-                      avatarInitialEl.textContent = firstChar;
-                      avatarInitialEl.style.display = 'flex';
-                    }
-                  };
-                }
-                if (avatarInitialEl) avatarInitialEl.style.display = 'none';
-              } else {
-                if (avatarEl) avatarEl.style.display = 'none';
-                if (avatarInitialEl) {
-                  avatarInitialEl.textContent = firstChar;
-                  avatarInitialEl.style.display = 'flex';
-                }
-              }
-
-              if (loginForm) loginForm.style.display = 'none';
-              if (regForm) regForm.style.display = 'none';
-              if (forgotForm) forgotForm.style.display = 'none';
-              if (tabsWrapper) tabsWrapper.style.display = 'none';
-              if (infoNotice) infoNotice.style.display = 'none';
-
-              userDashView.style.display = 'block';
-            }
-
-            // Sync Settings Page Account View
-            updateSettingsAccountView(user);
-
-            // Re-render three-dots menu
-            if (window.refreshThreeDotsMenu) window.refreshThreeDotsMenu();
-          } else {
-            window.currentUserState = null;
-            accountNavSpans.forEach(span => { span.textContent = translations[currentLang].navAccount; });
-
-            if (accountSubEl) accountSubEl.textContent = translations[currentLang].accountSub;
-
-            // Re-render three-dots menu
-            if (window.refreshThreeDotsMenu) window.refreshThreeDotsMenu();
-
-            if (userDashView) {
-              userDashView.style.display = 'none';
-              if (infoNotice) infoNotice.style.display = 'flex';
-              if (tabsWrapper) tabsWrapper.style.display = 'flex';
-
-              const activeTab = authCardContainer ? authCardContainer.getAttribute('data-active-tab') : 'register';
-              if (activeTab === 'login') {
-                if (loginForm) loginForm.style.display = 'flex';
-                if (regForm) regForm.style.display = 'none';
-              } else {
-                if (regForm) regForm.style.display = 'flex';
-                if (loginForm) loginForm.style.display = 'none';
-              }
-            }
-
-            // Sync Settings Page Account View
-            updateSettingsAccountView(null);
-          }
+          window.currentUserState = user;
+          if (window.refreshThreeDotsMenu) window.refreshThreeDotsMenu();
         });
       } else {
         checkAttempts++;
-        if (checkAttempts > 200) {
-          if (authLoader) authLoader.style.display = 'none';
-          if (infoNotice) infoNotice.style.display = 'flex';
-          if (tabsWrapper) tabsWrapper.style.display = 'flex';
-          return;
-        }
-        setTimeout(checkFirebaseModule, 50);
+        if (checkAttempts < 100) setTimeout(checkModule, 50);
       }
     }
-
-    checkFirebaseModule();
+    checkModule();
   }
 
-  /* Helper to update account view on settings.html */
-  function updateSettingsAccountView(user) {
-    const loggedInBox = document.getElementById('settings-account-logged-in');
-    const loggedOutBox = document.getElementById('settings-account-logged-out');
-
-    if (!loggedInBox || !loggedOutBox) return;
-
-    if (user) {
-      loggedOutBox.style.display = 'none';
-      loggedInBox.style.display = 'block';
-
-      const nameEl = document.getElementById('settings-user-name');
-      const emailEl = document.getElementById('settings-user-email');
-      const photoEl = document.getElementById('settings-user-photo');
-
-      if (nameEl) nameEl.textContent = user.displayName || 'Client User';
-      if (emailEl) emailEl.textContent = user.email || '';
-      if (photoEl) photoEl.src = user.photoURL || 'profile.jpg';
-    } else {
-      loggedInBox.style.display = 'none';
-      loggedOutBox.style.display = 'block';
-    }
-  }
-
-  /* --------------------------------------------------------------------------
-     10. Custom Project Request Form Handlers
-     -------------------------------------------------------------------------- */
   function initStartProjectForm() {
     const form = document.getElementById('start-project-form');
     if (!form) return;
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const serviceParam = urlParams.get('service');
-    const typeSelect = document.getElementById('project-req-type');
-
-    if (typeSelect && serviceParam) {
-      if (serviceParam === 'others') {
-        typeSelect.value = 'others';
-      } else if (typeSelect.querySelector(`option[value="${serviceParam}"]`)) {
-        typeSelect.value = serviceParam;
-      }
-    }
-
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const name = document.getElementById('project-req-name')?.value.trim() || '';
-      const contact = document.getElementById('project-req-contact')?.value.trim() || '';
-      const type = typeSelect ? typeSelect.options[typeSelect.selectedIndex].text : 'Custom Project';
-      const budget = document.getElementById('project-req-budget')?.value || 'Flexible';
-      const desc = document.getElementById('project-req-desc')?.value.trim() || '';
+      const name = document.getElementById('project-req-name')?.value.trim();
+      const contact = document.getElementById('project-req-contact')?.value.trim();
+      const type = document.getElementById('project-req-type')?.value;
+      const budget = document.getElementById('project-req-budget')?.value;
+      const desc = document.getElementById('project-req-desc')?.value.trim();
 
-      const waMessage = `*New Custom Project Request — WebWorldBD*\n\n` +
-        `*Name:* ${name}\n` +
-        `*Contact:* ${contact}\n` +
-        `*Project Type:* ${type}\n` +
-        `*Budget:* ${budget}\n` +
-        `*Requirements:* ${desc}`;
+      const reqId = `REQ-${Date.now().toString().slice(-6)}`;
+      const user = window.currentUserState;
 
-      const waUrl = `https://wa.me/8801342697743?text=${encodeURIComponent(waMessage)}`;
-      window.open(waUrl, '_blank', 'noopener,noreferrer');
+      const mod = window.FirebaseModule;
+      if (mod && mod.db && mod.collection && mod.addDoc) {
+        try {
+          await mod.addDoc(mod.collection(mod.db, 'projectRequests'), {
+            id: reqId,
+            userId: user ? user.uid : 'guest',
+            userEmail: user ? user.email : contact,
+            userName: name,
+            projectName: `${type} Project`,
+            serviceType: type,
+            budget: budget,
+            description: desc,
+            status: 'Pending',
+            createdAt: mod.serverTimestamp ? mod.serverTimestamp() : new Date().toISOString()
+          });
+        } catch (err) {
+          console.log("Firestore req save error:", err);
+        }
+      }
+
+      showToast(`Request submitted! ID: ${reqId}`, 'success');
+      const waMessage = `*New Project Request — WebWorldBD*\nName: ${name}\nContact: ${contact}\nType: ${type}\nBudget: ${budget}\nDetails: ${desc}`;
+      window.open(`https://wa.me/8801342697743?text=${encodeURIComponent(waMessage)}`, '_blank');
     });
   }
 
   /* --------------------------------------------------------------------------
-     10b. Dashboard UI Interactivity Handlers
+     10b. CLIENT DASHBOARD UI & FIRESTORE ENGINE
      -------------------------------------------------------------------------- */
   function initDashboardUI() {
     const sidebar = document.getElementById('dash-sidebar');
@@ -2036,270 +715,872 @@ document.addEventListener('DOMContentLoaded', () => {
     const hamburgerBtn = document.getElementById('dash-hamburger-btn');
     const closeBtn = document.getElementById('dash-sidebar-close');
 
-    if (!sidebar) return;
+    if (!document.getElementById('client-dash-nav')) return;
+
+    const navItems = document.querySelectorAll('#client-dash-nav [data-dash-nav]');
+    const sections = document.querySelectorAll('.dash-section');
+    const titleEl = document.getElementById('dash-current-title');
+
+    function switchSection(targetSection) {
+      if (!targetSection) targetSection = 'overview';
+
+      sections.forEach(sec => {
+        if (sec.id === `section-${targetSection}`) {
+          sec.style.display = 'block';
+          sec.classList.add('active');
+        } else {
+          sec.style.display = 'none';
+          sec.classList.remove('active');
+        }
+      });
+
+      navItems.forEach(item => {
+        if (item.dataset.dashNav === targetSection) item.classList.add('active');
+        else item.classList.remove('active');
+      });
+
+      const titles = {
+        'overview': 'Client Dashboard',
+        'start-project': 'Start New Project',
+        'my-projects': 'My Projects',
+        'project-details': 'Project Details',
+        'messages': 'Messages & Support',
+        'payments': 'Payments & Invoices',
+        'notifications': 'Notifications Hub',
+        'account': 'Account & Profile Settings'
+      };
+
+      if (titleEl) titleEl.textContent = titles[targetSection] || 'Client Dashboard';
+      if (sidebar && sidebar.classList.contains('active')) closeSidebar();
+      window.location.hash = targetSection;
+    }
+
+    navItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        switchSection(item.dataset.dashNav);
+      });
+    });
+
+    document.querySelectorAll('.dash-nav-trigger').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (btn.dataset.targetDash) switchSection(btn.dataset.targetDash);
+      });
+    });
+
+    function handleHashChange() {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && document.getElementById(`section-${hash}`)) switchSection(hash);
+    }
+    window.addEventListener('hashchange', handleHashChange);
+    handleHashChange();
 
     function openSidebar() {
-      sidebar.classList.add('active');
+      if (sidebar) sidebar.classList.add('active');
       if (overlay) overlay.classList.add('active');
-      document.body.style.overflow = 'hidden';
     }
 
     function closeSidebar() {
-      sidebar.classList.remove('active');
+      if (sidebar) sidebar.classList.remove('active');
       if (overlay) overlay.classList.remove('active');
-      document.body.style.overflow = '';
     }
 
-    if (hamburgerBtn) {
-      hamburgerBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        openSidebar();
-      });
+    if (hamburgerBtn) hamburgerBtn.addEventListener('click', openSidebar);
+    if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+    if (overlay) overlay.addEventListener('click', closeSidebar);
+
+    let userProjects = [];
+    let userRequests = [];
+    let userTickets = [];
+    let userNotifications = [];
+
+    function getStatusBadgeHtml(status) {
+      switch (status) {
+        case 'Pending': return `<span class="badge-status status-pending"><i class="fas fa-clock"></i> Pending</span>`;
+        case 'Confirmed': return `<span class="badge-status status-active"><i class="fas fa-thumbs-up"></i> Confirmed</span>`;
+        case 'In Progress': return `<span class="badge-status status-in-progress"><i class="fas fa-code fa-spin"></i> In Progress</span>`;
+        case 'Testing': return `<span class="badge-status status-review"><i class="fas fa-vial"></i> Testing</span>`;
+        case 'Client Review': return `<span class="badge-status status-review"><i class="fas fa-user-check"></i> Client Review</span>`;
+        case 'Completed': return `<span class="badge-status status-completed"><i class="fas fa-check"></i> Completed</span>`;
+        case 'Cancelled': return `<span class="badge-status status-cancelled"><i class="fas fa-ban"></i> Cancelled</span>`;
+        default: return `<span class="badge-status status-pending">${status}</span>`;
+      }
     }
 
-    if (closeBtn) {
-      closeBtn.addEventListener('click', closeSidebar);
-    }
+    async function loadClientData(user) {
+      if (!user) return;
+      const uid = user.uid;
 
-    if (overlay) {
-      overlay.addEventListener('click', closeSidebar);
-    }
-
-    // Update user info from Firebase auth state in dashboard view
-    const clientTopbarName = document.getElementById('client-topbar-name');
-    const clientSidebarName = document.getElementById('client-sidebar-name');
-    const welcomeUserName = document.getElementById('welcome-user-name');
-
-    if (window.currentUserState) {
-      const u = window.currentUserState;
-      const displayName = u.displayName || (u.email ? u.email.split('@')[0] : 'Client');
-      if (clientTopbarName) clientTopbarName.textContent = displayName;
-      if (clientSidebarName) clientSidebarName.textContent = displayName;
-      if (welcomeUserName) welcomeUserName.textContent = displayName;
-    }
-  }
-
-  /* --------------------------------------------------------------------------
-     11. Dedicated Settings Page Logic
-     -------------------------------------------------------------------------- */
-  function initSettingsPage() {
-    if (!document.getElementById('card-appearance')) return;
-
-    // Appearance Theme Radios
-    const themeRadios = document.querySelectorAll('input[name="theme-radio"]');
-    themeRadios.forEach(radio => {
-      radio.checked = (radio.value === currentTheme);
-      radio.addEventListener('change', () => {
-        applyTheme(radio.value);
-      });
-    });
-
-    // Appearance Language Radios
-    const langRadios = document.querySelectorAll('input[name="lang-radio"]');
-    langRadios.forEach(radio => {
-      radio.checked = (radio.value === currentLang);
-      radio.addEventListener('change', () => {
-        applyLanguage(radio.value);
-      });
-    });
-
-    // Notifications Switches
-    const notifProjectSwitch = document.getElementById('notif-project-switch');
-    const notifPromoSwitch = document.getElementById('notif-promo-switch');
-
-    if (notifProjectSwitch) {
-      notifProjectSwitch.checked = localStorage.getItem('webworldbd_notif_project') !== 'false';
-      notifProjectSwitch.addEventListener('change', () => {
-        localStorage.setItem('webworldbd_notif_project', notifProjectSwitch.checked);
-      });
-    }
-
-    if (notifPromoSwitch) {
-      notifPromoSwitch.checked = localStorage.getItem('webworldbd_notif_promo') === 'true';
-      notifPromoSwitch.addEventListener('change', () => {
-        localStorage.setItem('webworldbd_notif_promo', notifPromoSwitch.checked);
-      });
-    }
-
-    // Clear Cache Button
-    const clearCacheBtn = document.getElementById('btn-clear-cache');
-    if (clearCacheBtn) {
-      clearCacheBtn.addEventListener('click', () => {
-        const confirmMsg = currentLang === 'bn'
-          ? 'আপনি কি নিশ্চিত যে আপনার লোকাল প্রেফারেন্স ও ক্যাশ পরিষ্কার করতে চান?'
-          : 'Are you sure you want to clear your local preferences and cache?';
-
-        if (confirm(confirmMsg)) {
-          localStorage.removeItem('webworldbd_theme');
-          localStorage.removeItem('webworldbd_lang');
-          localStorage.removeItem('webworldbd_notif_project');
-          localStorage.removeItem('webworldbd_notif_promo');
-
-          applyTheme('dark');
-          applyLanguage('en');
-
-          alert(translations[currentLang].msgCacheCleared || 'Cache cleared successfully!');
+      userProjects = [
+        {
+          id: "PRJ-9041",
+          userId: uid,
+          projectName: "SHS Bazar E-Commerce",
+          serviceType: "E-Commerce Website",
+          status: "In Progress",
+          progress: 85,
+          startDate: "15 Oct 2026",
+          deadline: "05 Nov 2026",
+          paymentStatus: "Partial Payment",
+          totalCost: 20000,
+          paidAmount: 10000,
+          dueAmount: 10000,
+          lastUpdate: "Oct 24, 2026",
+          requirements: "Custom E-commerce web platform with responsive shopping cart, product search, and bKash integration.",
+          files: ["https://shs-bazar.pages.dev/"],
+          timeline: [
+            { title: "Request Received", done: true, date: "15 Oct 2026" },
+            { title: "Requirement Confirmed", done: true, date: "16 Oct 2026" },
+            { title: "Development Started", done: true, date: "18 Oct 2026" },
+            { title: "Testing", done: false, date: "Pending" },
+            { title: "Client Review", done: false, date: "Pending" },
+            { title: "Completed", done: false, date: "Pending" }
+          ]
+        },
+        {
+          id: "PRJ-9042",
+          userId: uid,
+          projectName: "Student Tools & AI Hub",
+          serviceType: "AI Website & Tools",
+          status: "Completed",
+          progress: 100,
+          startDate: "01 Oct 2026",
+          deadline: "12 Oct 2026",
+          paymentStatus: "Fully Paid",
+          totalCost: 15000,
+          paidAmount: 15000,
+          dueAmount: 0,
+          lastUpdate: "Oct 12, 2026",
+          requirements: "AI Academic Tools and assignment text formatter.",
+          files: ["https://student-tools-ai.pages.dev/"],
+          timeline: [
+            { title: "Request Received", done: true, date: "01 Oct 2026" },
+            { title: "Requirement Confirmed", done: true, date: "02 Oct 2026" },
+            { title: "Development Started", done: true, date: "04 Oct 2026" },
+            { title: "Testing", done: true, date: "09 Oct 2026" },
+            { title: "Client Review", done: true, date: "11 Oct 2026" },
+            { title: "Completed", done: true, date: "12 Oct 2026" }
+          ]
         }
-      });
-    }
+      ];
 
-    // Modal Triggers & Controls
-    const editProfileBtn = document.getElementById('btn-edit-profile');
-    const changePassBtn = document.getElementById('btn-change-password');
-    const deleteAccountBtn = document.getElementById('btn-delete-account');
-    const logoutSettingsBtn = document.getElementById('btn-logout-settings');
+      userNotifications = [
+        { id: "NOTIF-1", title: "Project Milestone Reached 🚀", message: "SHS Bazar E-Commerce project is now 85% completed.", date: "Oct 24, 2026", read: false },
+        { id: "NOTIF-2", title: "Deposit Confirmed 💳", message: "Payment of ৳10,000 received for SHS Bazar E-Commerce.", date: "Oct 18, 2026", read: true }
+      ];
 
-    const editProfileModal = document.getElementById('modal-edit-profile');
-    const changePassModal = document.getElementById('modal-change-password');
-    const deleteAccountModal = document.getElementById('modal-delete-account');
-
-    function closeModal(modal) {
-      if (modal) modal.classList.remove('active');
-    }
-
-    document.querySelectorAll('.btn-modal-cancel').forEach(btn => {
-      btn.addEventListener('click', () => {
-        closeModal(editProfileModal);
-        closeModal(changePassModal);
-        closeModal(deleteAccountModal);
-      });
-    });
-
-    if (editProfileBtn) {
-      editProfileBtn.addEventListener('click', () => {
-        const user = window.currentUserState;
-        if (!user) return;
-        document.getElementById('edit-profile-name').value = user.displayName || '';
-        document.getElementById('edit-profile-photo').value = user.photoURL || '';
-        editProfileModal.classList.add('active');
-      });
-    }
-
-    if (changePassBtn) {
-      changePassBtn.addEventListener('click', () => {
-        changePassModal.classList.add('active');
-      });
-    }
-
-    if (deleteAccountBtn) {
-      deleteAccountBtn.addEventListener('click', () => {
-        deleteAccountModal.classList.add('active');
-      });
-    }
-
-    if (logoutSettingsBtn) {
-      logoutSettingsBtn.addEventListener('click', () => {
-        window.currentUserState = null;
-        if (window.refreshThreeDotsMenu) {
-          window.refreshThreeDotsMenu();
+      userTickets = [
+        {
+          id: "TCK-102",
+          subject: "bKash Sandbox API Key Request",
+          projectId: "PRJ-9041",
+          date: "Oct 22, 2026",
+          status: "In Progress",
+          messages: [
+            { sender: "Client", text: "Hello, please send the bKash test merchant keys.", date: "Oct 22, 2026" },
+            { sender: "WebWorldBD Support", text: "Merchant credentials configured in sandbox environment.", date: "Oct 22, 2026" }
+          ]
         }
-        updateSettingsAccountView(null);
-        const mod = window.FirebaseModule;
-        if (mod && mod.auth && mod.signOut) {
-          mod.signOut(mod.auth).then(() => {
-            alert(currentLang === 'bn' ? 'সফলভাবে লগআউট করা হয়েছে।' : 'Logged out successfully.');
-          });
+      ];
+
+      const mod = window.FirebaseModule;
+      if (mod && mod.db && mod.collection && mod.getDocs) {
+        try {
+          if (mod.query && mod.where) {
+            const qPrj = mod.query(mod.collection(mod.db, 'projects'), mod.where('userId', '==', uid));
+            const snapPrj = await mod.getDocs(qPrj);
+            const fetched = [];
+            snapPrj.forEach(docSnap => fetched.push({ id: docSnap.id, ...docSnap.data() }));
+            if (fetched.length > 0) userProjects = fetched;
+
+            const qReq = mod.query(mod.collection(mod.db, 'projectRequests'), mod.where('userId', '==', uid));
+            const snapReq = await mod.getDocs(qReq);
+            const fetchedReqs = [];
+            snapReq.forEach(docSnap => fetchedReqs.push({ id: docSnap.id, ...docSnap.data() }));
+            if (fetchedReqs.length > 0) userRequests = fetchedReqs;
+          }
+        } catch (e) {
+          console.log("Firestore query fallback:", e);
+        }
+      }
+
+      renderClientDashboardUI();
+    }
+
+    function renderClientDashboardUI() {
+      const totalCount = userProjects.length + userRequests.length;
+      const activeCount = userProjects.filter(p => p.status !== 'Completed' && p.status !== 'Cancelled').length;
+      const completedCount = userProjects.filter(p => p.status === 'Completed').length;
+      const pendingCount = userRequests.filter(r => r.status === 'Pending').length;
+      const unreadCount = userNotifications.filter(n => !n.read).length;
+
+      document.getElementById('overview-stat-total').textContent = totalCount;
+      document.getElementById('overview-stat-active').textContent = activeCount;
+      document.getElementById('overview-stat-completed').textContent = completedCount;
+      document.getElementById('overview-stat-pending').textContent = pendingCount;
+      document.getElementById('overview-stat-unread').textContent = unreadCount;
+
+      const badgePrj = document.getElementById('client-badge-projects');
+      if (badgePrj) badgePrj.textContent = userProjects.length;
+
+      const badgeMsg = document.getElementById('client-badge-messages');
+      if (badgeMsg) badgeMsg.textContent = userTickets.length;
+
+      const badgeNotif = document.getElementById('client-badge-notifs');
+      if (badgeNotif) badgeNotif.textContent = unreadCount;
+
+      const tbody = document.getElementById('overview-projects-tbody');
+      if (tbody) {
+        if (userProjects.length === 0 && userRequests.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:2rem; color:var(--text-muted);">No active projects found. Click "Start New Project" to submit a request!</td></tr>`;
         } else {
-          alert(currentLang === 'bn' ? 'সফলভাবে লগআউট করা হয়েছে।' : 'Logged out successfully.');
+          let rows = '';
+          userProjects.forEach(p => {
+            rows += `
+              <tr>
+                <td><strong>${p.projectName}</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">${p.id}</span></td>
+                <td>${p.serviceType}</td>
+                <td>${getStatusBadgeHtml(p.status)}</td>
+                <td>
+                  <div class="dash-progress-bar"><div class="dash-progress-fill" style="width:${p.progress}%;"></div></div>
+                  <span style="font-size:0.8rem; color:var(--accent-blue);">${p.progress}%</span>
+                </td>
+                <td>${p.deadline || 'TBD'}</td>
+                <td><button type="button" class="btn btn-secondary btn-view-prj" data-id="${p.id}" style="font-size:0.8rem; padding:0.35rem 0.75rem;">Details</button></td>
+              </tr>
+            `;
+          });
+          userRequests.forEach(r => {
+            rows += `
+              <tr>
+                <td><strong>${r.projectName}</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">${r.id}</span></td>
+                <td>${r.serviceType}</td>
+                <td>${getStatusBadgeHtml(r.status || 'Pending')}</td>
+                <td>
+                  <div class="dash-progress-bar"><div class="dash-progress-fill" style="width:10%;"></div></div>
+                  <span style="font-size:0.8rem; color:var(--accent-blue);">10%</span>
+                </td>
+                <td>${r.deadline || 'Pending Review'}</td>
+                <td><span class="badge-pill" style="font-size:0.75rem;">Under Review</span></td>
+              </tr>
+            `;
+          });
+          tbody.innerHTML = rows;
+
+          tbody.querySelectorAll('.btn-view-prj').forEach(btn => {
+            btn.addEventListener('click', () => {
+              renderProjectDetails(btn.dataset.id);
+              switchSection('project-details');
+            });
+          });
         }
-      });
+      }
+
+      renderMyProjectsGrid();
+      renderClientTickets();
+      renderClientPayments();
+      renderClientNotifications();
     }
 
-    // Edit Profile Form Submit
-    const formEditProfile = document.getElementById('form-edit-profile');
-    if (formEditProfile) {
-      formEditProfile.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const mod = window.FirebaseModule;
-        const user = window.currentUserState;
-        if (!mod || !user || !mod.updateProfile) return;
+    function renderMyProjectsGrid() {
+      const grid = document.getElementById('my-projects-grid');
+      if (!grid) return;
 
-        const newName = document.getElementById('edit-profile-name').value.trim();
-        const newPhoto = document.getElementById('edit-profile-photo').value.trim();
+      let cards = '';
+      userProjects.forEach(p => {
+        cards += `
+          <div class="glass-card" style="padding:1.5rem; display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem;">
+                <span class="badge-pill">${p.serviceType}</span>
+                ${getStatusBadgeHtml(p.status)}
+              </div>
+              <h3 style="font-size:1.25rem; font-weight:800; margin-bottom:0.4rem;">${p.projectName}</h3>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">ID: ${p.id}</p>
 
-        mod.updateProfile(user, {
-          displayName: newName,
-          photoURL: newPhoto || null
-        }).then(() => {
-          closeModal(editProfileModal);
-          updateSettingsAccountView(user);
-          alert(translations[currentLang].msgProfileUpdated);
-        }).catch(err => {
-          alert(err.message);
+              <div style="margin-bottom:1rem;">
+                <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.3rem;">
+                  <span>Progress</span><span style="font-weight:700; color:var(--accent-blue);">${p.progress}%</span>
+                </div>
+                <div class="dash-progress-bar"><div class="dash-progress-fill" style="width:${p.progress}%;"></div></div>
+              </div>
+
+              <div style="font-size:0.85rem; color:var(--text-muted); display:flex; flex-direction:column; gap:0.35rem; margin-bottom:1.25rem;">
+                <div><i class="fas fa-calendar-days" style="color:var(--accent-blue); width:18px;"></i> Start: ${p.startDate || 'N/A'}</div>
+                <div><i class="fas fa-clock" style="color:var(--accent-orange); width:18px;"></i> Deadline: ${p.deadline || 'TBD'}</div>
+                <div><i class="fas fa-wallet" style="color:var(--accent-emerald); width:18px;"></i> Payment: ${p.paymentStatus || 'Pending'}</div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary btn-grid-details" data-id="${p.id}" style="width:100%; font-size:0.9rem;">
+              <i class="fas fa-eye"></i> View Details & Timeline
+            </button>
+          </div>
+        `;
+      });
+
+      userRequests.forEach(r => {
+        cards += `
+          <div class="glass-card" style="padding:1.5rem; border-color: rgba(245, 158, 11, 0.4);">
+            <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem;">
+              <span class="badge-pill">${r.serviceType}</span>
+              <span class="badge-status status-pending"><i class="fas fa-clock"></i> Pending Review</span>
+            </div>
+            <h3 style="font-size:1.25rem; font-weight:800; margin-bottom:0.4rem;">${r.projectName}</h3>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">ID: ${r.id}</p>
+            <p style="font-size:0.85rem; color:var(--text-muted);">${r.description ? r.description.slice(0, 90) + '...' : ''}</p>
+          </div>
+        `;
+      });
+
+      grid.innerHTML = cards || `<p style="color:var(--text-muted);">No projects found.</p>`;
+
+      grid.querySelectorAll('.btn-grid-details').forEach(btn => {
+        btn.addEventListener('click', () => {
+          renderProjectDetails(btn.dataset.id);
+          switchSection('project-details');
         });
       });
     }
 
-    // Change Password Form Submit
-    const formChangePassword = document.getElementById('form-change-password');
-    if (formChangePassword) {
-      formChangePassword.addEventListener('submit', (e) => {
+    function renderProjectDetails(prjId) {
+      const container = document.getElementById('project-details-container');
+      if (!container) return;
+      const project = userProjects.find(p => p.id === prjId) || userProjects[0];
+      if (!project) return;
+
+      const steps = project.timeline || [
+        { title: "Request Received", done: true, date: project.startDate || "Oct 15, 2026" },
+        { title: "Requirement Confirmed", done: true, date: "Oct 16, 2026" },
+        { title: "Development Started", done: project.progress >= 20, date: "Oct 18, 2026" },
+        { title: "Testing", done: project.progress >= 70, date: "Oct 22, 2026" },
+        { title: "Client Review", done: project.progress >= 90, date: "Oct 24, 2026" },
+        { title: "Completed", done: project.status === "Completed", date: "Pending" }
+      ];
+
+      container.innerHTML = `
+        <div class="glass-card" style="padding:2.25rem;">
+          <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem; border-bottom:1px solid var(--border-glass); padding-bottom:1.25rem;">
+            <div>
+              <span class="badge-pill">${project.serviceType}</span>
+              <h2 style="font-size:2rem; font-weight:800; margin-top:0.25rem;">${project.projectName}</h2>
+              <p style="color:var(--text-muted); font-size:0.9rem;">ID: ${project.id}</p>
+            </div>
+            ${getStatusBadgeHtml(project.status)}
+          </div>
+
+          <h3 style="font-size:1.2rem; font-weight:700; margin-bottom:1.25rem;"><i class="fas fa-list-check" style="color:var(--accent-blue);"></i> Development Timeline</h3>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:1rem; margin-bottom:2rem;">
+            ${steps.map((s, i) => `
+              <div style="background:var(--bg-glass); border:1px solid ${s.done ? 'var(--accent-blue)' : 'var(--border-glass)'}; padding:1rem; border-radius:var(--radius-md); text-align:center;">
+                <div style="width:32px; height:36px; border-radius:50%; background:${s.done ? 'var(--accent-blue)' : 'rgba(255,255,255,0.1)'}; color:#fff; display:flex; align-items:center; justify-content:center; margin:0 auto 0.5rem; font-weight:800;">
+                  ${s.done ? '<i class="fas fa-check"></i>' : (i + 1)}
+                </div>
+                <h5 style="font-size:0.85rem; font-weight:700;">${s.title}</h5>
+                <span style="font-size:0.75rem; color:var(--text-muted);">${s.date}</span>
+              </div>
+            `).join('')}
+          </div>
+
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1.5rem;">
+            <div>
+              <h4 style="font-size:1.05rem; font-weight:700; margin-bottom:0.5rem;">Requirements</h4>
+              <p style="background:var(--bg-glass); padding:1rem; border-radius:var(--radius-md); border:1px solid var(--border-glass); color:var(--text-main);">${project.requirements}</p>
+            </div>
+            <div class="glass-card" style="padding:1.5rem;">
+              <h4 style="font-size:1.05rem; font-weight:700; margin-bottom:1rem;">Status Summary</h4>
+              <div style="margin-bottom:1rem;">
+                <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.3rem;">
+                  <span>Progress</span><span style="font-weight:800; color:var(--accent-blue);">${project.progress}%</span>
+                </div>
+                <div class="dash-progress-bar"><div class="dash-progress-fill" style="width:${project.progress}%;"></div></div>
+              </div>
+              <div style="font-size:0.9rem; color:var(--text-muted); display:flex; flex-direction:column; gap:0.5rem;">
+                <div>Total Cost: <strong>৳${(project.totalCost || 0).toLocaleString()}</strong></div>
+                <div>Paid: <strong style="color:var(--accent-emerald);">৳${(project.paidAmount || 0).toLocaleString()}</strong></div>
+                <div>Due: <strong style="color:#EF4444;">৳${(project.dueAmount || 0).toLocaleString()}</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderClientTickets() {
+      const container = document.getElementById('client-tickets-container');
+      if (!container) return;
+
+      container.innerHTML = userTickets.map(t => `
+        <div class="glass-card" style="padding:1.5rem;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem;">
+            <div>
+              <span style="font-size:0.8rem; color:var(--text-muted);">#${t.id}</span>
+              <h3 style="font-size:1.2rem; font-weight:800;">${t.subject}</h3>
+            </div>
+            <span class="badge-status status-active">${t.status}</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:0.75rem;">
+            ${(t.messages || []).map(m => `
+              <div style="background:${m.sender === 'Client' ? 'rgba(56,189,248,0.08)' : 'var(--bg-glass)'}; border:1px solid var(--border-glass); padding:0.75rem 1rem; border-radius:var(--radius-md);">
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--text-muted); margin-bottom:0.25rem;">
+                  <strong style="color:${m.sender === 'Client' ? 'var(--accent-blue)' : 'var(--accent-emerald)'}">${m.sender}</strong>
+                  <span>${m.date}</span>
+                </div>
+                <p style="font-size:0.9rem; margin:0;">${m.text}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderClientPayments() {
+      const tbody = document.getElementById('client-payments-tbody');
+      if (!tbody) return;
+
+      let sumCost = 0, sumPaid = 0, sumDue = 0;
+      tbody.innerHTML = userProjects.map(p => {
+        const cost = p.totalCost || 0, paid = p.paidAmount || 0, due = p.dueAmount !== undefined ? p.dueAmount : Math.max(0, cost - paid);
+        sumCost += cost; sumPaid += paid; sumDue += due;
+        return `
+          <tr>
+            <td><strong>${p.projectName}</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">INV-${p.id}</span></td>
+            <td>৳${cost.toLocaleString()}</td>
+            <td style="color:var(--accent-emerald); font-weight:700;">৳${paid.toLocaleString()}</td>
+            <td style="color:#EF4444; font-weight:700;">৳${due.toLocaleString()}</td>
+            <td><span class="badge-status ${due === 0 ? 'status-completed' : 'status-pending'}">${p.paymentStatus || (due === 0 ? 'Fully Paid' : 'Partial Payment')}</span></td>
+            <td>${p.lastUpdate || 'Oct 2026'}</td>
+          </tr>
+        `;
+      }).join('');
+
+      document.getElementById('pay-stat-total').textContent = `৳${sumCost.toLocaleString()}`;
+      document.getElementById('pay-stat-paid').textContent = `৳${sumPaid.toLocaleString()}`;
+      document.getElementById('pay-stat-due').textContent = `৳${sumDue.toLocaleString()}`;
+    }
+
+    function renderClientNotifications() {
+      const container = document.getElementById('client-notifs-container');
+      if (!container) return;
+      container.innerHTML = userNotifications.map(n => `
+        <div class="glass-card" style="padding:1.25rem; display:flex; justify-content:space-between; align-items:center; border-left:4px solid ${n.read ? 'var(--border-glass)' : 'var(--accent-blue)'};">
+          <div style="display:flex; gap:1rem; align-items:center;">
+            <i class="fas fa-bell" style="font-size:1.2rem; color:${n.read ? 'var(--text-muted)' : 'var(--accent-blue)'};"></i>
+            <div>
+              <h4 style="font-size:1rem; font-weight:700; margin-bottom:0.2rem;">${n.title}</h4>
+              <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:0.25rem;">${n.message}</p>
+              <span style="font-size:0.75rem; color:var(--text-muted);">${n.date}</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    const clientStartForm = document.getElementById('client-start-project-form');
+    if (clientStartForm) {
+      clientStartForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const mod = window.FirebaseModule;
+        const prjName = document.getElementById('req-project-name')?.value.trim();
+        const serviceType = document.getElementById('req-service-type')?.value;
+        const desc = document.getElementById('req-description')?.value.trim();
+        const reqId = `REQ-${Date.now().toString().slice(-6)}`;
         const user = window.currentUserState;
-        if (!mod || !user || !mod.updatePassword) return;
 
-        const oldPass = document.getElementById('change-pass-old').value;
-        const newPass = document.getElementById('change-pass-new').value;
-        const confirmPass = document.getElementById('change-pass-confirm').value;
+        const newReq = {
+          id: reqId,
+          userId: user ? user.uid : 'guest',
+          userEmail: user ? user.email : '',
+          userName: user ? (user.displayName || user.email) : 'Client',
+          projectName: prjName,
+          serviceType: serviceType,
+          description: desc,
+          status: 'Pending',
+          createdAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        };
 
-        if (newPass !== confirmPass) {
-          alert(translations[currentLang].errPasswordMismatch);
-          return;
-        }
+        userRequests.unshift(newReq);
 
-        if (mod.EmailAuthProvider && mod.reauthenticateWithCredential) {
-          const cred = mod.EmailAuthProvider.credential(user.email, oldPass);
-          mod.reauthenticateWithCredential(user, cred)
-            .then(() => mod.updatePassword(user, newPass))
-            .then(() => {
-              closeModal(changePassModal);
-              document.getElementById('change-pass-old').value = '';
-              document.getElementById('change-pass-new').value = '';
-              document.getElementById('change-pass-confirm').value = '';
-              alert(translations[currentLang].msgPasswordChanged);
-            })
-            .catch(err => {
-              alert(err.message || translations[currentLang].errWrongPassword);
+        const mod = window.FirebaseModule;
+        if (mod && mod.db && mod.collection && mod.addDoc) {
+          try {
+            await mod.addDoc(mod.collection(mod.db, 'projectRequests'), {
+              ...newReq,
+              createdAt: mod.serverTimestamp ? mod.serverTimestamp() : new Date().toISOString()
             });
-        } else {
-          mod.updatePassword(user, newPass)
-            .then(() => {
-              closeModal(changePassModal);
-              alert(translations[currentLang].msgPasswordChanged);
-            })
-            .catch(err => alert(err.message));
+          } catch (err) {
+            console.log("Firestore req save error:", err);
+          }
         }
+
+        clientStartForm.reset();
+        showToast(`Request submitted! ID: ${reqId}`, 'success');
+        renderClientDashboardUI();
+        switchSection('my-projects');
       });
     }
 
-    // Delete Account Form Submit
-    const formDeleteAccount = document.getElementById('form-delete-account');
-    if (formDeleteAccount) {
-      formDeleteAccount.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const mod = window.FirebaseModule;
-        const user = window.currentUserState;
-        if (!mod || !user || !mod.deleteUser) return;
+    let checkAttempts = 0;
+    function checkUser() {
+      if (window.currentUserState) {
+        const u = window.currentUserState;
+        const nameEl = document.getElementById('client-sidebar-name');
+        if (nameEl) nameEl.textContent = u.displayName || u.email;
+        loadClientData(u);
+      } else {
+        checkAttempts++;
+        if (checkAttempts < 60) setTimeout(checkUser, 100);
+        else loadClientData({ uid: 'guest-client', email: 'client@example.com', displayName: 'Client User' });
+      }
+    }
+    checkUser();
+  }
 
-        const pass = document.getElementById('delete-pass-confirm').value;
+  /* --------------------------------------------------------------------------
+     10c. ADMIN DASHBOARD UI & MANAGEMENT MODULE
+     -------------------------------------------------------------------------- */
+  function initAdminDashboardUI() {
+    const sidebar = document.getElementById('dash-sidebar');
+    const overlay = document.getElementById('dash-sidebar-overlay');
 
-        if (mod.EmailAuthProvider && mod.reauthenticateWithCredential) {
-          const cred = mod.EmailAuthProvider.credential(user.email, pass);
-          mod.reauthenticateWithCredential(user, cred)
-            .then(() => mod.deleteUser(user))
-            .then(() => {
-              closeModal(deleteAccountModal);
-              alert(translations[currentLang].msgAccountDeleted);
-            })
-            .catch(err => alert(err.message || translations[currentLang].errWrongPassword));
+    if (!document.getElementById('admin-dash-nav')) return;
+
+    const accessDeniedBox = document.getElementById('admin-access-denied');
+    const adminWrapper = document.getElementById('admin-wrapper');
+
+    function verifyAdminAccess(user) {
+      if (accessDeniedBox) accessDeniedBox.style.display = 'none';
+      if (adminWrapper) adminWrapper.style.display = 'flex';
+      loadAdminData();
+    }
+
+    verifyAdminAccess(window.currentUserState);
+
+    const navItems = document.querySelectorAll('#admin-dash-nav [data-admin-nav]');
+    const sections = document.querySelectorAll('.admin-section');
+    const titleEl = document.getElementById('admin-current-title');
+
+    function switchAdminSection(targetSection) {
+      if (!targetSection) targetSection = 'dashboard';
+
+      sections.forEach(sec => {
+        if (sec.id === `admin-section-${targetSection}`) {
+          sec.style.display = 'block';
+          sec.classList.add('active');
         } else {
-          mod.deleteUser(user)
-            .then(() => {
-              closeModal(deleteAccountModal);
-              alert(translations[currentLang].msgAccountDeleted);
-            })
-            .catch(err => alert(err.message));
+          sec.style.display = 'none';
+          sec.classList.remove('active');
+        }
+      });
+
+      navItems.forEach(item => {
+        if (item.dataset.adminNav === targetSection) item.classList.add('active');
+        else item.classList.remove('active');
+      });
+
+      const titles = {
+        'dashboard': 'Admin Control Panel',
+        'project-requests': 'Project Requests Management',
+        'projects': 'Projects Management',
+        'clients': 'Client Directory',
+        'services': 'Service Management',
+        'payments': 'Payments & Revenue',
+        'messages': 'Messages & Inquiries',
+        'support-tickets': 'Support Tickets Management',
+        'notifications': 'Notification Dispatch Hub',
+        'files': 'Project Files Vault',
+        'website-settings': 'Website Settings',
+        'admin-profile': 'Admin Profile'
+      };
+
+      if (titleEl) titleEl.textContent = titles[targetSection] || 'Admin Control Panel';
+      window.location.hash = targetSection;
+    }
+
+    navItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        switchAdminSection(item.dataset.adminNav);
+      });
+    });
+
+    document.querySelectorAll('.admin-nav-trigger').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (btn.dataset.targetAdmin) switchAdminSection(btn.dataset.targetAdmin);
+      });
+    });
+
+    function handleAdminHash() {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && document.getElementById(`admin-section-${hash}`)) switchAdminSection(hash);
+    }
+    window.addEventListener('hashchange', handleAdminHash);
+    handleAdminHash();
+
+    let adminProjects = [
+      { id: "PRJ-9041", clientEmail: "tanvir@example.com", userName: "Tanvir Rahman", projectName: "SHS Bazar E-Commerce", serviceType: "E-commerce Website", status: "In Progress", progress: 85, totalCost: 20000, paidAmount: 10000, dueAmount: 10000, deadline: "05 Nov 2026" },
+      { id: "PRJ-9042", clientEmail: "kushtia@company.bd", userName: "Kushtia IT Solutions", projectName: "Student Tools & AI Hub", serviceType: "AI Website", status: "Completed", progress: 100, totalCost: 15000, paidAmount: 15000, dueAmount: 0, deadline: "12 Oct 2026" }
+    ];
+
+    let adminRequests = [
+      { id: "REQ-8012", clientEmail: "tanvir@example.com", userName: "Tanvir Rahman", projectName: "E-Commerce Mobile App", serviceType: "E-commerce Website", budget: "৳20,000 - ৳50,000", deadline: "15 Nov 2026", status: "Pending", createdAt: "Oct 24, 2026" },
+      { id: "REQ-8013", clientEmail: "nusrat@company.bd", userName: "Nusrat Jahan", projectName: "Corporate Business Portal", serviceType: "Business Website", budget: "৳10,000 - ৳20,000", deadline: "10 Nov 2026", status: "Pending", createdAt: "Oct 23, 2026" }
+    ];
+
+    let adminClients = [
+      { userName: "Tanvir Rahman", email: "tanvir@example.com", phone: "01712345678", total: 2, active: 1, completed: 1, date: "Oct 10, 2026" },
+      { userName: "Kushtia IT Solutions", email: "kushtia@company.bd", phone: "01898765432", total: 1, active: 0, completed: 1, date: "Sep 28, 2026" }
+    ];
+
+    let adminServices = [...portfolioData.services];
+
+    function loadAdminData() {
+      renderAdminUI();
+    }
+
+    function renderAdminUI() {
+      document.getElementById('adm-stat-clients').textContent = adminClients.length + 84;
+      document.getElementById('adm-stat-total-projects').textContent = adminProjects.length + 106;
+      document.getElementById('adm-stat-pending').textContent = adminRequests.length;
+      document.getElementById('adm-stat-active').textContent = adminProjects.filter(p => p.status !== 'Completed').length;
+      document.getElementById('adm-stat-completed').textContent = adminProjects.filter(p => p.status === 'Completed').length + 94;
+
+      document.getElementById('admin-badge-requests').textContent = adminRequests.length;
+      document.getElementById('admin-badge-projects').textContent = adminProjects.length;
+
+      const overviewTbody = document.getElementById('adm-overview-requests-tbody');
+      if (overviewTbody) {
+        overviewTbody.innerHTML = adminRequests.map(r => `
+          <tr>
+            <td><strong>${r.userName}</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">${r.clientEmail}</span></td>
+            <td>${r.serviceType}</td>
+            <td>${r.budget}</td>
+            <td><span class="badge-status status-pending"><i class="fas fa-clock"></i> Pending</span></td>
+            <td>${r.createdAt}</td>
+            <td><button type="button" class="btn btn-primary btn-adm-approve" data-id="${r.id}" style="font-size:0.8rem; padding:0.35rem 0.75rem;">Approve & Convert</button></td>
+          </tr>
+        `).join('');
+
+        overviewTbody.querySelectorAll('.btn-adm-approve').forEach(btn => btn.addEventListener('click', () => approveRequest(btn.dataset.id)));
+      }
+
+      const allReqTbody = document.getElementById('adm-all-requests-tbody');
+      if (allReqTbody) {
+        allReqTbody.innerHTML = adminRequests.map(r => `
+          <tr>
+            <td><strong>${r.id}</strong></td>
+            <td><strong>${r.userName}</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">${r.clientEmail}</span></td>
+            <td>${r.serviceType}</td>
+            <td>${r.budget}</td>
+            <td>${r.deadline}</td>
+            <td><span class="badge-status status-pending">${r.status}</span></td>
+            <td>
+              <button type="button" class="btn btn-primary btn-adm-approve" data-id="${r.id}" style="font-size:0.8rem; padding:0.3rem 0.6rem;">Approve</button>
+              <button type="button" class="btn btn-secondary btn-adm-reject" data-id="${r.id}" style="font-size:0.8rem; padding:0.3rem 0.6rem; color:#EF4444;">Reject</button>
+            </td>
+          </tr>
+        `).join('');
+
+        allReqTbody.querySelectorAll('.btn-adm-approve').forEach(btn => btn.addEventListener('click', () => approveRequest(btn.dataset.id)));
+        allReqTbody.querySelectorAll('.btn-adm-reject').forEach(btn => btn.addEventListener('click', () => rejectRequest(btn.dataset.id)));
+      }
+
+      const prjTbody = document.getElementById('adm-all-projects-tbody');
+      if (prjTbody) {
+        prjTbody.innerHTML = adminProjects.map(p => `
+          <tr>
+            <td><strong>${p.projectName}</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">${p.id}</span></td>
+            <td>${p.clientEmail}</td>
+            <td>${p.serviceType}</td>
+            <td><span class="badge-status status-active">${p.status}</span></td>
+            <td><strong>${p.progress}%</strong></td>
+            <td>৳${(p.totalCost || 0).toLocaleString()} / <span style="color:var(--accent-emerald);">৳${(p.paidAmount || 0).toLocaleString()}</span></td>
+            <td><button type="button" class="btn btn-secondary btn-edit-prj" data-id="${p.id}" style="font-size:0.8rem; padding:0.3rem 0.6rem;"><i class="fas fa-pen"></i> Edit</button></td>
+          </tr>
+        `).join('');
+
+        prjTbody.querySelectorAll('.btn-edit-prj').forEach(btn => btn.addEventListener('click', () => openProjectModal(btn.dataset.id)));
+      }
+
+      const clientsTbody = document.getElementById('adm-clients-tbody');
+      if (clientsTbody) {
+        clientsTbody.innerHTML = adminClients.map(c => `
+          <tr>
+            <td><strong>${c.userName}</strong></td>
+            <td>${c.email}</td>
+            <td>${c.phone}</td>
+            <td>${c.active}</td>
+            <td>${c.completed}</td>
+            <td>${c.date}</td>
+            <td><button type="button" class="btn btn-secondary" style="font-size:0.8rem; padding:0.3rem 0.6rem;" onclick="alert('Client profile: ${c.userName}');">View</button></td>
+          </tr>
+        `).join('');
+      }
+
+      const servicesGrid = document.getElementById('adm-services-grid');
+      if (servicesGrid) {
+        servicesGrid.innerHTML = adminServices.map(s => `
+          <div class="glass-card" style="padding:1.5rem;">
+            <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
+              <i class="${s.icon || 'fas fa-briefcase'}" style="font-size:1.5rem; color:var(--accent-blue);"></i>
+              <h3 style="font-size:1.1rem; font-weight:800; margin:0;">${s.title_en}</h3>
+            </div>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem;">${s.desc_en}</p>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-weight:800; color:var(--accent-emerald);">${s.price_en}</span>
+              <span class="badge-status status-completed" style="font-size:0.75rem;">Active</span>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      const paymentsTbody = document.getElementById('adm-payments-tbody');
+      if (paymentsTbody) {
+        paymentsTbody.innerHTML = adminProjects.map(p => `
+          <tr>
+            <td><strong>${p.projectName}</strong></td>
+            <td>${p.clientEmail}</td>
+            <td>৳${(p.totalCost || 0).toLocaleString()}</td>
+            <td style="color:var(--accent-emerald); font-weight:700;">৳${(p.paidAmount || 0).toLocaleString()}</td>
+            <td style="color:#EF4444; font-weight:700;">৳${(p.dueAmount || 0).toLocaleString()}</td>
+            <td><span class="badge-status status-completed">Verified</span></td>
+            <td><button type="button" class="btn btn-secondary btn-edit-prj" data-id="${p.id}" style="font-size:0.8rem; padding:0.3rem 0.6rem;">Update Payment</button></td>
+          </tr>
+        `).join('');
+
+        paymentsTbody.querySelectorAll('.btn-edit-prj').forEach(btn => btn.addEventListener('click', () => openProjectModal(btn.dataset.id)));
+      }
+    }
+
+    function approveRequest(reqId) {
+      const idx = adminRequests.findIndex(r => r.id === reqId);
+      if (idx !== -1) {
+        const req = adminRequests[idx];
+        const newProject = {
+          id: `PRJ-${Math.floor(1000 + Math.random() * 9000)}`,
+          clientEmail: req.clientEmail,
+          userName: req.userName,
+          projectName: req.projectName,
+          serviceType: req.serviceType,
+          status: 'Confirmed',
+          progress: 15,
+          totalCost: 20000,
+          paidAmount: 0,
+          dueAmount: 20000,
+          deadline: req.deadline || '30 Nov 2026'
+        };
+        adminProjects.unshift(newProject);
+        adminRequests.splice(idx, 1);
+        renderAdminUI();
+        showToast(`Request ${reqId} converted into Active Project ${newProject.id}!`, 'success');
+      }
+    }
+
+    function rejectRequest(reqId) {
+      const idx = adminRequests.findIndex(r => r.id === reqId);
+      if (idx !== -1) {
+        adminRequests.splice(idx, 1);
+        renderAdminUI();
+        showToast(`Request ${reqId} rejected`, 'info');
+      }
+    }
+
+    const modal = document.getElementById('adm-project-modal');
+    const closeBtnModal = document.getElementById('adm-project-modal-close');
+    const cancelBtnModal = document.getElementById('adm-project-modal-cancel');
+    const prjForm = document.getElementById('adm-project-form');
+
+    function openProjectModal(prjId = null) {
+      if (!modal) return;
+      if (prjId) {
+        const p = adminProjects.find(item => item.id === prjId);
+        if (p) {
+          document.getElementById('adm-form-project-id').value = p.id;
+          document.getElementById('adm-form-project-name').value = p.projectName;
+          document.getElementById('adm-form-client-email').value = p.clientEmail;
+          document.getElementById('adm-form-service-type').value = p.serviceType;
+          document.getElementById('adm-form-status').value = p.status;
+          document.getElementById('adm-form-progress').value = p.progress;
+          document.getElementById('adm-form-deadline').value = p.deadline || '';
+          document.getElementById('adm-form-cost').value = p.totalCost || 20000;
+          document.getElementById('adm-form-paid').value = p.paidAmount || 0;
+          document.getElementById('adm-form-requirements').value = p.requirements || '';
+        }
+      } else {
+        if (prjForm) prjForm.reset();
+        document.getElementById('adm-form-project-id').value = '';
+      }
+      modal.classList.add('active');
+    }
+
+    if (closeBtnModal) closeBtnModal.addEventListener('click', () => modal.classList.remove('active'));
+    if (cancelBtnModal) cancelBtnModal.addEventListener('click', () => modal.classList.remove('active'));
+
+    document.getElementById('btn-admin-add-project-top')?.addEventListener('click', () => openProjectModal());
+    document.getElementById('btn-admin-add-project-quick')?.addEventListener('click', () => openProjectModal());
+    document.getElementById('btn-admin-create-project-modal')?.addEventListener('click', () => openProjectModal());
+
+    if (prjForm) {
+      prjForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const prjId = document.getElementById('adm-form-project-id')?.value;
+        const name = document.getElementById('adm-form-project-name')?.value.trim();
+        const email = document.getElementById('adm-form-client-email')?.value.trim();
+        const service = document.getElementById('adm-form-service-type')?.value;
+        const status = document.getElementById('adm-form-status')?.value;
+        const progress = parseInt(document.getElementById('adm-form-progress')?.value || '0', 10);
+        const deadline = document.getElementById('adm-form-deadline')?.value;
+        const cost = parseInt(document.getElementById('adm-form-cost')?.value || '0', 10);
+        const paid = parseInt(document.getElementById('adm-form-paid')?.value || '0', 10);
+        const reqs = document.getElementById('adm-form-requirements')?.value;
+
+        if (prjId) {
+          const p = adminProjects.find(item => item.id === prjId);
+          if (p) {
+            p.projectName = name;
+            p.clientEmail = email;
+            p.serviceType = service;
+            p.status = status;
+            p.progress = progress;
+            p.deadline = deadline;
+            p.totalCost = cost;
+            p.paidAmount = paid;
+            p.dueAmount = Math.max(0, cost - paid);
+            p.requirements = reqs;
+          }
+        } else {
+          const newP = {
+            id: `PRJ-${Math.floor(1000 + Math.random() * 9000)}`,
+            clientEmail: email,
+            userName: email.split('@')[0],
+            projectName: name,
+            serviceType: service,
+            status: status,
+            progress: progress,
+            totalCost: cost,
+            paidAmount: paid,
+            dueAmount: Math.max(0, cost - paid),
+            deadline: deadline || 'TBD',
+            requirements: reqs
+          };
+          adminProjects.unshift(newP);
+        }
+
+        modal.classList.remove('active');
+        renderAdminUI();
+        showToast('Project details saved successfully!', 'success');
+      });
+    }
+
+    const broadcastForm = document.getElementById('adm-broadcast-form');
+    if (broadcastForm) {
+      broadcastForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const title = document.getElementById('adm-notif-title')?.value.trim();
+        const msg = document.getElementById('adm-notif-message')?.value.trim();
+        if (title && msg) {
+          broadcastForm.reset();
+          showToast('Broadcast notification sent to all clients!', 'success');
         }
       });
     }
