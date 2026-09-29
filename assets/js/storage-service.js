@@ -1,6 +1,11 @@
 /* ==========================================================================
-   WebWorldBD - Storage Service Interface (Provider-Independent)
+   WebWorldBD - Storage Service Interface (Cloudinary Upload Service)
    ========================================================================== */
+
+const CLOUDINARY_CLOUD_NAME = 'plpznnxh';
+const CLOUDINARY_UPLOAD_PRESET = 'webworldbd';
+const CLOUDINARY_FOLDER = 'webworldbd_uploads';
+const CLOUDINARY_UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
 
 /**
  * Validates a file before upload
@@ -9,9 +14,9 @@
  * @returns {Object} { valid: boolean, error: string|null }
  */
 export function validateUploadFile(file, options = {}) {
-  const maxSizeMB = options.maxSizeMB || 5;
+  const maxSizeMB = options.maxSizeMB || 10;
   const maxSizeBytes = maxSizeMB * 1024 * 1024;
-  const allowedImageTypes = options.allowedTypes || ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+  const allowedImageTypes = options.allowedTypes || ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml'];
   const allowDocuments = options.allowDocuments || false;
   const allowedDocTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain', 'application/zip'];
 
@@ -24,7 +29,7 @@ export function validateUploadFile(file, options = {}) {
   }
 
   const validTypes = allowDocuments ? [...allowedImageTypes, ...allowedDocTypes] : allowedImageTypes;
-  const isTypeValid = validTypes.includes(file.type.toLowerCase()) || validTypes.some(t => file.name.toLowerCase().endsWith(t.replace('image/', '.').replace('application/', '.')));
+  const isTypeValid = file.type.startsWith('image/') || validTypes.includes(file.type.toLowerCase()) || validTypes.some(t => file.name.toLowerCase().endsWith(t.replace('image/', '.').replace('application/', '.')));
 
   if (!isTypeValid) {
     const formats = allowDocuments ? 'JPG, JPEG, PNG, WEBP, PDF, DOC, DOCX, TXT, ZIP' : 'JPG, JPEG, PNG, WEBP';
@@ -43,7 +48,7 @@ export function validateUploadFile(file, options = {}) {
  * @returns {Promise<Blob|File>} Compressed image blob or original file
  */
 export async function optimizeAndConvertImage(file, maxWidth = 1200, maxHeight = 1200, quality = 0.85) {
-  if (!file || !file.type.startsWith('image/')) {
+  if (!file || !file.type || !file.type.startsWith('image/')) {
     return file; // Return non-image files as-is
   }
 
@@ -96,20 +101,51 @@ export async function optimizeAndConvertImage(file, maxWidth = 1200, maxHeight =
 }
 
 /**
- * Provider-independent upload function stub
+ * Uploads a file or blob directly to Cloudinary using unsigned upload preset
  * @param {File|Blob} fileOrBlob - The file or blob to upload
- * @param {string} filePath - Path in storage
- * @param {Object} options - Upload options
+ * @param {string} [filePath] - Optional file name/path identifier
+ * @param {Object} [options] - Upload options
  * @returns {Promise<Object>} { success: boolean, url: string|null, filePath: string, error: Error|null }
  */
-export async function uploadImage(fileOrBlob, filePath, options = {}) {
-  // Provider-independent stub: returns safe object ready for future backend integration
-  return {
-    success: true,
-    url: null,
-    filePath: filePath,
-    error: null
-  };
+export async function uploadImage(fileOrBlob, filePath = '', options = {}) {
+  try {
+    if (!fileOrBlob) {
+      throw new Error('No file provided for upload.');
+    }
+
+    const formData = new FormData();
+    const fileName = fileOrBlob.name || (filePath ? filePath.split('/').pop() : 'upload.webp');
+    formData.append('file', fileOrBlob, fileName);
+    formData.append('upload_preset', options.upload_preset || CLOUDINARY_UPLOAD_PRESET);
+    formData.append('folder', options.folder || CLOUDINARY_FOLDER);
+
+    const response = await fetch(CLOUDINARY_UPLOAD_URL, {
+      method: 'POST',
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.secure_url) {
+      const errorMsg = data.error && data.error.message ? data.error.message : 'Cloudinary upload failed.';
+      throw new Error(errorMsg);
+    }
+
+    return {
+      success: true,
+      url: data.secure_url,
+      filePath: filePath || data.public_id,
+      error: null
+    };
+  } catch (err) {
+    console.error('Cloudinary upload error:', err);
+    return {
+      success: false,
+      url: null,
+      filePath: filePath,
+      error: err
+    };
+  }
 }
 
 /**
@@ -123,7 +159,7 @@ export function getImageUrl(filePath) {
 }
 
 /**
- * Provider-independent delete function stub
+ * Delete helper function stub
  * @param {string} filePath - Path or URL to delete
  * @returns {Promise<boolean>}
  */
@@ -132,10 +168,10 @@ export async function deleteImage(filePath) {
 }
 
 /**
- * Provider-independent file replacement stub
+ * File replacement function using Cloudinary upload
  * @param {File|Blob} newFile - New file or blob
  * @param {string} newFilePath - Target file path
- * @param {string|null} oldFilePath - Existing file path to delete
+ * @param {string|null} oldFilePath - Existing file path
  * @param {Object} options - Upload options
  * @returns {Promise<Object>}
  */
