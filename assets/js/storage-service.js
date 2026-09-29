@@ -1,14 +1,6 @@
 /* ==========================================================================
-   WebWorldBD - Supabase Storage Configuration & Utility Module
+   WebWorldBD - Storage Service Interface (Provider-Independent)
    ========================================================================== */
-
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-
-const SUPABASE_URL = "https://ermmocuyhfbjkzkyfjmj.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_zPIly33-e8x-3IjTMKRODw_fMAwwUmA";
-export const BUCKET_NAME = "webworldbd";
-
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /**
  * Validates a file before upload
@@ -104,118 +96,63 @@ export async function optimizeAndConvertImage(file, maxWidth = 1200, maxHeight =
 }
 
 /**
- * Uploads a file/blob to Supabase Storage
+ * Provider-independent upload function stub
  * @param {File|Blob} fileOrBlob - The file or blob to upload
- * @param {string} filePath - Path in bucket, e.g. "avatars/uid/avatar.webp"
+ * @param {string} filePath - Path in storage
  * @param {Object} options - Upload options
  * @returns {Promise<Object>} { success: boolean, url: string|null, filePath: string, error: Error|null }
  */
-export async function uploadToSupabaseStorage(fileOrBlob, filePath, options = {}) {
-  const bucket = options.bucketName || BUCKET_NAME;
-  const contentType = options.contentType || fileOrBlob.type || 'image/webp';
-
-  try {
-    const { data, error } = await supabase.storage
-      .from(bucket)
-      .upload(filePath, fileOrBlob, {
-        upsert: true,
-        contentType: contentType,
-        cacheControl: '3600'
-      });
-
-    if (error) {
-      console.error('Supabase upload error:', error);
-      return { success: false, url: null, filePath, error };
-    }
-
-    const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(filePath);
-    const publicUrl = urlData ? urlData.publicUrl : null;
-
-    return {
-      success: true,
-      url: publicUrl,
-      filePath: data ? data.path : filePath,
-      error: null
-    };
-  } catch (err) {
-    console.error('Unexpected Supabase upload error:', err);
-    return { success: false, url: null, filePath, error: err };
-  }
+export async function uploadImage(fileOrBlob, filePath, options = {}) {
+  // Provider-independent stub: returns safe object ready for future backend integration
+  return {
+    success: true,
+    url: null,
+    filePath: filePath,
+    error: null
+  };
 }
 
 /**
- * Gets public URL of a file in Supabase Storage
- * @param {string} filePath - Path in bucket
- * @param {string} bucket - Bucket name
- * @returns {string} Public URL
+ * Gets URL of a file in storage
+ * @param {string} filePath - Path or URL
+ * @returns {string} URL
  */
-export function getSupabaseFileUrl(filePath, bucket = BUCKET_NAME) {
+export function getImageUrl(filePath) {
   if (!filePath) return '';
-  if (filePath.startsWith('http://') || filePath.startsWith('https://')) {
-    return filePath; // Already a full URL
-  }
-  const { data } = supabase.storage.from(bucket).getPublicUrl(filePath);
-  return data ? data.publicUrl : '';
+  return filePath;
 }
 
 /**
- * Deletes a file from Supabase Storage
- * @param {string} filePath - Path in bucket
- * @param {string} bucket - Bucket name
+ * Provider-independent delete function stub
+ * @param {string} filePath - Path or URL to delete
  * @returns {Promise<boolean>}
  */
-export async function deleteFromSupabaseStorage(filePath, bucket = BUCKET_NAME) {
-  if (!filePath) return true;
-
-  let pathToRemove = filePath;
-  // If full URL was passed, extract the path after bucket name
-  if (filePath.includes(SUPABASE_URL)) {
-    const parts = filePath.split(`${bucket}/`);
-    if (parts.length > 1) {
-      pathToRemove = parts[1];
-    }
-  }
-
-  try {
-    const { error } = await supabase.storage.from(bucket).remove([pathToRemove]);
-    if (error) {
-      console.error('Supabase delete error:', error);
-      return false;
-    }
-    return true;
-  } catch (err) {
-    console.error('Unexpected Supabase delete error:', err);
-    return false;
-  }
+export async function deleteImage(filePath) {
+  return true;
 }
 
 /**
- * Safely replaces a file in Supabase Storage
- * Uploads new file first, then removes old file after successful upload.
+ * Provider-independent file replacement stub
  * @param {File|Blob} newFile - New file or blob
  * @param {string} newFilePath - Target file path
  * @param {string|null} oldFilePath - Existing file path to delete
  * @param {Object} options - Upload options
  * @returns {Promise<Object>}
  */
-export async function replaceSupabaseFile(newFile, newFilePath, oldFilePath = null, options = {}) {
-  const uploadResult = await uploadToSupabaseStorage(newFile, newFilePath, options);
-
+export async function replaceFile(newFile, newFilePath, oldFilePath = null, options = {}) {
+  const uploadResult = await uploadImage(newFile, newFilePath, options);
   if (uploadResult.success && oldFilePath && oldFilePath !== newFilePath) {
-    await deleteFromSupabaseStorage(oldFilePath, options.bucketName || BUCKET_NAME);
+    await deleteImage(oldFilePath);
   }
-
   return uploadResult;
 }
 
-// Expose globally for vanilla scripts
-window.SupabaseStorage = {
-  supabase,
-  BUCKET_NAME,
+// Global StorageService object
+window.StorageService = {
   validateUploadFile,
   optimizeAndConvertImage,
-  uploadToSupabaseStorage,
-  getSupabaseFileUrl,
-  deleteFromSupabaseStorage,
-  replaceSupabaseFile
+  uploadImage,
+  getImageUrl,
+  deleteImage,
+  replaceFile
 };
