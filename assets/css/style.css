@@ -1119,7 +1119,7 @@ p {
   align-items: center;
   justify-content: center;
   text-align: center;
-  gap: 0.6rem;
+  gap: 0.65rem;
 }
 
 .user-display-name {
@@ -1159,12 +1159,20 @@ p {
   align-items: center;
   justify-content: center;
   flex-wrap: nowrap;
-  gap: 0.45rem;
+  gap: 0.5rem;
   color: var(--text-muted);
-  font-size: 0.875rem;
+  font-size: 0.88rem;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
+}
+
+.profile-info-row span,
+.profile-info-row a {
+  margin: 0;
+  line-height: 1.4;
+  display: inline-flex;
+  align-items: center;
 }
 
 .profile-info-row span {
@@ -1172,6 +1180,11 @@ p {
   word-break: break-all;
   text-align: center;
   min-width: 0;
+}
+
+.profile-info-row .user-display-email {
+  margin-bottom: 0;
+  color: var(--text-muted);
 }
 
 .profile-info-row a {
@@ -1191,6 +1204,9 @@ p {
   text-align: center;
   color: var(--accent-blue);
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .profile-details-info p {
