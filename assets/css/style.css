@@ -390,6 +390,12 @@ p {
   width: 100%;
 }
 
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .logo-brand {
   display: flex;
   align-items: center;
@@ -1459,88 +1465,134 @@ p {
 }
 
 /* --------------------------------------------------------------------------
-   4b. Top-Right Three-Dot Navigation Dropdown Menu
+   4b. Left-Side Sliding Navigation Drawer & Backdrop
    -------------------------------------------------------------------------- */
-.three-dots-wrapper {
-  position: relative;
-  display: inline-block;
+.nav-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 12, 20, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 15000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.35s ease;
 }
 
-.three-dots-dropdown-menu {
-  position: absolute;
-  top: calc(100% + 0.75rem);
-  right: 0;
-  width: 290px;
-  max-width: calc(100vw - 24px);
-  height: auto;
-  max-height: calc(100vh - 90px);
+.nav-drawer-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.nav-drawer-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 320px;
+  max-width: 85vw;
+  height: 100vh;
+  height: 100dvh;
+  background: #0f172a;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-right: 1px solid var(--border-glass);
+  box-shadow: 10px 0 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(56, 189, 248, 0.15);
+  z-index: 15001;
+  transform: translateX(-100%);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+@media (max-width: 480px) {
+  .nav-drawer-panel {
+    width: 100vw;
+    max-width: 100vw;
+  }
+}
+
+.nav-drawer-panel.active {
+  transform: translateX(0);
+}
+
+[data-theme="light"] .nav-drawer-panel {
+  background: #ffffff;
+  border-right-color: rgba(203, 213, 225, 0.8);
+  box-shadow: 10px 0 45px rgba(15, 23, 42, 0.18);
+}
+
+[data-theme="light"] .nav-drawer-backdrop {
+  background: rgba(15, 23, 42, 0.4);
+}
+
+.nav-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 1.25rem;
+  border-bottom: 1px solid var(--border-glass);
+  flex-shrink: 0;
+}
+
+.nav-drawer-close-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.nav-drawer-close-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #EF4444;
+  border-color: rgba(239, 68, 68, 0.3);
+  transform: rotate(90deg);
+}
+
+.nav-drawer-body {
+  flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   touch-action: pan-y;
-  background: #0f172a;
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--border-glass);
-  border-radius: 20px;
-  padding: 0.85rem;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75), 0 0 30px rgba(56, 189, 248, 0.2);
-  opacity: 0;
-  visibility: hidden;
-  transform-origin: top right;
-  transform: translateY(-10px) scale(0.95);
-  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.25s;
-  z-index: 12000;
+  padding: 1rem 0.85rem 2rem 0.85rem;
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
 }
 
-/* Custom Slim Scrollbar for Three-Dots Dropdown Menu */
-.three-dots-dropdown-menu::-webkit-scrollbar {
+/* Custom Slim Scrollbar for Drawer Body */
+.nav-drawer-body::-webkit-scrollbar {
   width: 5px;
 }
 
-.three-dots-dropdown-menu::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.4);
-  border-radius: 10px;
-  margin: 8px 0;
-}
-
-.three-dots-dropdown-menu::-webkit-scrollbar-thumb {
-  background: rgba(56, 189, 248, 0.4);
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  transition: background 0.2s ease, box-shadow 0.2s ease;
-}
-
-.three-dots-dropdown-menu::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-blue);
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
-}
-
-/* Firefox scrollbar styling */
-.three-dots-dropdown-menu {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(56, 189, 248, 0.4) transparent;
-}
-
-[data-theme="light"] .three-dots-dropdown-menu {
-  background: #ffffff;
-  border-color: rgba(203, 213, 225, 0.8);
-  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.18), 0 0 25px rgba(14, 165, 233, 0.15);
-  scrollbar-color: rgba(15, 23, 42, 0.2) transparent;
-}
-
-[data-theme="light"] .three-dots-dropdown-menu::-webkit-scrollbar-thumb {
+.nav-drawer-body::-webkit-scrollbar-track {
   background: rgba(15, 23, 42, 0.2);
+  border-radius: 10px;
 }
 
-.three-dots-dropdown-menu.active {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0) scale(1);
+.nav-drawer-body::-webkit-scrollbar-thumb {
+  background: rgba(56, 189, 248, 0.35);
+  border-radius: 10px;
+}
+
+.nav-drawer-body::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-blue);
+}
+
+.nav-drawer-body {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(56, 189, 248, 0.35) transparent;
 }
 
 .three-dots-group {
