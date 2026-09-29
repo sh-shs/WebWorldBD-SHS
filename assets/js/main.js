@@ -67,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollAnimations();
   initSettingsPage();
   initDashboardUI();
+  initAccountDashboardUI();
   initAdminDashboardUI();
 
   // Dynamic Content Rendering
@@ -1908,29 +1909,31 @@ document.addEventListener('DOMContentLoaded', () => {
             if (accountSubEl) accountSubEl.textContent = translations[currentLang].accountSubLoggedIn;
 
             if (userDashView) {
-              const nameEl = document.getElementById('user-display-name');
-              const emailEl = document.getElementById('user-display-email');
-              const avatarEl = document.getElementById('user-avatar-img');
-              const avatarInitialEl = document.getElementById('user-avatar-initial');
+              const displayName = user.displayName || (user.email ? user.email.split('@')[0] : 'SHAFAET HOSSEN SARIP');
+              const firstName = displayName.trim().split(' ')[0] || 'Client';
 
-              const displayName = user.displayName || user.email || 'SHAFAET HOSSEN SARIP';
-              if (nameEl) nameEl.textContent = displayName;
-              if (emailEl) emailEl.textContent = user.email || '';
+              if (document.getElementById('user-display-name')) document.getElementById('user-display-name').textContent = displayName;
+              if (document.getElementById('user-display-email')) document.getElementById('user-display-email').textContent = user.email || '';
+
+              if (document.getElementById('account-profile-name')) document.getElementById('account-profile-name').textContent = displayName;
+              if (document.getElementById('account-profile-email')) document.getElementById('account-profile-email').innerHTML = `<i class="fas fa-envelope"></i> ${user.email || ''}`;
+              if (document.getElementById('account-sidebar-name')) document.getElementById('account-sidebar-name').textContent = displayName;
+              if (document.getElementById('account-topbar-name')) document.getElementById('account-topbar-name').textContent = displayName;
+              if (document.getElementById('welcome-client-name')) document.getElementById('welcome-client-name').textContent = firstName;
 
               const firstChar = displayName.trim().charAt(0).toUpperCase() || 'S';
 
+              const avatarEl = document.getElementById('account-user-avatar-img') || document.getElementById('user-avatar-img');
+              const avatarInitialEl = document.getElementById('account-user-avatar-initial') || document.getElementById('user-avatar-initial');
+
               if (user.photoURL) {
-                if (avatarEl) {
-                  avatarEl.src = user.photoURL;
-                  avatarEl.style.display = 'block';
-                  avatarEl.onerror = () => {
-                    avatarEl.style.display = 'none';
-                    if (avatarInitialEl) {
-                      avatarInitialEl.textContent = firstChar;
-                      avatarInitialEl.style.display = 'flex';
-                    }
-                  };
-                }
+                ['account-user-avatar-img', 'account-sidebar-avatar', 'account-topbar-avatar', 'user-avatar-img'].forEach(id => {
+                  const img = document.getElementById(id);
+                  if (img) {
+                    img.src = user.photoURL;
+                    img.style.display = 'block';
+                  }
+                });
                 if (avatarInitialEl) avatarInitialEl.style.display = 'none';
               } else {
                 if (avatarEl) avatarEl.style.display = 'none';
@@ -1946,7 +1949,15 @@ document.addEventListener('DOMContentLoaded', () => {
               if (tabsWrapper) tabsWrapper.style.display = 'none';
               if (infoNotice) infoNotice.style.display = 'none';
 
+              const sectionTitle = document.querySelector('.about-section .section-title');
+              if (sectionTitle) sectionTitle.style.display = 'none';
+
+              if (authCardContainer) authCardContainer.classList.add('authenticated');
+
               userDashView.style.display = 'block';
+
+              // Sync Firestore projects for Account Dashboard
+              syncAccountDashboardProjects(user.uid);
             }
 
             // Sync Settings Page Account View
@@ -1967,6 +1978,11 @@ document.addEventListener('DOMContentLoaded', () => {
               userDashView.style.display = 'none';
               if (infoNotice) infoNotice.style.display = 'flex';
               if (tabsWrapper) tabsWrapper.style.display = 'flex';
+
+              const sectionTitle = document.querySelector('.about-section .section-title');
+              if (sectionTitle) sectionTitle.style.display = 'block';
+
+              if (authCardContainer) authCardContainer.classList.remove('authenticated');
 
               const activeTab = authCardContainer ? authCardContainer.getAttribute('data-active-tab') : 'register';
               if (activeTab === 'login') {
@@ -2285,6 +2301,184 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       });
     }
+  }
+
+  /* --------------------------------------------------------------------------
+     10b2. Client Account Dashboard UI Interactivity & Tab Navigation
+     -------------------------------------------------------------------------- */
+  function initAccountDashboardUI() {
+    const sidebar = document.getElementById('account-sidebar');
+    const overlay = document.getElementById('account-sidebar-overlay');
+    const hamburgerBtn = document.getElementById('account-hamburger-btn');
+    const closeBtn = document.getElementById('account-sidebar-close');
+    const themeBtn = document.getElementById('account-theme-toggle-btn');
+    const editProfileBtn = document.getElementById('account-edit-profile-btn');
+
+    if (sidebar) {
+      function openSidebar() {
+        sidebar.classList.add('active');
+        if (overlay) overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeSidebar() {
+        sidebar.classList.remove('active');
+        if (overlay) overlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
+      if (hamburgerBtn) hamburgerBtn.addEventListener('click', (e) => { e.stopPropagation(); openSidebar(); });
+      if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+      if (overlay) overlay.addEventListener('click', closeSidebar);
+    }
+
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        applyTheme(nextTheme);
+      });
+    }
+
+    if (editProfileBtn) {
+      editProfileBtn.addEventListener('click', () => {
+        window.location.href = 'settings.html';
+      });
+    }
+
+    // Tab Switching Logic for Account Dashboard
+    const navLinks = document.querySelectorAll('[data-account-nav]');
+    const tabPanes = {
+      'overview': document.getElementById('tab-pane-overview'),
+      'my-projects': document.getElementById('tab-pane-my-projects'),
+      'messages': document.getElementById('tab-pane-messages'),
+      'invoices': document.getElementById('tab-pane-invoices')
+    };
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        const navTarget = link.getAttribute('data-account-nav');
+        if (!tabPanes[navTarget]) return;
+
+        e.preventDefault();
+
+        // Active class on sidebar/action links
+        document.querySelectorAll('[data-account-nav]').forEach(item => {
+          if (item.getAttribute('data-account-nav') === navTarget && item.classList.contains('dash-nav-item')) {
+            item.classList.add('active');
+          } else if (item.classList.contains('dash-nav-item')) {
+            item.classList.remove('active');
+          }
+        });
+
+        // Switch pane visibility
+        Object.keys(tabPanes).forEach(key => {
+          if (tabPanes[key]) {
+            if (key === navTarget) {
+              tabPanes[key].style.display = 'block';
+              tabPanes[key].classList.add('active');
+            } else {
+              tabPanes[key].style.display = 'none';
+              tabPanes[key].classList.remove('active');
+            }
+          }
+        });
+
+        // Page title map
+        const titleEl = document.getElementById('account-page-title');
+        if (titleEl) {
+          const map = {
+            'overview': 'Client Dashboard',
+            'my-projects': 'My Projects',
+            'messages': 'Messages & Support',
+            'invoices': 'Invoices & Billing'
+          };
+          titleEl.textContent = map[navTarget] || 'Client Dashboard';
+        }
+
+        // Close sidebar if mobile open
+        if (sidebar) sidebar.classList.remove('active');
+        if (overlay) overlay.classList.remove('active');
+        document.body.style.overflow = '';
+      });
+    });
+  }
+
+  function syncAccountDashboardProjects(uid) {
+    const mod = window.FirebaseModule;
+    if (!mod || !mod.db || !mod.collection || !mod.query || !mod.where || !mod.onSnapshot) return;
+
+    const projectsQuery = mod.query(mod.collection(mod.db, 'projects'), mod.where('userId', '==', uid));
+    mod.onSnapshot(projectsQuery, (snapshot) => {
+      let total = 0;
+      let active = 0;
+      let completed = 0;
+      let pending = 0;
+      const userProjects = [];
+
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        data.id = doc.id;
+        userProjects.push(data);
+        total++;
+
+        const st = (data.status || '').toLowerCase();
+        if (st === 'completed') completed++;
+        else if (st === 'pending') pending++;
+        else active++;
+      });
+
+      if (total > 0) {
+        if (document.getElementById('stat-total-projects')) document.getElementById('stat-total-projects').textContent = total;
+        if (document.getElementById('stat-active-projects')) document.getElementById('stat-active-projects').textContent = active;
+        if (document.getElementById('stat-completed-projects')) document.getElementById('stat-completed-projects').textContent = completed;
+        if (document.getElementById('sidebar-projects-badge')) document.getElementById('sidebar-projects-badge').textContent = total;
+
+        const recentTbody = document.getElementById('recent-projects-tbody');
+        const myProjectsTbody = document.getElementById('my-projects-tbody');
+
+        if (recentTbody || myProjectsTbody) {
+          const rowsHtml = userProjects.map(p => {
+            const progress = p.progress || 0;
+            const status = p.status || 'Active';
+            let badge = `<span class="badge-status status-active"><i class="fas fa-sync fa-spin"></i> ${status}</span>`;
+            if (status.toLowerCase() === 'completed') {
+              badge = `<span class="badge-status status-completed"><i class="fas fa-check"></i> Completed</span>`;
+            } else if (status.toLowerCase() === 'pending') {
+              badge = `<span class="badge-status status-pending"><i class="fas fa-clock"></i> Pending</span>`;
+            }
+
+            return `
+              <tr>
+                <td>
+                  <div class="dash-table-project-name">
+                    ${p.projectName || 'Web Development Project'}
+                    <span class="dash-table-project-sub">ID: ${p.projectId || p.id}</span>
+                  </div>
+                </td>
+                <td>${badge}</td>
+                <td>
+                  <div class="dash-progress-wrapper">
+                    <div class="dash-progress-bar">
+                      <div class="dash-progress-fill" style="width: ${progress}%;"></div>
+                    </div>
+                    <span class="dash-progress-text">${progress}%</span>
+                  </div>
+                </td>
+                <td><span class="dash-date-badge"><i class="fas fa-calendar-day"></i> Active</span></td>
+                <td>
+                  <a href="project-details.html?id=${p.id}" class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">Details</a>
+                </td>
+              </tr>
+            `;
+          }).join('');
+
+          if (recentTbody) recentTbody.innerHTML = rowsHtml;
+          if (myProjectsTbody) myProjectsTbody.innerHTML = rowsHtml;
+        }
+      }
+    }, (error) => {
+      console.error('Error syncing account dashboard projects:', error);
+    });
   }
 
   /* --------------------------------------------------------------------------
