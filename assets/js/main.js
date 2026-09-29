@@ -1671,7 +1671,10 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.classList.remove('loading');
             if (btnText) btnText.textContent = originalText;
             if (btnIcon) btnIcon.style.display = 'inline-block';
-            showAlert(translations[currentLang].msgLoginSuccess, 'success');
+            showAlert(translations[currentLang].msgLoginSuccess || 'Login successful!', 'success');
+            setTimeout(() => {
+              window.location.href = 'dashboard.html';
+            }, 800);
           })
           .catch((error) => {
             submitBtn.classList.remove('loading');
@@ -1744,7 +1747,10 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.classList.remove('loading');
             if (btnText) btnText.textContent = originalText;
             if (btnIcon) btnIcon.style.display = 'inline-block';
-            showAlert(translations[currentLang].msgRegisterSuccess, 'success');
+            showAlert(translations[currentLang].msgRegisterSuccess || 'Account created successfully!', 'success');
+            setTimeout(() => {
+              window.location.href = 'dashboard.html';
+            }, 800);
           })
           .catch((error) => {
             submitBtn.classList.remove('loading');
@@ -1809,7 +1815,10 @@ document.addEventListener('DOMContentLoaded', () => {
           const provider = new mod.GoogleAuthProvider();
           mod.signInWithPopup(mod.auth, provider)
             .then(() => {
-              showAlert(translations[currentLang].msgGoogleAuthSuccess, 'success');
+              showAlert(translations[currentLang].msgGoogleAuthSuccess || 'Authenticated with Google!', 'success');
+              setTimeout(() => {
+                window.location.href = 'dashboard.html';
+              }, 800);
             })
             .catch((error) => {
               if (error.code !== 'auth/popup-closed-by-user') {
@@ -1919,6 +1928,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Sync Settings Page Account View
             updateSettingsAccountView(user);
 
+            // Sync Dashboard User View
+            updateDashboardUserView(user);
+
             // Re-render three-dots menu
             if (window.refreshThreeDotsMenu) window.refreshThreeDotsMenu();
           } else {
@@ -1947,6 +1959,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Sync Settings Page Account View
             updateSettingsAccountView(null);
+
+            // Protect Dashboard Page: Redirect to account page if not logged in
+            if (getNormalizedPath() === '/dashboard') {
+              window.location.href = 'account.html';
+            }
           }
         });
       } else {
@@ -1955,6 +1972,9 @@ document.addEventListener('DOMContentLoaded', () => {
           if (authLoader) authLoader.style.display = 'none';
           if (infoNotice) infoNotice.style.display = 'flex';
           if (tabsWrapper) tabsWrapper.style.display = 'flex';
+          if (getNormalizedPath() === '/dashboard' && !window.currentUserState) {
+            window.location.href = 'account.html';
+          }
           return;
         }
         setTimeout(checkFirebaseModule, 50);
@@ -1985,6 +2005,27 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       loggedInBox.style.display = 'none';
       loggedOutBox.style.display = 'block';
+    }
+  }
+
+  /* Helper to update user view on dashboard.html */
+  function updateDashboardUserView(user) {
+    const clientTopbarName = document.getElementById('client-topbar-name');
+    const clientSidebarName = document.getElementById('client-sidebar-name');
+    const welcomeUserName = document.getElementById('welcome-user-name');
+    const clientTopbarAvatar = document.getElementById('client-topbar-avatar');
+    const clientSidebarAvatar = document.getElementById('client-sidebar-avatar');
+
+    if (user) {
+      const displayName = user.displayName || (user.email ? user.email.split('@')[0] : 'Valued Client');
+      if (clientTopbarName) clientTopbarName.textContent = displayName;
+      if (clientSidebarName) clientSidebarName.textContent = displayName;
+      if (welcomeUserName) welcomeUserName.textContent = displayName;
+
+      if (user.photoURL) {
+        if (clientTopbarAvatar) clientTopbarAvatar.src = user.photoURL;
+        if (clientSidebarAvatar) clientSidebarAvatar.src = user.photoURL;
+      }
     }
   }
 
