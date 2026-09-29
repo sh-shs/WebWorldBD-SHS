@@ -1948,11 +1948,13 @@ document.addEventListener('DOMContentLoaded', () => {
               const phoneText = document.getElementById('account-profile-phone');
               const userPhone = user.phoneNumber || user.phone || '';
               if (phoneRow && phoneText) {
+                phoneRow.style.display = 'flex';
                 if (userPhone) {
                   phoneText.textContent = userPhone;
-                  phoneRow.style.display = 'flex';
                 } else {
-                  phoneRow.style.display = 'none';
+                  const isBn = currentLang === 'bn';
+                  const promptLabel = isBn ? '+ ফোন নম্বর যোগ করুন' : '+ Add phone number';
+                  phoneText.innerHTML = `<a href="settings.html" style="font-size: 0.88rem; font-weight: 500;">${promptLabel}</a>`;
                 }
               }
 
