@@ -270,6 +270,7 @@ const translations = {
     /* Account / Client Portal Page */
     accountBadge: "Client Portal",
     accountHeading: "Client Account Dashboard",
+    dashClientTitle: "Client Dashboard",
     accountSub: "Log in or register to track project progress, request support, and manage invoices.",
     accountSubLoggedIn: "Welcome! Track your projects, invoices, and support requests here.",
     tabLogin: "Login",
@@ -599,6 +600,7 @@ const translations = {
     /* Account / Client Portal Page */
     accountBadge: "ক্লায়েন্ট পোর্টাল",
     accountHeading: "ক্লায়েন্ট অ্যাকাউন্ট ড্যাশবোর্ড",
+    dashClientTitle: "ক্লায়েন্ট ড্যাশবোর্ড",
     accountSub: "প্রজেক্টের অগ্রগতি ট্র্যাক করতে, সাপোর্ট পেতে ও ইনভয়েস দেখতে লগইন বা রেজিস্ট্রেশন করুন।",
     accountSubLoggedIn: "স্বাগতম! এখানে আপনার প্রজেক্ট, ইনভয়েস ও সাপোর্ট রিকোয়েস্ট ট্র্যাক করুন।",
     tabLogin: "লগইন",

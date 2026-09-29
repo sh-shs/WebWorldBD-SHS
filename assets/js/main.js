@@ -2353,12 +2353,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const titleEl = document.getElementById('account-page-title');
         if (titleEl) {
           const map = {
-            'overview': 'Client Dashboard',
-            'my-projects': 'My Projects',
-            'messages': 'Messages & Support',
-            'invoices': 'Invoices & Billing'
+            'overview': currentLang === 'bn' ? 'ক্লায়েন্ট ড্যাশবোর্ড' : 'Client Dashboard',
+            'my-projects': currentLang === 'bn' ? 'আমার প্রজেক্টসমূহ' : 'My Projects',
+            'messages': currentLang === 'bn' ? 'মেসেজ ও সাপোর্ট' : 'Messages & Support',
+            'invoices': currentLang === 'bn' ? 'ইনভয়েস ও বিলিং' : 'Invoices & Billing'
           };
-          titleEl.textContent = map[navTarget] || 'Client Dashboard';
+          titleEl.textContent = map[navTarget] || (currentLang === 'bn' ? 'ক্লায়েন্ট ড্যাশবোর্ড' : 'Client Dashboard');
         }
 
         // Close sidebar if mobile open
