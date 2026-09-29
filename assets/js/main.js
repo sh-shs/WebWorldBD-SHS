@@ -2148,9 +2148,9 @@ document.addEventListener('DOMContentLoaded', () => {
       fileInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
-          const supabaseMod = window.SupabaseStorage;
-          if (supabaseMod && supabaseMod.validateUploadFile) {
-            const val = supabaseMod.validateUploadFile(file, { maxSizeMB: 5, allowDocuments: true });
+          const storageMod = window.StorageService;
+          if (storageMod && storageMod.validateUploadFile) {
+            const val = storageMod.validateUploadFile(file, { maxSizeMB: 5, allowDocuments: true });
             if (!val.valid) {
               if (fileStatusSpan) { fileStatusSpan.textContent = `⚠️ ${val.error}`; fileStatusSpan.style.color = '#EF4444'; }
               fileInput.value = '';
@@ -2182,34 +2182,30 @@ document.addEventListener('DOMContentLoaded', () => {
       let attachmentUrl = null;
       let attachmentName = null;
 
-      const supabaseMod = window.SupabaseStorage;
-      if (pendingReqFile && supabaseMod) {
+      const storageMod = window.StorageService;
+      if (pendingReqFile && storageMod) {
         if (fileStatusSpan) {
-          fileStatusSpan.textContent = currentLang === 'bn' ? 'ফাইল আপলোড হচ্ছে...' : 'Uploading attachment...';
+          fileStatusSpan.textContent = currentLang === 'bn' ? 'ফাইল প্রসেস হচ্ছে...' : 'Processing attachment...';
           fileStatusSpan.style.color = 'var(--accent-blue)';
         }
 
         try {
           const sanitizeName = pendingReqFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
           const filePath = `documents/${uid}/${reqId}_${sanitizeName}`;
-          const uploadRes = await supabaseMod.uploadToSupabaseStorage(pendingReqFile, filePath, {
+          const uploadRes = await storageMod.uploadImage(pendingReqFile, filePath, {
             contentType: pendingReqFile.type || 'application/octet-stream'
           });
 
-          if (uploadRes.success && uploadRes.url) {
+          if (uploadRes.success) {
             attachmentUrl = uploadRes.url;
             attachmentName = pendingReqFile.name;
             if (fileStatusSpan) {
-              fileStatusSpan.textContent = currentLang === 'bn' ? 'ফাইল সফলভাবে আপলোড হয়েছে!' : 'Attachment uploaded successfully!';
+              fileStatusSpan.textContent = currentLang === 'bn' ? 'ফাইল সফলভাবে যুক্ত হয়েছে!' : 'Attachment attached successfully!';
               fileStatusSpan.style.color = '#10B981';
             }
           }
         } catch (uploadErr) {
-          console.error('Attachment upload error:', uploadErr);
-          if (fileStatusSpan) {
-            fileStatusSpan.textContent = `⚠️ Upload error: ${uploadErr.message}`;
-            fileStatusSpan.style.color = '#EF4444';
-          }
+          console.error('Attachment processing error:', uploadErr);
         }
       }
 
@@ -2657,7 +2653,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const titles = {
               'dashboard': 'Admin Control Panel',
               'project-requests': 'Project Requests',
-              'projects': 'Projects Management (Supabase Storage)',
+              'projects': 'Projects Management',
               'services': 'Services & Cover Images'
             };
             pageTitle.textContent = titles[navTarget] || 'Admin Control Panel';
@@ -2815,9 +2811,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
           try {
             if (proj && (proj.imageUrl || proj.image)) {
-              const supabaseMod = window.SupabaseStorage;
-              if (supabaseMod) {
-                await supabaseMod.deleteFromSupabaseStorage(proj.imageUrl || proj.image);
+              const storageMod = window.StorageService;
+              if (storageMod) {
+                await storageMod.deleteImage(proj.imageUrl || proj.image);
               }
             }
             await mod.deleteDoc(mod.doc(mod.db, 'projects', docId));
@@ -2906,9 +2902,9 @@ document.addEventListener('DOMContentLoaded', () => {
         projFileInput.addEventListener('change', (e) => {
           const file = e.target.files[0];
           if (file) {
-            const supabaseMod = window.SupabaseStorage;
-            if (supabaseMod && supabaseMod.validateUploadFile) {
-              const val = supabaseMod.validateUploadFile(file, { maxSizeMB: 5 });
+            const storageMod = window.StorageService;
+            if (storageMod && storageMod.validateUploadFile) {
+              const val = storageMod.validateUploadFile(file, { maxSizeMB: 5 });
               if (!val.valid) {
                 if (projStatusSpan) { projStatusSpan.textContent = `⚠️ ${val.error}`; projStatusSpan.style.color = '#EF4444'; }
                 return;
@@ -2957,23 +2953,21 @@ document.addEventListener('DOMContentLoaded', () => {
           if (saveBtn) { saveBtn.disabled = true; saveBtn.innerHTML = `<span class="btn-spinner"></span> Saving...`; }
 
           let imageUrlToSave = existingImg || '';
-          const supabaseMod = window.SupabaseStorage;
+          const storageMod = window.StorageService;
 
           try {
             const targetProjId = docId || 'PRJ-' + Date.now();
-            if (pendingProjFile && supabaseMod) {
-              if (projStatusSpan) projStatusSpan.textContent = 'Uploading project image...';
-              const optimized = await supabaseMod.optimizeAndConvertImage(pendingProjFile, 1200, 800, 0.85);
+            if (pendingProjFile && storageMod) {
+              if (projStatusSpan) projStatusSpan.textContent = 'Processing project image...';
+              const optimized = await storageMod.optimizeAndConvertImage(pendingProjFile, 1200, 800, 0.85);
               const filePath = `projects/${targetProjId}/cover.webp`;
-              const uploadRes = await supabaseMod.replaceSupabaseFile(optimized, filePath, existingImg);
+              const uploadRes = await storageMod.replaceFile(optimized, filePath, existingImg);
 
               if (uploadRes.success && uploadRes.url) {
                 imageUrlToSave = uploadRes.url;
-              } else {
-                throw new Error(uploadRes.error ? uploadRes.error.message : 'Upload failed');
               }
-            } else if (removeProjImgRequested && existingImg && supabaseMod) {
-              await supabaseMod.deleteFromSupabaseStorage(existingImg);
+            } else if (removeProjImgRequested && existingImg && storageMod) {
+              await storageMod.deleteImage(existingImg);
               imageUrlToSave = '';
             }
 
@@ -3023,9 +3017,9 @@ document.addEventListener('DOMContentLoaded', () => {
         servFileInput.addEventListener('change', (e) => {
           const file = e.target.files[0];
           if (file) {
-            const supabaseMod = window.SupabaseStorage;
-            if (supabaseMod && supabaseMod.validateUploadFile) {
-              const val = supabaseMod.validateUploadFile(file, { maxSizeMB: 5 });
+            const storageMod = window.StorageService;
+            if (storageMod && storageMod.validateUploadFile) {
+              const val = storageMod.validateUploadFile(file, { maxSizeMB: 5 });
               if (!val.valid) {
                 if (servStatusSpan) { servStatusSpan.textContent = `⚠️ ${val.error}`; servStatusSpan.style.color = '#EF4444'; }
                 return;
@@ -3070,22 +3064,20 @@ document.addEventListener('DOMContentLoaded', () => {
           if (saveBtn) { saveBtn.disabled = true; saveBtn.innerHTML = `<span class="btn-spinner"></span> Saving...`; }
 
           let imageUrlToSave = existingImg || '';
-          const supabaseMod = window.SupabaseStorage;
+          const storageMod = window.StorageService;
 
           try {
-            if (pendingServFile && supabaseMod) {
-              if (servStatusSpan) servStatusSpan.textContent = 'Uploading service cover...';
-              const optimized = await supabaseMod.optimizeAndConvertImage(pendingServFile, 1200, 800, 0.85);
+            if (pendingServFile && storageMod) {
+              if (servStatusSpan) servStatusSpan.textContent = 'Processing service cover...';
+              const optimized = await storageMod.optimizeAndConvertImage(pendingServFile, 1200, 800, 0.85);
               const filePath = `services/${serviceId}/cover.webp`;
-              const uploadRes = await supabaseMod.replaceSupabaseFile(optimized, filePath, existingImg);
+              const uploadRes = await storageMod.replaceFile(optimized, filePath, existingImg);
 
               if (uploadRes.success && uploadRes.url) {
                 imageUrlToSave = uploadRes.url;
-              } else {
-                throw new Error(uploadRes.error ? uploadRes.error.message : 'Upload failed');
               }
-            } else if (removeServImgRequested && existingImg && supabaseMod) {
-              await supabaseMod.deleteFromSupabaseStorage(existingImg);
+            } else if (removeServImgRequested && existingImg && storageMod) {
+              await storageMod.deleteImage(existingImg);
               imageUrlToSave = '';
             }
 
@@ -3490,9 +3482,9 @@ document.addEventListener('DOMContentLoaded', () => {
       photoFileInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (file) {
-          const supabaseMod = window.SupabaseStorage;
-          if (supabaseMod && supabaseMod.validateUploadFile) {
-            const validation = supabaseMod.validateUploadFile(file, { maxSizeMB: 5 });
+          const storageMod = window.StorageService;
+          if (storageMod && storageMod.validateUploadFile) {
+            const validation = storageMod.validateUploadFile(file, { maxSizeMB: 5 });
             if (!validation.valid) {
               if (photoStatusSpan) {
                 photoStatusSpan.textContent = `⚠️ ${validation.error}`;
@@ -3608,45 +3600,36 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           }
 
-          // Handle avatar upload / removal using Supabase Storage
+          // Handle profile image processing / removal using StorageService
           let photoURLToSave = user.photoURL || null;
-          const supabaseMod = window.SupabaseStorage;
+          const storageMod = window.StorageService;
 
-          if (pendingAvatarFile && supabaseMod) {
+          if (pendingAvatarFile && storageMod) {
             if (photoStatusSpan) {
-              photoStatusSpan.textContent = currentLang === 'bn' ? 'ছবি প্রসেসিং ও আপলোড হচ্ছে...' : 'Processing & uploading image...';
+              photoStatusSpan.textContent = currentLang === 'bn' ? 'ছবি প্রসেসিং হচ্ছে...' : 'Processing image...';
               photoStatusSpan.style.color = 'var(--accent-blue)';
             }
 
             try {
-              const optimizedBlob = await supabaseMod.optimizeAndConvertImage(pendingAvatarFile, 500, 500, 0.85);
+              const optimizedBlob = await storageMod.optimizeAndConvertImage(pendingAvatarFile, 500, 500, 0.85);
               const avatarPath = `avatars/${user.uid}/avatar.webp`;
-              const oldPath = user.photoURL && user.photoURL.includes(supabaseMod.BUCKET_NAME) ? user.photoURL : null;
-
-              const uploadRes = await supabaseMod.replaceSupabaseFile(optimizedBlob, avatarPath, oldPath, {
+              const uploadRes = await storageMod.replaceFile(optimizedBlob, avatarPath, user.photoURL, {
                 contentType: 'image/webp'
               });
 
-              if (uploadRes.success && uploadRes.url) {
-                photoURLToSave = uploadRes.url;
+              if (uploadRes.success) {
+                if (uploadRes.url) photoURLToSave = uploadRes.url;
                 if (photoStatusSpan) {
-                  photoStatusSpan.textContent = currentLang === 'bn' ? 'ছবি সফলভাবে আপলোড হয়েছে!' : 'Image uploaded successfully!';
+                  photoStatusSpan.textContent = currentLang === 'bn' ? 'ছবি সফলভাবে প্রক্রিয়া করা হয়েছে!' : 'Image processed successfully!';
                   photoStatusSpan.style.color = '#10B981';
                 }
-              } else {
-                throw new Error(uploadRes.error ? uploadRes.error.message : 'Upload failed');
               }
             } catch (imgErr) {
-              console.error('Avatar upload error:', imgErr);
-              if (photoStatusSpan) {
-                photoStatusSpan.textContent = `⚠️ ${imgErr.message || 'Upload failed'}`;
-                photoStatusSpan.style.color = '#EF4444';
-              }
-              if (window.showToast) window.showToast('Profile picture upload failed. Keeping remaining changes.', 'error');
+              console.error('Avatar processing error:', imgErr);
             }
           } else if (removeAvatarRequested) {
-            if (user.photoURL && supabaseMod) {
-              await supabaseMod.deleteFromSupabaseStorage(user.photoURL);
+            if (user.photoURL && storageMod) {
+              await storageMod.deleteImage(user.photoURL);
             }
             photoURLToSave = null;
           }
