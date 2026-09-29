@@ -558,7 +558,7 @@ p {
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   touch-action: pan-y;
-  background: rgba(15, 23, 42, 0.92);
+  background: #0f172a;
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--border-glass);
@@ -623,7 +623,7 @@ p {
 }
 
 [data-theme="light"] .three-dots-dropdown-menu {
-  background: rgba(255, 255, 255, 0.95);
+  background: #ffffff;
   border-color: rgba(203, 213, 225, 0.8);
   box-shadow: 0 20px 45px rgba(15, 23, 42, 0.18), 0 0 25px rgba(14, 165, 233, 0.15);
   scrollbar-color: rgba(15, 23, 42, 0.2) transparent;
@@ -651,12 +651,12 @@ p {
 
 .three-dots-menu-divider {
   height: 1px;
-  background: var(--border-glass);
+  background: rgba(255, 255, 255, 0.05);
   margin: 0.4rem 0;
 }
 
 [data-theme="light"] .three-dots-menu-divider {
-  background: rgba(15, 23, 42, 0.08);
+  background: rgba(15, 23, 42, 0.06);
 }
 
 /* User Profile Header at top of Three-Dot Menu */
