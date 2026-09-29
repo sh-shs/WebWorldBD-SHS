@@ -113,11 +113,24 @@ export async function uploadImage(fileOrBlob, filePath = '', options = {}) {
       throw new Error('No file provided for upload.');
     }
 
+    // Determine target subfolder in Cloudinary
+    let targetFolder = options.folder;
+    if (!targetFolder) {
+      if (filePath && filePath.includes('/')) {
+        const subDir = filePath.substring(0, filePath.lastIndexOf('/'));
+        targetFolder = `${CLOUDINARY_FOLDER}/${subDir}`;
+      } else {
+        targetFolder = CLOUDINARY_FOLDER;
+      }
+    } else if (!targetFolder.startsWith(CLOUDINARY_FOLDER)) {
+      targetFolder = `${CLOUDINARY_FOLDER}/${targetFolder}`;
+    }
+
     const formData = new FormData();
     const fileName = fileOrBlob.name || (filePath ? filePath.split('/').pop() : 'upload.webp');
     formData.append('file', fileOrBlob, fileName);
     formData.append('upload_preset', options.upload_preset || CLOUDINARY_UPLOAD_PRESET);
-    formData.append('folder', options.folder || CLOUDINARY_FOLDER);
+    formData.append('folder', targetFolder);
 
     const response = await fetch(CLOUDINARY_UPLOAD_URL, {
       method: 'POST',

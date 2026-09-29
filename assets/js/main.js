@@ -8,6 +8,18 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentTheme = localStorage.getItem('webworldbd_theme') || 'dark';
   let currentLang = localStorage.getItem('webworldbd_lang') || 'en';
 
+  // Helper function to escape HTML for XSS prevention
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+  window.escapeHtml = escapeHtml;
+
   // Apply Theme & Language on Load
   applyTheme(currentTheme);
   applyLanguage(currentLang);
@@ -352,10 +364,6 @@ document.addEventListener('DOMContentLoaded', () => {
         logoutBtn.addEventListener('click', (e) => {
           e.preventDefault();
           closeMenu();
-          window.currentUserState = null;
-          if (window.refreshThreeDotsMenu) {
-            window.refreshThreeDotsMenu();
-          }
           const mod = window.FirebaseModule;
           if (mod && mod.auth && mod.signOut) {
             mod.signOut(mod.auth).then(() => {
@@ -421,10 +429,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const accountLogoutBtn = document.getElementById('account-logout-btn');
     if (accountLogoutBtn) {
       accountLogoutBtn.addEventListener('click', () => {
-        window.currentUserState = null;
-        if (window.refreshThreeDotsMenu) {
-          window.refreshThreeDotsMenu();
-        }
         const mod = window.FirebaseModule;
         if (mod && mod.auth && mod.signOut) {
           mod.signOut(mod.auth).then(() => {
@@ -1625,10 +1629,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (logoutBtn) {
       logoutBtn.addEventListener('click', () => {
-        window.currentUserState = null;
-        if (window.refreshThreeDotsMenu) {
-          window.refreshThreeDotsMenu();
-        }
         const mod = window.FirebaseModule;
         if (mod && mod.auth && mod.signOut) {
           mod.signOut(mod.auth).then(() => {
@@ -1640,12 +1640,6 @@ document.addEventListener('DOMContentLoaded', () => {
           }).catch(err => {
             showAlert(getFirebaseErrorMessage(err ? err.code : ''), 'error');
           });
-        } else {
-          if (userDashView) userDashView.style.display = 'none';
-          const infoNotice = document.getElementById('auth-info-notice');
-          if (infoNotice) infoNotice.style.display = 'flex';
-          switchAuthTab('register');
-          showAlert(currentLang === 'bn' ? 'সফলভাবে লগআউট করা হয়েছে।' : 'Logged out successfully.', 'info');
         }
       });
     }
@@ -2550,12 +2544,14 @@ document.addEventListener('DOMContentLoaded', () => {
               badge = `<span class="badge-status status-pending"><i class="fas fa-clock"></i> Pending</span>`;
             }
 
+            const projName = escapeHtml(p.projectName || 'Web Development Project');
+            const projId = escapeHtml(p.projectId || p.id);
             return `
               <tr>
                 <td>
                   <div class="dash-table-project-name">
-                    ${p.projectName || 'Web Development Project'}
-                    <span class="dash-table-project-sub">ID: ${p.projectId || p.id}</span>
+                    ${projName}
+                    <span class="dash-table-project-sub">ID: ${projId}</span>
                   </div>
                 </td>
                 <td>${badge}</td>
@@ -2569,7 +2565,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </td>
                 <td><span class="dash-date-badge"><i class="fas fa-calendar-day"></i> Active</span></td>
                 <td>
-                  <a href="project-details.html?id=${p.id}" class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">Details</a>
+                  <a href="project-details.html?id=${encodeURIComponent(p.id)}" class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">Details</a>
                 </td>
               </tr>
             `;
@@ -4093,18 +4089,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (logoutSettingsBtn) {
       logoutSettingsBtn.addEventListener('click', () => {
-        window.currentUserState = null;
-        if (window.refreshThreeDotsMenu) {
-          window.refreshThreeDotsMenu();
-        }
-        updateSettingsAccountView(null);
         const mod = window.FirebaseModule;
         if (mod && mod.auth && mod.signOut) {
           mod.signOut(mod.auth).then(() => {
             alert(currentLang === 'bn' ? 'সফলভাবে লগআউট করা হয়েছে।' : 'Logged out successfully.');
           });
-        } else {
-          alert(currentLang === 'bn' ? 'সফলভাবে লগআউট করা হয়েছে।' : 'Logged out successfully.');
         }
       });
     }
