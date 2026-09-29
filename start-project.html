@@ -18,8 +18,9 @@
   <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="assets/css/style.css">
 
-  <!-- Firebase Module Script -->
+  <!-- Firebase & Supabase Module Scripts -->
   <script type="module" src="assets/js/firebase-config.js"></script>
+  <script type="module" src="assets/js/supabase-config.js"></script>
 </head>
 <body>
 
@@ -120,6 +121,18 @@
           <div>
             <label class="form-label" data-i18n="formCustomDescLabel" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Project Details / Free-text Requirement</label>
             <textarea id="project-req-desc" rows="5" class="form-control" style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--radius-md); background: var(--bg-glass); border: 1px solid var(--border-glass); color: var(--text-main);" placeholder="Describe your custom project requirements in detail..." required></textarea>
+          </div>
+
+          <div>
+            <label class="form-label" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Attach Reference File / Requirements Document <span style="font-size: 0.8rem; color: var(--text-muted);">(Optional - JPG, PNG, WEBP, PDF, DOCX, ZIP up to 5MB)</span></label>
+            <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+              <input type="file" id="project-req-file-input" style="display: none;" accept="image/jpeg,image/png,image/webp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/zip,text/plain">
+              <button type="button" class="btn btn-secondary" id="btn-project-req-file" style="padding: 0.55rem 1rem; font-size: 0.88rem;">
+                <i class="fas fa-paperclip"></i> Choose Attachment
+              </button>
+              <span id="project-req-file-name" style="font-size: 0.85rem; color: var(--text-muted);"></span>
+            </div>
+            <span id="project-req-file-status" style="display: block; font-size: 0.78rem; margin-top: 0.35rem; font-weight: 600;"></span>
           </div>
 
           <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem;">

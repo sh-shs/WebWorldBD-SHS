@@ -18,8 +18,9 @@
   <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="assets/css/style.css">
 
-  <!-- Firebase Module Script -->
+  <!-- Firebase & Supabase Module Scripts -->
   <script type="module" src="assets/js/firebase-config.js"></script>
+  <script type="module" src="assets/js/supabase-config.js"></script>
 </head>
 <body>
 
@@ -713,11 +714,17 @@
               </div>
             </div>
             <div>
-              <input type="file" id="edit-photo-file-input" accept="image/*" style="display: none;">
-              <button type="button" class="btn btn-secondary" id="btn-change-photo" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
-                <i class="fas fa-camera"></i> ছবি পরিবর্তন করুন
-              </button>
+              <input type="file" id="edit-photo-file-input" accept="image/jpeg,image/png,image/webp" style="display: none;">
+              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button type="button" class="btn btn-secondary" id="btn-change-photo" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+                  <i class="fas fa-camera"></i> ছবি নির্বাচন করুন
+                </button>
+                <button type="button" class="btn btn-danger-outline" id="btn-remove-photo" style="padding: 0.5rem 0.85rem; font-size: 0.85rem; display: none;">
+                  <i class="fas fa-trash"></i> রিমুভ
+                </button>
+              </div>
               <span id="photo-selected-name" style="display: block; font-size: 0.78rem; color: var(--text-muted); margin-top: 0.35rem;"></span>
+              <span id="photo-upload-status" style="display: block; font-size: 0.78rem; margin-top: 0.25rem; font-weight: 600;"></span>
             </div>
           </div>
         </div>

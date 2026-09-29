@@ -2137,6 +2137,35 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    let pendingReqFile = null;
+    const fileInput = document.getElementById('project-req-file-input');
+    const fileBtn = document.getElementById('btn-project-req-file');
+    const fileNameSpan = document.getElementById('project-req-file-name');
+    const fileStatusSpan = document.getElementById('project-req-file-status');
+
+    if (fileBtn && fileInput) {
+      fileBtn.addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const supabaseMod = window.SupabaseStorage;
+          if (supabaseMod && supabaseMod.validateUploadFile) {
+            const val = supabaseMod.validateUploadFile(file, { maxSizeMB: 5, allowDocuments: true });
+            if (!val.valid) {
+              if (fileStatusSpan) { fileStatusSpan.textContent = `⚠️ ${val.error}`; fileStatusSpan.style.color = '#EF4444'; }
+              fileInput.value = '';
+              pendingReqFile = null;
+              if (fileNameSpan) fileNameSpan.textContent = '';
+              return;
+            }
+          }
+          pendingReqFile = file;
+          if (fileNameSpan) fileNameSpan.textContent = `${file.name} (${(file.size / (1024 * 1024)).toFixed(2)} MB)`;
+          if (fileStatusSpan) { fileStatusSpan.textContent = currentLang === 'bn' ? 'ফাইলটি প্রজেক্ট রিকুয়েস্টের সাথে যুক্ত হবে।' : 'File ready to attach.'; fileStatusSpan.style.color = 'var(--accent-blue)'; }
+        }
+      });
+    }
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const name = document.getElementById('project-req-name')?.value.trim() || '';
@@ -2149,13 +2178,50 @@ document.addEventListener('DOMContentLoaded', () => {
       const uid = user ? user.uid : 'guest_' + Date.now();
       const userEmail = user ? user.email : (contact.includes('@') ? contact : '');
 
+      const reqId = 'REQ-' + Math.floor(100000 + Math.random() * 900000);
+      let attachmentUrl = null;
+      let attachmentName = null;
+
+      const supabaseMod = window.SupabaseStorage;
+      if (pendingReqFile && supabaseMod) {
+        if (fileStatusSpan) {
+          fileStatusSpan.textContent = currentLang === 'bn' ? 'ফাইল আপলোড হচ্ছে...' : 'Uploading attachment...';
+          fileStatusSpan.style.color = 'var(--accent-blue)';
+        }
+
+        try {
+          const sanitizeName = pendingReqFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+          const filePath = `documents/${uid}/${reqId}_${sanitizeName}`;
+          const uploadRes = await supabaseMod.uploadToSupabaseStorage(pendingReqFile, filePath, {
+            contentType: pendingReqFile.type || 'application/octet-stream'
+          });
+
+          if (uploadRes.success && uploadRes.url) {
+            attachmentUrl = uploadRes.url;
+            attachmentName = pendingReqFile.name;
+            if (fileStatusSpan) {
+              fileStatusSpan.textContent = currentLang === 'bn' ? 'ফাইল সফলভাবে আপলোড হয়েছে!' : 'Attachment uploaded successfully!';
+              fileStatusSpan.style.color = '#10B981';
+            }
+          }
+        } catch (uploadErr) {
+          console.error('Attachment upload error:', uploadErr);
+          if (fileStatusSpan) {
+            fileStatusSpan.textContent = `⚠️ Upload error: ${uploadErr.message}`;
+            fileStatusSpan.style.color = '#EF4444';
+          }
+        }
+      }
+
       const requestPayload = {
-        requestId: 'REQ-' + Math.floor(100000 + Math.random() * 900000),
+        requestId: reqId,
         clientName: name,
         contactInfo: contact,
         serviceName: serviceType,
         budget: budget,
         description: desc,
+        attachmentUrl: attachmentUrl,
+        attachmentName: attachmentName,
         status: 'pending',
         userId: uid,
         userEmail: userEmail,
@@ -2550,12 +2616,57 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
 
-        // Initialize Real-time Project Requests & Projects Management for Admin
+        // Initialize Admin Section Navigation & Real-time Syncs
+        initAdminTabNavigation();
         initAdminProjectRequestsSync();
         initAdminProjectsSync();
+        initAdminServicesSync();
+        initAdminModalControls();
       });
     }
 
+    function initAdminTabNavigation() {
+      const navLinks = document.querySelectorAll('.dash-nav .dash-nav-item[data-nav]');
+      const sections = {
+        'dashboard': document.getElementById('admin-section-overview'),
+        'project-requests': document.getElementById('admin-section-overview'),
+        'projects': document.getElementById('admin-section-projects'),
+        'services': document.getElementById('admin-section-services')
+      };
+
+      navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          const navTarget = link.getAttribute('data-nav');
+          if (!sections[navTarget]) return;
+
+          e.preventDefault();
+
+          navLinks.forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
+
+          Object.keys(sections).forEach(key => {
+            if (sections[key]) sections[key].style.display = 'none';
+          });
+
+          if (sections[navTarget]) {
+            sections[navTarget].style.display = 'block';
+          }
+
+          const pageTitle = document.querySelector('.dash-page-title');
+          if (pageTitle) {
+            const titles = {
+              'dashboard': 'Admin Control Panel',
+              'project-requests': 'Project Requests',
+              'projects': 'Projects Management (Supabase Storage)',
+              'services': 'Services & Cover Images'
+            };
+            pageTitle.textContent = titles[navTarget] || 'Admin Control Panel';
+          }
+        });
+      });
+    }
+
+    let adminProjectsList = [];
     function initAdminProjectsSync() {
       const mod = window.FirebaseModule;
       if (!mod || !mod.db || !mod.collection || !mod.onSnapshot) return;
@@ -2564,10 +2675,14 @@ document.addEventListener('DOMContentLoaded', () => {
       mod.onSnapshot(projectsRef, (snapshot) => {
         let activeCount = 0;
         let totalProjects = 0;
+        adminProjectsList = [];
 
         snapshot.forEach((doc) => {
           totalProjects++;
           const data = doc.data();
+          data.docId = doc.id;
+          adminProjectsList.push(data);
+
           const st = (data.status || '').toLowerCase();
           if (st !== 'completed' && st !== 'cancelled') {
             activeCount++;
@@ -2578,9 +2693,430 @@ document.addEventListener('DOMContentLoaded', () => {
         if (statCards.length >= 2) {
           statCards[1].textContent = activeCount;
         }
+
+        renderAdminProjectsTable(adminProjectsList);
       }, (error) => {
         console.error('Error listening to admin projects:', error);
       });
+    }
+
+    function renderAdminProjectsTable(projects) {
+      const tbody = document.getElementById('admin-projects-tbody');
+      if (!tbody) return;
+
+      if (projects.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+              No projects in database yet.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = projects.map(p => {
+        const imgUrl = p.imageUrl || p.image || '';
+        const thumbHtml = imgUrl
+          ? `<img src="${imgUrl}" alt="${p.projectName}" style="width: 50px; height: 35px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-glass);" />`
+          : `<div style="width: 50px; height: 35px; border-radius: 6px; background: var(--bg-glass); border: 1px solid var(--border-glass); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: var(--text-muted);"><i class="fas fa-image"></i></div>`;
+
+        return `
+          <tr>
+            <td>${thumbHtml}</td>
+            <td>
+              <div class="dash-table-project-name">
+                ${p.projectName || 'Web Project'}
+                <span class="dash-table-project-sub">ID: ${p.projectId || p.docId}</span>
+              </div>
+            </td>
+            <td>${p.clientName || p.userEmail || 'Client'}</td>
+            <td><span class="badge-status status-active">${p.status || 'Active'}</span></td>
+            <td>${p.progress || 0}%</td>
+            <td>
+              <button type="button" class="btn btn-secondary btn-admin-edit-project" data-doc-id="${p.docId}" style="padding: 0.3rem 0.6rem; font-size: 0.78rem;"><i class="fas fa-pen"></i> Edit / Img</button>
+              <button type="button" class="btn btn-danger-outline btn-admin-delete-project" data-doc-id="${p.docId}" style="padding: 0.3rem 0.6rem; font-size: 0.78rem;"><i class="fas fa-trash"></i> Delete</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      attachAdminProjectsRowActions();
+    }
+
+    function initAdminServicesSync() {
+      const tbody = document.getElementById('admin-services-tbody');
+      if (!tbody) return;
+
+      const services = portfolioData.services || [];
+      tbody.innerHTML = services.map(s => {
+        const coverUrl = s.coverImage || s.image || '';
+        const thumbHtml = coverUrl
+          ? `<img src="${coverUrl}" alt="${s.title_en}" style="width: 60px; height: 38px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-glass);" />`
+          : `<div style="width: 60px; height: 38px; border-radius: 6px; background: var(--bg-glass); border: 1px solid var(--border-glass); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: var(--text-muted);"><i class="${s.icon || 'fas fa-layer-group'}"></i></div>`;
+
+        return `
+          <tr>
+            <td>${thumbHtml}</td>
+            <td><strong>${s.title_en}</strong><br><span style="font-size: 0.8rem; color: var(--text-muted);">${s.title_bn}</span></td>
+            <td><code>${s.id}</code></td>
+            <td>${s.price_en}</td>
+            <td>
+              <button type="button" class="btn btn-secondary btn-admin-edit-service" data-service-id="${s.id}" style="padding: 0.35rem 0.7rem; font-size: 0.8rem;"><i class="fas fa-camera"></i> Manage Image</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      attachAdminServicesRowActions();
+    }
+
+    function attachAdminProjectsRowActions() {
+      const mod = window.FirebaseModule;
+      if (!mod || !mod.db) return;
+
+      document.querySelectorAll('.btn-admin-edit-project').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const docId = btn.getAttribute('data-doc-id');
+          const proj = adminProjectsList.find(p => p.docId === docId);
+          if (!proj) return;
+
+          document.getElementById('admin-project-doc-id').value = docId;
+          document.getElementById('admin-project-name').value = proj.projectName || '';
+          document.getElementById('admin-project-client').value = proj.clientName || proj.userEmail || '';
+          document.getElementById('admin-project-status').value = proj.status || 'In Progress';
+          document.getElementById('admin-project-progress').value = proj.progress || 10;
+          document.getElementById('admin-project-existing-img').value = proj.imageUrl || proj.image || '';
+
+          const previewBox = document.getElementById('admin-project-img-preview');
+          const removeImgBtn = document.getElementById('btn-admin-project-file-remove');
+          const statusSpan = document.getElementById('admin-project-file-status');
+          if (statusSpan) { statusSpan.textContent = ''; statusSpan.style.color = ''; }
+
+          const currentImg = proj.imageUrl || proj.image || '';
+          if (currentImg) {
+            if (previewBox) previewBox.innerHTML = `<img src="${currentImg}" style="width:100%; height:100%; object-fit:cover;" />`;
+            if (removeImgBtn) removeImgBtn.style.display = 'inline-flex';
+          } else {
+            if (previewBox) previewBox.innerHTML = `<span style="font-size: 0.75rem; color: var(--text-muted);">No Img</span>`;
+            if (removeImgBtn) removeImgBtn.style.display = 'none';
+          }
+
+          document.getElementById('admin-project-modal-title').innerHTML = `<i class="fas fa-folder-pen"></i> Edit Project & Image`;
+          document.getElementById('admin-project-modal').classList.add('active');
+        });
+      });
+
+      document.querySelectorAll('.btn-admin-delete-project').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const docId = btn.getAttribute('data-doc-id');
+          const proj = adminProjectsList.find(p => p.docId === docId);
+          if (!confirm(`Are you sure you want to delete project "${proj ? proj.projectName : docId}"?`)) return;
+
+          try {
+            if (proj && (proj.imageUrl || proj.image)) {
+              const supabaseMod = window.SupabaseStorage;
+              if (supabaseMod) {
+                await supabaseMod.deleteFromSupabaseStorage(proj.imageUrl || proj.image);
+              }
+            }
+            await mod.deleteDoc(mod.doc(mod.db, 'projects', docId));
+            if (window.showToast) window.showToast('Project deleted successfully.', 'info');
+          } catch (err) {
+            console.error('Error deleting project:', err);
+            if (window.showToast) window.showToast('Error deleting project: ' + err.message, 'error');
+          }
+        });
+      });
+    }
+
+    function attachAdminServicesRowActions() {
+      document.querySelectorAll('.btn-admin-edit-service').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const serviceId = btn.getAttribute('data-service-id');
+          const service = (portfolioData.services || []).find(s => s.id === serviceId);
+          if (!service) return;
+
+          document.getElementById('admin-service-id').value = serviceId;
+          document.getElementById('admin-service-title-label').textContent = `${service.title_en} (${service.title_bn})`;
+          document.getElementById('admin-service-desc').textContent = service.desc_en;
+          document.getElementById('admin-service-existing-img').value = service.coverImage || service.image || '';
+
+          const previewBox = document.getElementById('admin-service-img-preview');
+          const removeImgBtn = document.getElementById('btn-admin-service-file-remove');
+          const statusSpan = document.getElementById('admin-service-file-status');
+          if (statusSpan) { statusSpan.textContent = ''; statusSpan.style.color = ''; }
+
+          const currentImg = service.coverImage || service.image || '';
+          if (currentImg) {
+            if (previewBox) previewBox.innerHTML = `<img src="${currentImg}" style="width:100%; height:100%; object-fit:cover;" />`;
+            if (removeImgBtn) removeImgBtn.style.display = 'inline-flex';
+          } else {
+            if (previewBox) previewBox.innerHTML = `<span style="font-size: 0.75rem; color: var(--text-muted);">No Img</span>`;
+            if (removeImgBtn) removeImgBtn.style.display = 'none';
+          }
+
+          document.getElementById('admin-service-modal').classList.add('active');
+        });
+      });
+    }
+
+    function initAdminModalControls() {
+      const addProjBtn = document.getElementById('btn-admin-add-project');
+      const projModal = document.getElementById('admin-project-modal');
+      const servModal = document.getElementById('admin-service-modal');
+
+      document.querySelectorAll('.settings-modal-overlay .btn-modal-cancel').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (projModal) projModal.classList.remove('active');
+          if (servModal) servModal.classList.remove('active');
+        });
+      });
+
+      if (addProjBtn && projModal) {
+        addProjBtn.addEventListener('click', () => {
+          document.getElementById('admin-project-doc-id').value = '';
+          document.getElementById('admin-project-name').value = '';
+          document.getElementById('admin-project-client').value = '';
+          document.getElementById('admin-project-status').value = 'In Progress';
+          document.getElementById('admin-project-progress').value = 10;
+          document.getElementById('admin-project-existing-img').value = '';
+
+          const previewBox = document.getElementById('admin-project-img-preview');
+          if (previewBox) previewBox.innerHTML = `<span style="font-size: 0.75rem; color: var(--text-muted);">No Img</span>`;
+          const removeImgBtn = document.getElementById('btn-admin-project-file-remove');
+          if (removeImgBtn) removeImgBtn.style.display = 'none';
+
+          document.getElementById('admin-project-modal-title').innerHTML = `<i class="fas fa-folder-plus"></i> Add New Project`;
+          projModal.classList.add('active');
+        });
+      }
+
+      // Project Image Upload & Form Submit
+      let pendingProjFile = null;
+      let removeProjImgRequested = false;
+
+      const projFileInput = document.getElementById('admin-project-file-input');
+      const projFileBtn = document.getElementById('btn-admin-project-file');
+      const projFileRemoveBtn = document.getElementById('btn-admin-project-file-remove');
+      const projStatusSpan = document.getElementById('admin-project-file-status');
+
+      if (projFileBtn && projFileInput) {
+        projFileBtn.addEventListener('click', () => projFileInput.click());
+        projFileInput.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const supabaseMod = window.SupabaseStorage;
+            if (supabaseMod && supabaseMod.validateUploadFile) {
+              const val = supabaseMod.validateUploadFile(file, { maxSizeMB: 5 });
+              if (!val.valid) {
+                if (projStatusSpan) { projStatusSpan.textContent = `⚠️ ${val.error}`; projStatusSpan.style.color = '#EF4444'; }
+                return;
+              }
+            }
+            pendingProjFile = file;
+            removeProjImgRequested = false;
+            if (projStatusSpan) { projStatusSpan.textContent = `Selected: ${file.name}`; projStatusSpan.style.color = 'var(--accent-blue)'; }
+
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+              const previewBox = document.getElementById('admin-project-img-preview');
+              if (previewBox) previewBox.innerHTML = `<img src="${evt.target.result}" style="width:100%; height:100%; object-fit:cover;" />`;
+              if (projFileRemoveBtn) projFileRemoveBtn.style.display = 'inline-flex';
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      }
+
+      if (projFileRemoveBtn) {
+        projFileRemoveBtn.addEventListener('click', () => {
+          pendingProjFile = null;
+          removeProjImgRequested = true;
+          const previewBox = document.getElementById('admin-project-img-preview');
+          if (previewBox) previewBox.innerHTML = `<span style="font-size: 0.75rem; color: var(--text-muted);">No Img</span>`;
+          if (projStatusSpan) { projStatusSpan.textContent = 'Image will be deleted.'; projStatusSpan.style.color = '#EF4444'; }
+          projFileRemoveBtn.style.display = 'none';
+        });
+      }
+
+      const projForm = document.getElementById('admin-project-form');
+      if (projForm) {
+        projForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const docId = document.getElementById('admin-project-doc-id').value;
+          const name = document.getElementById('admin-project-name').value.trim();
+          const client = document.getElementById('admin-project-client').value.trim();
+          const status = document.getElementById('admin-project-status').value;
+          const progress = parseInt(document.getElementById('admin-project-progress').value, 10) || 0;
+          const existingImg = document.getElementById('admin-project-existing-img').value;
+
+          if (!name) return;
+
+          const saveBtn = document.getElementById('admin-project-save-btn');
+          if (saveBtn) { saveBtn.disabled = true; saveBtn.innerHTML = `<span class="btn-spinner"></span> Saving...`; }
+
+          let imageUrlToSave = existingImg || '';
+          const supabaseMod = window.SupabaseStorage;
+
+          try {
+            const targetProjId = docId || 'PRJ-' + Date.now();
+            if (pendingProjFile && supabaseMod) {
+              if (projStatusSpan) projStatusSpan.textContent = 'Uploading project image...';
+              const optimized = await supabaseMod.optimizeAndConvertImage(pendingProjFile, 1200, 800, 0.85);
+              const filePath = `projects/${targetProjId}/cover.webp`;
+              const uploadRes = await supabaseMod.replaceSupabaseFile(optimized, filePath, existingImg);
+
+              if (uploadRes.success && uploadRes.url) {
+                imageUrlToSave = uploadRes.url;
+              } else {
+                throw new Error(uploadRes.error ? uploadRes.error.message : 'Upload failed');
+              }
+            } else if (removeProjImgRequested && existingImg && supabaseMod) {
+              await supabaseMod.deleteFromSupabaseStorage(existingImg);
+              imageUrlToSave = '';
+            }
+
+            const mod = window.FirebaseModule;
+            if (mod && mod.db) {
+              const payload = {
+                projectName: name,
+                clientName: client,
+                status: status,
+                progress: progress,
+                imageUrl: imageUrlToSave,
+                updatedAt: mod.serverTimestamp ? mod.serverTimestamp() : new Date().toISOString()
+              };
+
+              if (docId) {
+                await mod.updateDoc(mod.doc(mod.db, 'projects', docId), payload);
+              } else {
+                payload.projectId = targetProjId;
+                payload.createdAt = new Date().toISOString();
+                await mod.addDoc(mod.collection(mod.db, 'projects'), payload);
+              }
+            }
+
+            if (projModal) projModal.classList.remove('active');
+            if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save Project'; }
+            if (window.showToast) window.showToast('Project saved successfully!', 'success');
+
+          } catch (err) {
+            console.error('Error saving admin project:', err);
+            if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save Project'; }
+            if (window.showToast) window.showToast('Error: ' + err.message, 'error');
+          }
+        });
+      }
+
+      // Service Image Upload & Form Submit
+      let pendingServFile = null;
+      let removeServImgRequested = false;
+
+      const servFileInput = document.getElementById('admin-service-file-input');
+      const servFileBtn = document.getElementById('btn-admin-service-file');
+      const servFileRemoveBtn = document.getElementById('btn-admin-service-file-remove');
+      const servStatusSpan = document.getElementById('admin-service-file-status');
+
+      if (servFileBtn && servFileInput) {
+        servFileBtn.addEventListener('click', () => servFileInput.click());
+        servFileInput.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const supabaseMod = window.SupabaseStorage;
+            if (supabaseMod && supabaseMod.validateUploadFile) {
+              const val = supabaseMod.validateUploadFile(file, { maxSizeMB: 5 });
+              if (!val.valid) {
+                if (servStatusSpan) { servStatusSpan.textContent = `⚠️ ${val.error}`; servStatusSpan.style.color = '#EF4444'; }
+                return;
+              }
+            }
+            pendingServFile = file;
+            removeServImgRequested = false;
+            if (servStatusSpan) { servStatusSpan.textContent = `Selected: ${file.name}`; servStatusSpan.style.color = 'var(--accent-blue)'; }
+
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+              const previewBox = document.getElementById('admin-service-img-preview');
+              if (previewBox) previewBox.innerHTML = `<img src="${evt.target.result}" style="width:100%; height:100%; object-fit:cover;" />`;
+              if (servFileRemoveBtn) servFileRemoveBtn.style.display = 'inline-flex';
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      }
+
+      if (servFileRemoveBtn) {
+        servFileRemoveBtn.addEventListener('click', () => {
+          pendingServFile = null;
+          removeServImgRequested = true;
+          const previewBox = document.getElementById('admin-service-img-preview');
+          if (previewBox) previewBox.innerHTML = `<span style="font-size: 0.75rem; color: var(--text-muted);">No Img</span>`;
+          if (servStatusSpan) { servStatusSpan.textContent = 'Cover image will be deleted.'; servStatusSpan.style.color = '#EF4444'; }
+          servFileRemoveBtn.style.display = 'none';
+        });
+      }
+
+      const servForm = document.getElementById('admin-service-form');
+      if (servForm) {
+        servForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const serviceId = document.getElementById('admin-service-id').value;
+          const existingImg = document.getElementById('admin-service-existing-img').value;
+
+          if (!serviceId) return;
+
+          const saveBtn = document.getElementById('admin-service-save-btn');
+          if (saveBtn) { saveBtn.disabled = true; saveBtn.innerHTML = `<span class="btn-spinner"></span> Saving...`; }
+
+          let imageUrlToSave = existingImg || '';
+          const supabaseMod = window.SupabaseStorage;
+
+          try {
+            if (pendingServFile && supabaseMod) {
+              if (servStatusSpan) servStatusSpan.textContent = 'Uploading service cover...';
+              const optimized = await supabaseMod.optimizeAndConvertImage(pendingServFile, 1200, 800, 0.85);
+              const filePath = `services/${serviceId}/cover.webp`;
+              const uploadRes = await supabaseMod.replaceSupabaseFile(optimized, filePath, existingImg);
+
+              if (uploadRes.success && uploadRes.url) {
+                imageUrlToSave = uploadRes.url;
+              } else {
+                throw new Error(uploadRes.error ? uploadRes.error.message : 'Upload failed');
+              }
+            } else if (removeServImgRequested && existingImg && supabaseMod) {
+              await supabaseMod.deleteFromSupabaseStorage(existingImg);
+              imageUrlToSave = '';
+            }
+
+            // Update in-memory data & Firestore 'services' collection if exists
+            const servItem = (portfolioData.services || []).find(s => s.id === serviceId);
+            if (servItem) {
+              servItem.coverImage = imageUrlToSave;
+            }
+
+            const mod = window.FirebaseModule;
+            if (mod && mod.db) {
+              await mod.setDoc(mod.doc(mod.db, 'services', serviceId), {
+                serviceId: serviceId,
+                coverImage: imageUrlToSave,
+                updatedAt: mod.serverTimestamp ? mod.serverTimestamp() : new Date().toISOString()
+              }, { merge: true });
+            }
+
+            initAdminServicesSync();
+
+            if (servModal) servModal.classList.remove('active');
+            if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save Changes'; }
+            if (window.showToast) window.showToast('Service cover image updated!', 'success');
+
+          } catch (err) {
+            console.error('Error saving service image:', err);
+            if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save Changes'; }
+            if (window.showToast) window.showToast('Error: ' + err.message, 'error');
+          }
+        });
+      }
     }
 
     function initAdminProjectRequestsSync() {
@@ -2778,13 +3314,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // Avatar preview
     const firstChar = (user.displayName || user.email || 'S').trim().charAt(0).toUpperCase() || 'S';
     if (avatarInitial) avatarInitial.textContent = firstChar;
+    const removePhotoBtn = document.getElementById('btn-remove-photo');
+    const statusSpan = document.getElementById('photo-upload-status');
+    if (statusSpan) { statusSpan.textContent = ''; statusSpan.style.color = ''; }
+
     if (user.photoURL && avatarImg) {
       avatarImg.src = user.photoURL;
       avatarImg.style.display = 'block';
       if (avatarInitial) avatarInitial.style.display = 'none';
+      if (removePhotoBtn) removePhotoBtn.style.display = 'inline-flex';
     } else if (avatarImg) {
       avatarImg.style.display = 'none';
       if (avatarInitial) avatarInitial.style.display = 'flex';
+      if (removePhotoBtn) removePhotoBtn.style.display = 'none';
     }
 
     if (photoFileInput) photoFileInput.value = '';
@@ -2934,17 +3476,43 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
+    let pendingAvatarFile = null;
+    let removeAvatarRequested = false;
+    const removePhotoBtn = document.getElementById('btn-remove-photo');
+    const photoStatusSpan = document.getElementById('photo-upload-status');
+
     // Change photo button triggers hidden file input
     if (changePhotoBtn && photoFileInput) {
       changePhotoBtn.addEventListener('click', () => {
         photoFileInput.click();
       });
 
-      photoFileInput.addEventListener('change', (e) => {
+      photoFileInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (file) {
-          // TODO: wire up to Firebase Storage once connected
-          if (selectedNameSpan) selectedNameSpan.textContent = `নির্বাচিত ছবি: ${file.name}`;
+          const supabaseMod = window.SupabaseStorage;
+          if (supabaseMod && supabaseMod.validateUploadFile) {
+            const validation = supabaseMod.validateUploadFile(file, { maxSizeMB: 5 });
+            if (!validation.valid) {
+              if (photoStatusSpan) {
+                photoStatusSpan.textContent = `⚠️ ${validation.error}`;
+                photoStatusSpan.style.color = '#EF4444';
+              }
+              if (window.showToast) window.showToast(validation.error, 'error');
+              photoFileInput.value = '';
+              return;
+            }
+          }
+
+          pendingAvatarFile = file;
+          removeAvatarRequested = false;
+
+          if (selectedNameSpan) selectedNameSpan.textContent = `Selected: ${file.name} (${(file.size / (1024 * 1024)).toFixed(2)} MB)`;
+          if (photoStatusSpan) {
+            photoStatusSpan.textContent = currentLang === 'bn' ? 'ছবি সংরক্ষণের জন্য তৈরি।' : 'Image ready for saving.';
+            photoStatusSpan.style.color = 'var(--accent-blue)';
+          }
+
           const reader = new FileReader();
           reader.onload = (event) => {
             const avatarImg = document.getElementById('edit-avatar-img');
@@ -2954,9 +3522,28 @@ document.addEventListener('DOMContentLoaded', () => {
               avatarImg.style.display = 'block';
             }
             if (avatarInitial) avatarInitial.style.display = 'none';
+            if (removePhotoBtn) removePhotoBtn.style.display = 'inline-flex';
           };
           reader.readAsDataURL(file);
         }
+      });
+    }
+
+    if (removePhotoBtn) {
+      removePhotoBtn.addEventListener('click', () => {
+        pendingAvatarFile = null;
+        removeAvatarRequested = true;
+        if (photoFileInput) photoFileInput.value = '';
+        if (selectedNameSpan) selectedNameSpan.textContent = '';
+        if (photoStatusSpan) {
+          photoStatusSpan.textContent = currentLang === 'bn' ? 'প্রোফাইল ছবি সরিয়ে ফেলা হবে।' : 'Profile photo will be removed.';
+          photoStatusSpan.style.color = '#EF4444';
+        }
+        const avatarImg = document.getElementById('edit-avatar-img');
+        const avatarInitial = document.getElementById('edit-avatar-initial');
+        if (avatarImg) avatarImg.style.display = 'none';
+        if (avatarInitial) avatarInitial.style.display = 'flex';
+        removePhotoBtn.style.display = 'none';
       });
     }
 
@@ -3021,9 +3608,55 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           }
 
-          // 1. Update Firebase Auth displayName
+          // Handle avatar upload / removal using Supabase Storage
+          let photoURLToSave = user.photoURL || null;
+          const supabaseMod = window.SupabaseStorage;
+
+          if (pendingAvatarFile && supabaseMod) {
+            if (photoStatusSpan) {
+              photoStatusSpan.textContent = currentLang === 'bn' ? 'ছবি প্রসেসিং ও আপলোড হচ্ছে...' : 'Processing & uploading image...';
+              photoStatusSpan.style.color = 'var(--accent-blue)';
+            }
+
+            try {
+              const optimizedBlob = await supabaseMod.optimizeAndConvertImage(pendingAvatarFile, 500, 500, 0.85);
+              const avatarPath = `avatars/${user.uid}/avatar.webp`;
+              const oldPath = user.photoURL && user.photoURL.includes(supabaseMod.BUCKET_NAME) ? user.photoURL : null;
+
+              const uploadRes = await supabaseMod.replaceSupabaseFile(optimizedBlob, avatarPath, oldPath, {
+                contentType: 'image/webp'
+              });
+
+              if (uploadRes.success && uploadRes.url) {
+                photoURLToSave = uploadRes.url;
+                if (photoStatusSpan) {
+                  photoStatusSpan.textContent = currentLang === 'bn' ? 'ছবি সফলভাবে আপলোড হয়েছে!' : 'Image uploaded successfully!';
+                  photoStatusSpan.style.color = '#10B981';
+                }
+              } else {
+                throw new Error(uploadRes.error ? uploadRes.error.message : 'Upload failed');
+              }
+            } catch (imgErr) {
+              console.error('Avatar upload error:', imgErr);
+              if (photoStatusSpan) {
+                photoStatusSpan.textContent = `⚠️ ${imgErr.message || 'Upload failed'}`;
+                photoStatusSpan.style.color = '#EF4444';
+              }
+              if (window.showToast) window.showToast('Profile picture upload failed. Keeping remaining changes.', 'error');
+            }
+          } else if (removeAvatarRequested) {
+            if (user.photoURL && supabaseMod) {
+              await supabaseMod.deleteFromSupabaseStorage(user.photoURL);
+            }
+            photoURLToSave = null;
+          }
+
+          // 1. Update Firebase Auth profile (displayName & photoURL)
           if (mod && mod.updateProfile) {
-            await mod.updateProfile(user, { displayName: name });
+            await mod.updateProfile(user, {
+              displayName: name,
+              photoURL: photoURLToSave
+            });
           }
 
           // 2. Manage usernames collection doc
@@ -3051,14 +3684,40 @@ document.addEventListener('DOMContentLoaded', () => {
               username: username,
               phone: phone,
               email: user.email || '',
+              photoURL: photoURLToSave,
               updatedAt: mod.serverTimestamp ? mod.serverTimestamp() : new Date().toISOString()
             }, { merge: true });
           }
 
           // Update local state
           user.displayName = name;
+          user.photoURL = photoURLToSave;
 
           // Update DOM display on account card & sidebars
+          const avatarEl = document.getElementById('account-user-avatar-img') || document.getElementById('user-avatar-img');
+          const avatarInitialEl = document.getElementById('account-user-avatar-initial') || document.getElementById('user-avatar-initial');
+
+          if (photoURLToSave) {
+            ['account-user-avatar-img', 'account-sidebar-avatar', 'account-topbar-avatar', 'user-avatar-img', 'client-sidebar-avatar', 'client-topbar-avatar'].forEach(id => {
+              const img = document.getElementById(id);
+              if (img) {
+                img.src = photoURLToSave;
+                img.style.display = 'block';
+              }
+            });
+            if (avatarInitialEl) avatarInitialEl.style.display = 'none';
+          } else {
+            ['account-user-avatar-img', 'user-avatar-img'].forEach(id => {
+              const img = document.getElementById(id);
+              if (img) img.style.display = 'none';
+            });
+            const firstChar = name.trim().charAt(0).toUpperCase() || 'S';
+            if (avatarInitialEl) {
+              avatarInitialEl.textContent = firstChar;
+              avatarInitialEl.style.display = 'flex';
+            }
+          }
+
           if (document.getElementById('account-profile-name')) {
             document.getElementById('account-profile-name').textContent = name;
           }
