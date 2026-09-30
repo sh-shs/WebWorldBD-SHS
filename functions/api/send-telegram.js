@@ -3,16 +3,20 @@ export async function onRequestPost(context) {
   try {
     const formData = await request.formData(); // supports text fields + file upload together
     const name = formData.get('name') || '';
-    const contact = formData.get('contact') || '';
+    const mobile = formData.get('mobile') || formData.get('contact') || '';
+    const email = formData.get('email') || '';
     const projectType = formData.get('projectType') || '';
     const budget = formData.get('budget') || '';
     const requirements = formData.get('requirements') || '';
     const file = formData.get('file'); // may be null
 
+    const formattedEmail = email ? email : 'প্রদান করা হয়নি';
+
     const text =
       `*New Project Request — WebWorldBD*\n\n` +
       `*Name:* ${name}\n` +
-      `*Contact:* ${contact}\n` +
+      `*Mobile:* ${mobile}\n` +
+      `*Email:* ${formattedEmail}\n` +
       `*Project Type:* ${projectType}\n` +
       `*Budget:* ${budget}\n` +
       `*Requirements:* ${requirements}`;

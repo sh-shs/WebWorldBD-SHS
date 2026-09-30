@@ -102,8 +102,15 @@
           </div>
 
           <div>
-            <label class="form-label" data-i18n="formContactLabel" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Email or Phone Number</label>
-            <input type="text" id="project-req-contact" class="form-control" style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--radius-md); background: var(--bg-glass); border: 1px solid var(--border-glass); color: var(--text-main);" placeholder="example@mail.com / 01700000000" required>
+            <label class="form-label" data-i18n="formMobileLabel" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">মোবাইল নম্বর *</label>
+            <input type="tel" id="project-req-mobile" class="form-control" style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--radius-md); background: var(--bg-glass); border: 1px solid var(--border-glass); color: var(--text-main);" placeholder="01XXXXXXXXX" required>
+            <span id="project-req-mobile-error" class="field-error-msg" style="color: #EF4444; font-size: 0.82rem; margin-top: 0.35rem; display: none;"></span>
+          </div>
+
+          <div>
+            <label class="form-label" data-i18n="formEmailOptionalLabel" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">ইমেইল ঠিকানা (ঐচ্ছিক)</label>
+            <input type="email" id="project-req-email" class="form-control" style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--radius-md); background: var(--bg-glass); border: 1px solid var(--border-glass); color: var(--text-main);" placeholder="example@mail.com">
+            <span id="project-req-email-error" class="field-error-msg" style="color: #EF4444; font-size: 0.82rem; margin-top: 0.35rem; display: none;"></span>
           </div>
 
           <div>
@@ -148,6 +155,9 @@
           <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem;">
             <button type="submit" id="btn-project-req-submit" class="btn btn-primary" style="padding: 0.85rem 1.8rem; font-size: 1rem; flex: 1;">
               <i class="fas fa-paper-plane"></i> <span data-i18n="btnSendMessage">Send Message</span>
+            </button>
+            <button type="button" id="btn-project-req-whatsapp" class="btn btn-whatsapp" style="padding: 0.85rem 1.5rem; font-size: 1rem;">
+              <i class="fab fa-whatsapp"></i> <span data-i18n="btnWhatsAppMsg">Message on WhatsApp</span>
             </button>
             <a href="contact.html" class="btn btn-secondary" style="padding: 0.85rem 1.5rem; font-size: 1rem;">
               <i class="fas fa-headset"></i> <span data-i18n="secSupportTitle">Support & Contact</span>

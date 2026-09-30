@@ -2192,24 +2192,117 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+    const mobileInput = document.getElementById('project-req-mobile');
+    const emailInput = document.getElementById('project-req-email');
+    const mobileErrorSpan = document.getElementById('project-req-mobile-error');
+    const emailErrorSpan = document.getElementById('project-req-email-error');
+
+    function clearStartProjectErrors() {
+      if (mobileInput) mobileInput.classList.remove('is-invalid');
+      if (emailInput) emailInput.classList.remove('is-invalid');
+      if (mobileErrorSpan) { mobileErrorSpan.textContent = ''; mobileErrorSpan.style.display = 'none'; }
+      if (emailErrorSpan) { emailErrorSpan.textContent = ''; emailErrorSpan.style.display = 'none'; }
+    }
+
+    if (mobileInput) {
+      mobileInput.addEventListener('input', () => {
+        if (mobileInput) mobileInput.classList.remove('is-invalid');
+        if (mobileErrorSpan) { mobileErrorSpan.textContent = ''; mobileErrorSpan.style.display = 'none'; }
+      });
+    }
+
+    if (emailInput) {
+      emailInput.addEventListener('input', () => {
+        if (emailInput) emailInput.classList.remove('is-invalid');
+        if (emailErrorSpan) { emailErrorSpan.textContent = ''; emailErrorSpan.style.display = 'none'; }
+      });
+    }
+
+    function validateProjectReqForm() {
+      clearStartProjectErrors();
+
       const name = document.getElementById('project-req-name')?.value.trim() || '';
-      const contact = document.getElementById('project-req-contact')?.value.trim() || '';
+      const mobile = mobileInput?.value.trim() || '';
+      const email = emailInput?.value.trim() || '';
       const serviceType = typeSelect ? typeSelect.options[typeSelect.selectedIndex].text : 'Custom Project';
       const budget = document.getElementById('project-req-budget')?.value || 'flexible';
       const desc = document.getElementById('project-req-desc')?.value.trim() || '';
 
-      // Validation check
-      if (!name || !contact) {
-        if (window.showToast) window.showToast(currentLang === 'bn' ? 'অনুগ্রহ করে নাম এবং ইমেইল/ফোন নম্বর পূরণ করুন।' : 'Please fill in your name and email/phone.', 'error');
-        return;
+      let hasError = false;
+
+      // Full Name Validation
+      if (!name) {
+        const nameInput = document.getElementById('project-req-name');
+        if (nameInput) nameInput.classList.add('is-invalid');
+        if (window.showToast) window.showToast(currentLang === 'bn' ? 'অনুগ্রহ করে আপনার নাম প্রদান করুন।' : 'Please enter your full name.', 'error');
+        hasError = true;
       }
+
+      // Mobile Number Validation (REQUIRED: Bangladeshi phone format check)
+      const bdMobileRegex = /^(?:\+?88)?01[3-9]\d{8}$/;
+      if (!mobile || !bdMobileRegex.test(mobile)) {
+        if (mobileInput) mobileInput.classList.add('is-invalid');
+        const errorMsg = currentLang === 'bn' ? 'সঠিক মোবাইল নম্বর দিন' : 'Please enter a valid mobile number';
+        if (mobileErrorSpan) {
+          mobileErrorSpan.textContent = errorMsg;
+          mobileErrorSpan.style.display = 'block';
+        }
+        if (window.showToast) window.showToast(errorMsg, 'error');
+        hasError = true;
+      }
+
+      // Email Address Validation (OPTIONAL: validate format only if filled out)
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (email && !emailRegex.test(email)) {
+        if (emailInput) emailInput.classList.add('is-invalid');
+        const errorMsg = currentLang === 'bn' ? 'সঠিক ইমেইল ঠিকানা দিন' : 'Please enter a valid email address';
+        if (emailErrorSpan) {
+          emailErrorSpan.textContent = errorMsg;
+          emailErrorSpan.style.display = 'block';
+        }
+        if (window.showToast) window.showToast(errorMsg, 'error');
+        hasError = true;
+      }
+
+      if (hasError) return null;
 
       if (!desc && (!pendingReqFile || pendingReqFile.size === 0)) {
         if (window.showToast) window.showToast(currentLang === 'bn' ? 'অনুগ্রহ করে প্রজেক্টের বিবরণ অথবা একটি ফাইল সংযুক্ত করুন।' : 'Please provide project details or attach a file.', 'error');
-        return;
+        return null;
       }
+
+      return { name, mobile, email, serviceType, budget, desc };
+    }
+
+    const whatsappBtn = document.getElementById('btn-project-req-whatsapp');
+    if (whatsappBtn) {
+      whatsappBtn.addEventListener('click', () => {
+        const formData = validateProjectReqForm();
+        if (!formData) return;
+
+        const { name, mobile, email, serviceType, budget, desc } = formData;
+        const formattedEmail = email ? email : 'প্রদান করা হয়নি';
+
+        const waText =
+          `*New Project Request — WebWorldBD*\n\n` +
+          `*Name:* ${name}\n` +
+          `*Mobile:* ${mobile}\n` +
+          `*Email:* ${formattedEmail}\n` +
+          `*Project Type:* ${serviceType}\n` +
+          `*Budget:* ${budget}\n` +
+          `*Requirements:* ${desc}`;
+
+        const waUrl = `https://wa.me/8801342697743?text=${encodeURIComponent(waText)}`;
+        window.open(waUrl, '_blank', 'noopener,noreferrer');
+      });
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = validateProjectReqForm();
+      if (!formData) return;
+
+      const { name, mobile, email, serviceType, budget, desc } = formData;
 
       const submitBtn = document.getElementById('btn-project-req-submit') || form.querySelector('button[type="submit"]');
       const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
@@ -2220,7 +2313,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const tgFormData = new FormData();
       tgFormData.append('name', name);
-      tgFormData.append('contact', contact);
+      tgFormData.append('mobile', mobile);
+      tgFormData.append('email', email);
       tgFormData.append('projectType', serviceType);
       tgFormData.append('budget', budget);
       tgFormData.append('requirements', desc);
@@ -2244,13 +2338,15 @@ document.addEventListener('DOMContentLoaded', () => {
           // Save to Firestore for record keeping
           const user = window.currentUserState;
           const uid = user ? user.uid : 'guest_' + Date.now();
-          const userEmail = user ? user.email : (contact.includes('@') ? contact : '');
+          const userEmail = user ? user.email : email;
           const reqId = 'REQ-' + Math.floor(100000 + Math.random() * 900000);
 
           const requestPayload = {
             requestId: reqId,
             clientName: name,
-            contactInfo: contact,
+            mobileNumber: mobile,
+            email: email,
+            contactInfo: mobile + (email ? ' | ' + email : ''),
             serviceName: serviceType,
             budget: budget,
             description: desc,
