@@ -1967,10 +1967,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
               const mod = window.FirebaseModule;
               if (mod && mod.db && mod.doc && mod.getDoc) {
-                const profileRef = mod.doc(mod.db, 'sarip', 'sarip');
-                mod.getDoc(profileRef).then(docSnap => {
-                  if (docSnap.exists()) {
-                    const profileData = docSnap.data();
+                const userDocRef = mod.doc(mod.db, 'users', user.uid);
+                mod.getDoc(userDocRef).then(userSnap => {
+                  if (userSnap.exists()) {
+                    const profileData = userSnap.data();
                     if (profileData.username) {
                       usernameHandle = profileData.username;
                       if (document.getElementById('account-profile-username')) {
@@ -1987,6 +1987,24 @@ document.addEventListener('DOMContentLoaded', () => {
                         phoneText.innerHTML = `<a href="settings.html" style="font-size: 0.88rem; font-weight: 500;">${promptLabel}</a>`;
                       }
                     }
+                  } else {
+                    // Fallback to sarip doc if users/{uid} does not exist yet
+                    const saripRef = mod.doc(mod.db, 'sarip', 'sarip');
+                    mod.getDoc(saripRef).then(saripSnap => {
+                      if (saripSnap.exists() && (saripSnap.data().uid === user.uid || user.email === 'onlyphone678@gmail.com')) {
+                        const sData = saripSnap.data();
+                        if (sData.username) {
+                          usernameHandle = sData.username;
+                          if (document.getElementById('account-profile-username')) {
+                            document.getElementById('account-profile-username').textContent = usernameHandle;
+                          }
+                        }
+                        const uPhone = sData.phoneNumber || sData.phone;
+                        if (phoneRow && phoneText && uPhone !== undefined) {
+                          if (uPhone) phoneText.textContent = uPhone;
+                        }
+                      }
+                    }).catch(e => console.warn('Sarip doc fallback read error:', e));
                   }
                 }).catch(e => console.error('Error getting user profile doc:', e));
               }
@@ -2497,6 +2515,56 @@ document.addEventListener('DOMContentLoaded', () => {
         if (sidebar) sidebar.classList.remove('active');
         if (overlay) overlay.classList.remove('active');
         document.body.style.overflow = '';
+      });
+    });
+
+    // Invoice download handler
+    document.querySelectorAll('.btn-download-invoice').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const invId = btn.getAttribute('data-invoice-id') || 'INV-2026-002';
+        const client = btn.getAttribute('data-client') || 'SHAFAET HOSSEN SARIP';
+        const project = btn.getAttribute('data-project') || 'Web Development Service';
+        const amount = btn.getAttribute('data-amount') || '$180.00';
+        const date = btn.getAttribute('data-date') || '2026-04-08';
+
+        if (window.showToast) {
+          window.showToast(`Generating Invoice #${invId}...`, 'info');
+        }
+
+        const invoiceContent = `
+==================================================
+                 WEBWORLDBD INVOICE
+==================================================
+Invoice ID: #${invId}
+Date: ${date}
+Status: PAID
+
+CLIENT DETAILS:
+--------------------------------------------------
+Client Name: ${client}
+ServiceProvider: WebWorldBD (SHAFAET HOSSEN SARIP)
+Contact: saripofficialsupport@gmail.com
+
+PROJECT DETAILS:
+--------------------------------------------------
+Project Name: ${project}
+Amount Paid: ${amount}
+Payment Status: Completed
+
+Thank you for choosing WebWorldBD!
+Website: https://webworldbd.com
+==================================================
+        `.trim();
+
+        const blob = new Blob([invoiceContent], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Invoice_${invId}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
       });
     });
   }
@@ -3476,13 +3544,28 @@ document.addEventListener('DOMContentLoaded', () => {
     let initialPhone = user.phoneNumber || user.phone || '';
 
     if (mod && mod.db && mod.doc && mod.getDoc) {
-      const profileRef = mod.doc(mod.db, 'sarip', 'sarip');
-      mod.getDoc(profileRef).then(docSnap => {
+      const userDocRef = mod.doc(mod.db, 'users', user.uid);
+      mod.getDoc(userDocRef).then(docSnap => {
         if (docSnap.exists()) {
           const data = docSnap.data();
           if (data.username) initialUsername = data.username;
           const userPhone = data.phoneNumber || data.phone;
           if (userPhone !== undefined) initialPhone = userPhone;
+        } else {
+          // Fallback to sarip doc if user doc does not exist
+          const saripRef = mod.doc(mod.db, 'sarip', 'sarip');
+          mod.getDoc(saripRef).then(saripSnap => {
+            if (saripSnap.exists() && (saripSnap.data().uid === user.uid || user.email === 'onlyphone678@gmail.com')) {
+              const sData = saripSnap.data();
+              if (sData.username) initialUsername = sData.username;
+              const uPhone = sData.phoneNumber || sData.phone;
+              if (uPhone !== undefined) initialPhone = uPhone;
+              if (usernameInput) usernameInput.value = initialUsername;
+              if (phoneInput) phoneInput.value = initialPhone;
+              currentUserUsername = initialUsername;
+              validateUsernameLive(initialUsername);
+            }
+          }).catch(e => console.warn('Fallback sarip read warning:', e));
         }
         currentUserUsername = initialUsername;
         if (usernameInput) {
@@ -3900,55 +3983,47 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           }
 
-          // 3. Update existing profile document(s) in Firestore preserving existing profile fields and uid
+          // 3. Update primary user document users/{user.uid} in Firestore
           if (mod && mod.db && mod.doc) {
-            const saripRef = mod.doc(mod.db, 'sarip', 'sarip');
-            const saripSnap = await mod.getDoc(saripRef);
+            const userRef = mod.doc(mod.db, 'users', user.uid);
+            const userSnap = await mod.getDoc(userRef);
 
-            const saripPayload = {
+            const userPayload = {
               uid: user.uid,
-              fullName: name,
               displayName: name,
+              fullName: name,
               username: username,
               phoneNumber: phone,
               phone: phone,
               email: user.email || '',
-              profilePicture: photoURLToSave,
               photoURL: photoURLToSave,
+              profilePicture: photoURLToSave,
               updatedAt: mod.serverTimestamp ? mod.serverTimestamp() : new Date().toISOString()
             };
 
-            if (saripSnap.exists()) {
-              if (saripSnap.data().uid && saripSnap.data().uid !== user.uid) {
-                throw new Error('Unauthorized: Profile uid mismatch.');
-              }
-              if (mod.updateDoc) {
-                await mod.updateDoc(saripRef, saripPayload);
-              } else {
-                await mod.setDoc(saripRef, saripPayload, { merge: true });
-              }
-            } else {
-              await mod.setDoc(saripRef, saripPayload);
-            }
-
-            // 4. Also update users/{user.uid} document if present
-            const userRef = mod.doc(mod.db, 'users', user.uid);
-            const userSnap = await mod.getDoc(userRef);
-
             if (userSnap.exists()) {
-              const userPayload = {
-                displayName: name,
-                username: username,
-                phoneNumber: phone,
-                phone: phone,
-                photoURL: photoURLToSave,
-                updatedAt: mod.serverTimestamp ? mod.serverTimestamp() : new Date().toISOString()
-              };
               if (mod.updateDoc) {
                 await mod.updateDoc(userRef, userPayload);
               } else {
                 await mod.setDoc(userRef, userPayload, { merge: true });
               }
+            } else {
+              await mod.setDoc(userRef, userPayload, { merge: true });
+            }
+
+            // 4. Also update sarip/sarip document if user is sarip/owner
+            try {
+              const saripRef = mod.doc(mod.db, 'sarip', 'sarip');
+              const saripSnap = await mod.getDoc(saripRef);
+              if (saripSnap.exists() && saripSnap.data().uid === user.uid) {
+                if (mod.updateDoc) {
+                  await mod.updateDoc(saripRef, userPayload);
+                } else {
+                  await mod.setDoc(saripRef, userPayload, { merge: true });
+                }
+              }
+            } catch (saripErr) {
+              console.warn('sarip/sarip doc update skipped:', saripErr);
             }
           }
 
