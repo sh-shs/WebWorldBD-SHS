@@ -25,6 +25,7 @@ const portfolioData = {
     whatsapp: "+8801342697743",
     hotline: "+8809658183506",
     telegram: "https://t.me/saripsupportBD",
+    linkedin: "https://www.linkedin.com/in/sh-sarip-4066b2431",
     facebook: "https://www.facebook.com/share/1HydyFmRfe/",
     tiktok: "https://www.tiktok.com/@webworldbd",
     fiverrProfile: "https://www.fiverr.com/s/0DbA3ok",
