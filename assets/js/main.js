@@ -444,17 +444,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderMenuContent();
     window.refreshThreeDotsMenu = renderMenuContent;
 
-    function toggleMenu(e) {
-      if (e) e.stopPropagation();
-      const isOpen = panelEl.classList.contains('active');
-      if (isOpen) {
-        closeMenu();
-      } else {
-        openMenu();
-      }
-    }
-
-    function openMenu() {
+    function openThreeDotsMenu() {
       highlightActiveMenuItem();
       panelEl.classList.add('active');
       backdropEl.classList.add('active');
@@ -464,7 +454,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.style.overflow = 'hidden';
     }
 
-    function closeMenu() {
+    function closeThreeDotsMenu() {
       panelEl.classList.remove('active');
       backdropEl.classList.remove('active');
       btn.classList.remove('active');
@@ -473,8 +463,18 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.style.overflow = '';
     }
 
+    function toggleMenu(e) {
+      if (e) e.stopPropagation();
+      const isOpen = panelEl.classList.contains('active');
+      if (isOpen) {
+        closeThreeDotsMenu();
+      } else {
+        openThreeDotsMenu();
+      }
+    }
+
     btn.addEventListener('click', toggleMenu);
-    backdropEl.addEventListener('click', closeMenu);
+    backdropEl.addEventListener('click', closeThreeDotsMenu);
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && panelEl.classList.contains('active')) {
@@ -625,7 +625,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.appendChild(navBackdrop);
     }
 
-    function openMenu() {
+    function openMobileNavMenu() {
       navMenu.classList.add('active');
       if (mobileToggle) mobileToggle.classList.add('active');
       if (navBackdrop) navBackdrop.classList.add('active');
@@ -633,7 +633,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.style.overflow = 'hidden';
     }
 
-    function closeMenu() {
+    function closeMobileNavMenu() {
       navMenu.classList.remove('active');
       if (mobileToggle) mobileToggle.classList.remove('active');
       if (navBackdrop) navBackdrop.classList.remove('active');
@@ -645,9 +645,9 @@ document.addEventListener('DOMContentLoaded', () => {
       mobileToggle.addEventListener('click', (e) => {
         e.stopPropagation();
         if (navMenu.classList.contains('active')) {
-          closeMenu();
+          closeMobileNavMenu();
         } else {
-          openMenu();
+          openMobileNavMenu();
         }
       });
     }
@@ -655,7 +655,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (navBackdrop) {
       navBackdrop.addEventListener('click', (e) => {
         e.stopPropagation();
-        closeMenu();
+        closeMobileNavMenu();
       });
     }
 
@@ -2288,13 +2288,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!sidebar && !isDashboardPage) return;
 
     if (sidebar) {
-      function openSidebar() {
+      function openDashSidebar() {
         sidebar.classList.add('active');
         if (overlay) overlay.classList.add('active');
         document.body.style.overflow = 'hidden';
       }
 
-      function closeSidebar() {
+      function closeDashSidebar() {
         sidebar.classList.remove('active');
         if (overlay) overlay.classList.remove('active');
         document.body.style.overflow = '';
@@ -2303,16 +2303,16 @@ document.addEventListener('DOMContentLoaded', () => {
       if (hamburgerBtn) {
         hamburgerBtn.addEventListener('click', (e) => {
           e.stopPropagation();
-          openSidebar();
+          openDashSidebar();
         });
       }
 
       if (closeBtn) {
-        closeBtn.addEventListener('click', closeSidebar);
+        closeBtn.addEventListener('click', closeDashSidebar);
       }
 
       if (overlay) {
-        overlay.addEventListener('click', closeSidebar);
+        overlay.addEventListener('click', closeDashSidebar);
       }
     }
 
@@ -2426,21 +2426,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const editProfileBtn = document.getElementById('account-edit-profile-btn');
 
     if (sidebar) {
-      function openSidebar() {
+      function openAccountSidebar() {
         sidebar.classList.add('active');
         if (overlay) overlay.classList.add('active');
         document.body.style.overflow = 'hidden';
       }
 
-      function closeSidebar() {
+      function closeAccountSidebar() {
         sidebar.classList.remove('active');
         if (overlay) overlay.classList.remove('active');
         document.body.style.overflow = '';
       }
 
-      if (hamburgerBtn) hamburgerBtn.addEventListener('click', (e) => { e.stopPropagation(); openSidebar(); });
-      if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
-      if (overlay) overlay.addEventListener('click', closeSidebar);
+      if (hamburgerBtn) hamburgerBtn.addEventListener('click', (e) => { e.stopPropagation(); openAccountSidebar(); });
+      if (closeBtn) closeBtn.addEventListener('click', closeAccountSidebar);
+      if (overlay) overlay.addEventListener('click', closeAccountSidebar);
     }
 
     if (themeBtn) {
