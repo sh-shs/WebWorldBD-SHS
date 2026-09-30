@@ -1,8 +1,18 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    (function() {
+      var savedTheme = localStorage.getItem('webworldbd_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      var savedLang = localStorage.getItem('webworldbd_lang') || 'en';
+      if (savedLang === 'bn') {
+        document.documentElement.classList.add('lang-bn');
+      }
+    })();
+  </script>
   <title>Portfolio Website | WebWorldBD — SHAFAET HOSSEN SARIP</title>
   <meta name="description" content="Personal brand portfolio website development for freelancers, creators, and professionals by WebWorldBD.">
 

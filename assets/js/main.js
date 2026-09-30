@@ -5,7 +5,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   // 1. Initial State & Configuration
-  let currentTheme = localStorage.getItem('webworldbd_theme') || 'dark';
+  let currentTheme = localStorage.getItem('webworldbd_theme') || 'light';
   let currentLang = localStorage.getItem('webworldbd_lang') || 'en';
 
   // Helper function to escape HTML for XSS prevention
@@ -4177,7 +4177,7 @@ Website: https://webworldbd.com
           localStorage.removeItem('webworldbd_notif_project');
           localStorage.removeItem('webworldbd_notif_promo');
 
-          applyTheme('dark');
+          applyTheme('light');
           applyLanguage('en');
 
           alert(translations[currentLang].msgCacheCleared || 'Cache cleared successfully!');
