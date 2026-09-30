@@ -2200,78 +2200,93 @@ document.addEventListener('DOMContentLoaded', () => {
       const budget = document.getElementById('project-req-budget')?.value || 'flexible';
       const desc = document.getElementById('project-req-desc')?.value.trim() || '';
 
-      const user = window.currentUserState;
-      const uid = user ? user.uid : 'guest_' + Date.now();
-      const userEmail = user ? user.email : (contact.includes('@') ? contact : '');
-
-      const reqId = 'REQ-' + Math.floor(100000 + Math.random() * 900000);
-      let attachmentUrl = null;
-      let attachmentName = null;
-
-      const storageMod = window.StorageService;
-      if (pendingReqFile && storageMod) {
-        if (fileStatusSpan) {
-          fileStatusSpan.textContent = currentLang === 'bn' ? 'ফাইল প্রসেস হচ্ছে...' : 'Processing attachment...';
-          fileStatusSpan.style.color = 'var(--accent-blue)';
-        }
-
-        try {
-          const sanitizeName = pendingReqFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-          const filePath = `documents/${uid}/${reqId}_${sanitizeName}`;
-          const uploadRes = await storageMod.uploadImage(pendingReqFile, filePath, {
-            contentType: pendingReqFile.type || 'application/octet-stream'
-          });
-
-          if (uploadRes.success) {
-            attachmentUrl = uploadRes.url;
-            attachmentName = pendingReqFile.name;
-            if (fileStatusSpan) {
-              fileStatusSpan.textContent = currentLang === 'bn' ? 'ফাইল সফলভাবে যুক্ত হয়েছে!' : 'Attachment attached successfully!';
-              fileStatusSpan.style.color = '#10B981';
-            }
-          }
-        } catch (uploadErr) {
-          console.error('Attachment processing error:', uploadErr);
-        }
+      // Validation check
+      if (!name || !contact) {
+        if (window.showToast) window.showToast(currentLang === 'bn' ? 'অনুগ্রহ করে নাম এবং ইমেইল/ফোন নম্বর পূরণ করুন।' : 'Please fill in your name and email/phone.', 'error');
+        return;
       }
 
-      const requestPayload = {
-        requestId: reqId,
-        clientName: name,
-        contactInfo: contact,
-        serviceName: serviceType,
-        budget: budget,
-        description: desc,
-        attachmentUrl: attachmentUrl,
-        attachmentName: attachmentName,
-        status: 'pending',
-        userId: uid,
-        userEmail: userEmail,
-        createdAt: new Date().toISOString()
-      };
+      if (!desc && (!pendingReqFile || pendingReqFile.size === 0)) {
+        if (window.showToast) window.showToast(currentLang === 'bn' ? 'অনুগ্রহ করে প্রজেক্টের বিবরণ অথবা একটি ফাইল সংযুক্ত করুন।' : 'Please provide project details or attach a file.', 'error');
+        return;
+      }
 
-      const mod = window.FirebaseModule;
-      if (mod && mod.db && mod.collection && mod.addDoc) {
-        try {
-          await mod.addDoc(mod.collection(mod.db, 'project_requests'), requestPayload);
+      const submitBtn = document.getElementById('btn-project-req-submit') || form.querySelector('button[type="submit"]');
+      const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<span class="btn-spinner"></span> ${currentLang === 'bn' ? 'পাঠানো হচ্ছে...' : 'Sending...'}`;
+      }
+
+      const tgFormData = new FormData();
+      tgFormData.append('name', name);
+      tgFormData.append('contact', contact);
+      tgFormData.append('projectType', serviceType);
+      tgFormData.append('budget', budget);
+      tgFormData.append('requirements', desc);
+      if (pendingReqFile) {
+        tgFormData.append('file', pendingReqFile);
+      }
+
+      try {
+        const response = await fetch('/api/send-telegram', {
+          method: 'POST',
+          body: tgFormData
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result && result.success) {
           if (window.showToast) {
-            window.showToast(currentLang === 'bn' ? 'প্রজেক্ট রিকুয়েস্ট সফলভাবে জমা দেওয়া হয়েছে!' : 'Project request submitted successfully!', 'success');
+            window.showToast("আপনার মেসেজ পাঠানো হয়েছে! শীঘ্রই যোগাযোগ করা হবে।", 'success');
           }
-        } catch (err) {
-          console.error('Error saving project request:', err);
+
+          // Save to Firestore for record keeping
+          const user = window.currentUserState;
+          const uid = user ? user.uid : 'guest_' + Date.now();
+          const userEmail = user ? user.email : (contact.includes('@') ? contact : '');
+          const reqId = 'REQ-' + Math.floor(100000 + Math.random() * 900000);
+
+          const requestPayload = {
+            requestId: reqId,
+            clientName: name,
+            contactInfo: contact,
+            serviceName: serviceType,
+            budget: budget,
+            description: desc,
+            attachmentName: pendingReqFile ? pendingReqFile.name : null,
+            status: 'pending',
+            userId: uid,
+            userEmail: userEmail,
+            createdAt: new Date().toISOString()
+          };
+
+          const mod = window.FirebaseModule;
+          if (mod && mod.db && mod.collection && mod.addDoc) {
+            mod.addDoc(mod.collection(mod.db, 'project_requests'), requestPayload).catch(err => {
+              console.error('Error saving project request to Firestore:', err);
+            });
+          }
+
+          form.reset();
+          pendingReqFile = null;
+          if (fileInput) fileInput.value = '';
+          if (fileNameSpan) fileNameSpan.textContent = '';
+          if (fileStatusSpan) fileStatusSpan.textContent = '';
+        } else {
+          throw new Error(result.error || 'Server returned non-success response');
+        }
+      } catch (err) {
+        console.error('Send Telegram error:', err);
+        if (window.showToast) {
+          window.showToast("মেসেজ পাঠাতে সমস্যা হয়েছে, অনুগ্রহ করে আবার চেষ্টা করুন অথবা হোয়াটসঅ্যাপে যোগাযোগ করুন।", 'error');
+        }
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnHtml;
         }
       }
-
-      const waMessage = `*New Custom Project Request — WebWorldBD*\n\n` +
-        `*Request ID:* ${requestPayload.requestId}\n` +
-        `*Name:* ${name}\n` +
-        `*Contact:* ${contact}\n` +
-        `*Project Type:* ${serviceType}\n` +
-        `*Budget:* ${budget}\n` +
-        `*Requirements:* ${desc}`;
-
-      const waUrl = `https://wa.me/8801342697743?text=${encodeURIComponent(waMessage)}`;
-      window.open(waUrl, '_blank', 'noopener,noreferrer');
     });
   }
 
