@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const closeBtn = document.getElementById('nav-drawer-close-btn');
     if (closeBtn) {
-      closeBtn.addEventListener('click', closeMenu);
+      closeBtn.addEventListener('click', closeThreeDotsMenu);
     }
 
     function renderMenuContent() {
@@ -335,7 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const links = drawerBody.querySelectorAll('a.three-dots-menu-item');
       links.forEach(a => {
         a.addEventListener('click', () => {
-          closeMenu();
+          closeThreeDotsMenu();
         });
       });
 
@@ -363,7 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (logoutBtn) {
         logoutBtn.addEventListener('click', (e) => {
           e.preventDefault();
-          closeMenu();
+          closeThreeDotsMenu();
           const mod = window.FirebaseModule;
           if (mod && mod.auth && mod.signOut) {
             mod.signOut(mod.auth).then(() => {
@@ -478,7 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && panelEl.classList.contains('active')) {
-        closeMenu();
+        closeThreeDotsMenu();
       }
     });
 
@@ -703,13 +703,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     navMenu.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => {
-        closeMenu();
+        closeMobileNavMenu();
       });
     });
 
     document.addEventListener('click', (e) => {
       if (navMenu.classList.contains('active') && !navMenu.contains(e.target) && (!mobileToggle || !mobileToggle.contains(e.target))) {
-        closeMenu();
+        closeMobileNavMenu();
       }
     });
   }
