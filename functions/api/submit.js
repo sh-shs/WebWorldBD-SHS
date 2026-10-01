@@ -18,8 +18,13 @@ export async function onRequestPost(context) {
   const { request, env } = context;
 
   try {
-    const botToken = env.TELEGRAM_BOT_TOKEN;
-    const chatId = env.TELEGRAM_CHAT_ID;
+    // Sanitize Telegram Bot Token & Chat ID environment variables
+    let botToken = (env.TELEGRAM_BOT_TOKEN || '').trim().replace(/^["']|["']$/g, '');
+    if (botToken.toLowerCase().startsWith('bot')) {
+      botToken = botToken.slice(3);
+    }
+
+    let chatId = (env.TELEGRAM_CHAT_ID || '').trim().replace(/^["']|["']$/g, '');
 
     if (!botToken || !chatId) {
       return new Response(
@@ -45,7 +50,7 @@ export async function onRequestPost(context) {
     const file = formData.get('file') || formData.get('attachment');
 
     const formattedMessage =
-      `🚀 নতুন প্রজেক্ট রিকোয়েস্ট!\n` +
+      `🚀 নতুন প্রজেক্ট রিকোয়েস্ট!\n\n` +
       `👤 নাম: ${name}\n` +
       `📞 মোবাইল: ${mobile}\n` +
       `📧 ইমেইল: ${email}\n` +
@@ -59,7 +64,7 @@ export async function onRequestPost(context) {
     let telegramErrorMsg = '';
 
     // If file is attached and valid size
-    if (file && typeof file === 'object' && file.size > 0) {
+    if (file && typeof file === 'object' && typeof file.size === 'number' && file.size > 0) {
       try {
         const tgDocForm = new FormData();
         tgDocForm.append('chat_id', chatId);
@@ -77,7 +82,7 @@ export async function onRequestPost(context) {
           telegramSuccess = true;
         } else {
           console.warn('sendDocument failed, falling back to sendMessage:', tgData);
-          telegramErrorMsg = tgData.description || 'sendDocument API error';
+          telegramErrorMsg = tgData.description || `HTTP ${tgRes.status}: sendDocument API error`;
         }
       } catch (docErr) {
         console.warn('Exception during sendDocument, falling back to sendMessage:', docErr);
@@ -87,7 +92,7 @@ export async function onRequestPost(context) {
 
     // Fallback or No-File path: Send text message
     if (!telegramSuccess) {
-      const fallbackNote = (file && typeof file === 'object' && file.size > 0)
+      const fallbackNote = (file && typeof file === 'object' && typeof file.size === 'number' && file.size > 0)
         ? `\n\n⚠️ নোট: ফাইলটি টেলিগ্রামে পাঠাতে সমস্যা হয়েছে (${telegramErrorMsg || 'ফাইল সাইজ বা সার্ভার ইস্যু'}), শুধুমাত্র বিবরণী পাঠানো হলো।`
         : '';
 
@@ -105,13 +110,14 @@ export async function onRequestPost(context) {
       if (tgMsgRes.ok && tgMsgData.ok) {
         telegramSuccess = true;
       } else {
+        const errDetail = tgMsgData.description || `Telegram API Error (${tgMsgRes.status})`;
         return new Response(
           JSON.stringify({
             success: false,
-            error: tgMsgData.description || 'Failed to send message via Telegram API.',
+            error: errDetail,
           }),
           {
-            status: 500,
+            status: tgMsgRes.status === 401 ? 401 : 500,
             headers: CORS_HEADERS,
           }
         );
