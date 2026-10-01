@@ -2605,6 +2605,7 @@ body.lang-bn .hero-intro-text {
 
 /* Contact Info Icon Brand Variants */
 .contact-icon.gmail { background: rgba(234, 67, 53, 0.12); border-color: rgba(234, 67, 53, 0.3); }
+.contact-icon.phone { background: rgba(16, 185, 129, 0.12); border-color: rgba(16, 185, 129, 0.3); color: var(--accent-emerald); }
 .contact-icon.whatsapp { background: rgba(37, 211, 102, 0.12); border-color: rgba(37, 211, 102, 0.3); color: #25D366; }
 .contact-icon.hotline { background: rgba(56, 189, 248, 0.12); border-color: rgba(56, 189, 248, 0.3); color: var(--accent-blue); }
 .contact-icon.telegram { background: rgba(36, 161, 222, 0.12); border-color: rgba(36, 161, 222, 0.3); color: #24A1DE; }
@@ -3495,23 +3496,6 @@ body.lang-bn .hero-intro-text {
     padding-bottom: 5px;
   }
 
-  .floating-whatsapp {
-    bottom: calc(88px + env(safe-area-inset-bottom));
-    right: 16px;
-    width: 48px;
-    height: 48px;
-    font-size: 1.4rem;
-    z-index: 9999;
-  }
-
-  .back-to-top {
-    bottom: calc(88px + env(safe-area-inset-bottom));
-    right: 72px;
-    width: 42px;
-    height: 42px;
-    font-size: 0.95rem;
-    z-index: 9999;
-  }
 }
 
 .floating-whatsapp {
@@ -3548,6 +3532,26 @@ body.lang-bn .hero-intro-text {
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .floating-whatsapp {
+    bottom: calc(128px + env(safe-area-inset-bottom));
+    right: 16px;
+    width: 48px;
+    height: 48px;
+    font-size: 1.4rem;
+    z-index: 9999;
+  }
+
+  .back-to-top {
+    bottom: calc(128px + env(safe-area-inset-bottom));
+    right: 72px;
+    width: 42px;
+    height: 42px;
+    font-size: 0.95rem;
+    z-index: 9999;
+  }
 }
 
 .back-to-top.visible { opacity: 1; visibility: visible; }
