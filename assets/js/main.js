@@ -2308,31 +2308,37 @@ document.addEventListener('DOMContentLoaded', () => {
       const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.innerHTML = `<span class="btn-spinner"></span> ${currentLang === 'bn' ? 'পাঠানো হচ্ছে...' : 'Sending...'}`;
+        submitBtn.innerHTML = `<span class="btn-spinner"></span> ${currentLang === 'bn' ? 'পাঠানো হচ্ছে...' : 'Submitting...'}`;
       }
 
-      const tgFormData = new FormData();
-      tgFormData.append('name', name);
-      tgFormData.append('mobile', mobile);
-      tgFormData.append('email', email);
-      tgFormData.append('projectType', serviceType);
-      tgFormData.append('budget', budget);
-      tgFormData.append('requirements', desc);
+      const submitFormData = new FormData();
+      submitFormData.append('name', name);
+      submitFormData.append('fullName', name);
+      submitFormData.append('mobile', mobile);
+      submitFormData.append('email', email);
+      submitFormData.append('category', serviceType);
+      submitFormData.append('projectType', serviceType);
+      submitFormData.append('budget', budget);
+      submitFormData.append('description', desc);
+      submitFormData.append('requirements', desc);
       if (pendingReqFile) {
-        tgFormData.append('file', pendingReqFile);
+        submitFormData.append('file', pendingReqFile);
       }
 
       try {
-        const response = await fetch('/api/send-telegram', {
+        const response = await fetch('/api/submit', {
           method: 'POST',
-          body: tgFormData
+          body: submitFormData
         });
 
         const result = await response.json();
 
         if (response.ok && result && result.success) {
+          const successMsg = currentLang === 'bn'
+            ? 'ধন্যবাদ! আপনার রিকোয়েস্ট পাঠানো হয়েছে।'
+            : 'Thank you! Your project request has been submitted.';
           if (window.showToast) {
-            window.showToast("আপনার মেসেজ পাঠানো হয়েছে! শীঘ্রই যোগাযোগ করা হবে।", 'success');
+            window.showToast(successMsg, 'success');
           }
 
           // Save to Firestore for record keeping
@@ -2370,12 +2376,15 @@ document.addEventListener('DOMContentLoaded', () => {
           if (fileNameSpan) fileNameSpan.textContent = '';
           if (fileStatusSpan) fileStatusSpan.textContent = '';
         } else {
-          throw new Error(result.error || 'Server returned non-success response');
+          throw new Error((result && result.error) ? result.error : 'Server returned non-success response');
         }
       } catch (err) {
-        console.error('Send Telegram error:', err);
+        console.error('Submit project request error:', err);
+        const errMsg = currentLang === 'bn'
+          ? (err.message ? `রিকোয়েস্ট পাঠাতে ব্যর্থ হয়েছে: ${err.message}` : 'রিকোয়েস্ট পাঠাতে সমস্যা হয়েছে, অনুগ্রহ করে আবার চেষ্টা করুন।')
+          : (err.message ? `Submission failed: ${err.message}` : 'Something went wrong, please try again.');
         if (window.showToast) {
-          window.showToast("মেসেজ পাঠাতে সমস্যা হয়েছে, অনুগ্রহ করে আবার চেষ্টা করুন অথবা হোয়াটসঅ্যাপে যোগাযোগ করুন।", 'error');
+          window.showToast(errMsg, 'error');
         }
       } finally {
         if (submitBtn) {
