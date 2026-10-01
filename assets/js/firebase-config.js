@@ -37,13 +37,13 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCHSi0gYDulHe84PPNnSUNYbsNRTZjZMlc",
-  authDomain: "movebox-9b766.firebaseapp.com",
-  projectId: "movebox-9b766",
-  storageBucket: "movebox-9b766.firebasestorage.app",
-  messagingSenderId: "726875913332",
-  appId: "1:726875913332:web:d1e191717fc8c9f4a36521",
-  measurementId: "G-JDP02VP7HD"
+  apiKey: "AIzaSyAwb8imMQ_WtL7Lp56wo8P8EHBlS4OxtMI",
+  authDomain: "web-worldbd.firebaseapp.com",
+  projectId: "web-worldbd",
+  storageBucket: "web-worldbd.firebasestorage.app",
+  messagingSenderId: "255296358027",
+  appId: "1:255296358027:web:b2bf1baf074f62aa06768e",
+  measurementId: "G-KRHD6HY3Z6"
 };
 
 const app = initializeApp(firebaseConfig);
