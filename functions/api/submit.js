@@ -45,7 +45,6 @@ export async function onRequestPost(context) {
     const mobile = formData.get('mobile') || formData.get('contact') || formData.get('phone') || 'প্রদান করা হয়নি';
     const email = formData.get('email') || 'প্রদান করা হয়নি';
     const category = formData.get('category') || formData.get('projectType') || formData.get('serviceType') || 'অন্যান্য / Custom';
-    const budget = formData.get('budget') || 'Flexible';
     const description = formData.get('description') || formData.get('requirements') || formData.get('desc') || 'কোন বিবরণ দেওয়া হয়নি';
     const file = formData.get('file') || formData.get('attachment');
 
@@ -55,7 +54,6 @@ export async function onRequestPost(context) {
       `📞 মোবাইল: ${mobile}\n` +
       `📧 ইমেইল: ${email}\n` +
       `📁 ক্যাটাগরি: ${category}\n` +
-      `💰 বাজেট: ${budget}\n` +
       `📝 বিবরণ: ${description}`;
 
     const TELEGRAM_API = `https://api.telegram.org/bot${botToken}`;

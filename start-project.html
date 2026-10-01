@@ -115,24 +115,26 @@
 
           <div>
             <label class="form-label" data-i18n="formServiceLabel" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Project Type</label>
-            <select id="project-req-type" class="form-control" style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--radius-md); background: var(--bg-glass); border: 1px solid var(--border-glass); color: var(--text-main);">
-              <option value="others" data-i18n="formServiceOthers">অন্যান্য / Custom</option>
+            <select id="project-req-type" class="form-control" style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--radius-md); background: var(--bg-glass); border: 1px solid var(--border-glass); color: var(--text-main);" required>
+              <option value="" data-i18n="formSelectCategory">-- Select category --</option>
               <option value="business" data-i18n="serviceBusiness">Business Website</option>
               <option value="ecommerce" data-i18n="serviceEcommerce">E-commerce Website</option>
               <option value="portfolio" data-i18n="servicePortfolio">Portfolio Website</option>
-              <option value="webapp-saas" data-i18n="serviceWebapp">Web App / SaaS</option>
-              <option value="ai-website" data-i18n="serviceAi">AI Website & Tools</option>
+              <option value="blog" data-i18n="serviceBlog">Blog Website</option>
+              <option value="news" data-i18n="serviceNews">News Portal</option>
+              <option value="educational" data-i18n="serviceEducational">Educational Website</option>
+              <option value="social" data-i18n="serviceSocialMedia">Social Media Website</option>
+              <option value="webapp" data-i18n="serviceWebapp">Web App / SaaS</option>
+              <option value="booking" data-i18n="serviceBooking">Booking Website</option>
+              <option value="marketplace" data-i18n="serviceMarketplace">Marketplace Website</option>
+              <option value="forum" data-i18n="serviceForum">Forum / Community Site</option>
+              <option value="entertainment" data-i18n="serviceEntertainment">Entertainment Website</option>
+              <option value="landing" data-i18n="serviceLandingPage">Landing Page</option>
+              <option value="govt-ngo" data-i18n="serviceGovernment">Government / NGO Site</option>
+              <option value="ai" data-i18n="serviceAi">AI Website / Tools</option>
+              <option value="other" data-i18n="formServiceOthers">Others / Custom</option>
             </select>
-          </div>
-
-          <div>
-            <label class="form-label" data-i18n="formBudgetLabel" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Estimated Budget</label>
-            <select id="project-req-budget" class="form-control" style="width: 100%; padding: 0.75rem 1rem; border-radius: var(--radius-md); background: var(--bg-glass); border: 1px solid var(--border-glass); color: var(--text-main);">
-              <option value="flexible" data-i18n="formBudget4">Flexible / To be discussed</option>
-              <option value="basic" data-i18n="formBudget1">৳10,000 - ৳20,000</option>
-              <option value="standard" data-i18n="formBudget2">৳20,000 - ৳50,000</option>
-              <option value="enterprise" data-i18n="formBudget3">৳50,000 - ৳100,000+</option>
-            </select>
+            <span id="project-req-type-error" class="field-error-msg" style="color: #EF4444; font-size: 0.82rem; margin-top: 0.35rem; display: none;"></span>
           </div>
 
           <div>
