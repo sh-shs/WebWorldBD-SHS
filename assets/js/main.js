@@ -231,9 +231,9 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'why', url: `${p}why-choose-me.html`, icon: 'fas fa-shield-halved', i18nKey: 'menuWhy' },
         { id: 'process', url: `${p}process.html`, icon: 'fas fa-list-check', i18nKey: 'menuProcess' },
         { id: 'faq', url: `${p}faq.html`, icon: 'fas fa-circle-question', i18nKey: 'menuFaq' },
-        { id: 'shopping-now', url: 'https://shs-bazar.pages.dev/', icon: 'fas fa-bag-shopping', i18nKey: 'menuShoppingNow', external: true },
-        { id: 'student-tools-ai', url: 'https://student-tools-ai.pages.dev/', icon: 'fas fa-graduation-cap', i18nKey: 'menuStudentToolsAi', external: true },
-        { id: 'privacy-policy', url: 'https://privacy-policy-5dn.pages.dev/', icon: 'fas fa-shield-halved', i18nKey: 'menuPrivacyPolicy', external: true }
+        { id: 'shopping-now', url: 'https://shsbazar.pages.dev/', icon: 'fas fa-bag-shopping', i18nKey: 'menuShoppingNow', external: true },
+        { id: 'student-tools-ai', url: 'https://studentstoolsorai.pages.dev/', icon: 'fas fa-graduation-cap', i18nKey: 'menuStudentToolsAi', external: true },
+        { id: 'privacy-policy', url: 'https://webworldbd-privacypolicy.pages.dev/', icon: 'fas fa-shield-halved', i18nKey: 'menuPrivacyPolicy', external: true }
       ];
 
       const group3 = [
