@@ -2154,12 +2154,49 @@ document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const serviceParam = urlParams.get('service');
     const typeSelect = document.getElementById('project-req-type');
+    const typeErrorSpan = document.getElementById('project-req-type-error');
 
     if (typeSelect && serviceParam) {
-      if (serviceParam === 'others') {
-        typeSelect.value = 'others';
-      } else if (typeSelect.querySelector(`option[value="${serviceParam}"]`)) {
-        typeSelect.value = serviceParam;
+      const slugMap = {
+        'business-website': 'business',
+        'business': 'business',
+        'ecommerce-website': 'ecommerce',
+        'ecommerce': 'ecommerce',
+        'portfolio-website': 'portfolio',
+        'portfolio': 'portfolio',
+        'blog-website': 'blog',
+        'blog': 'blog',
+        'news-website': 'news',
+        'news': 'news',
+        'educational-website': 'educational',
+        'educational': 'educational',
+        'social-media-website': 'social',
+        'social-media': 'social',
+        'social': 'social',
+        'webapp-saas': 'webapp',
+        'webapp': 'webapp',
+        'booking-website': 'booking',
+        'booking': 'booking',
+        'marketplace-website': 'marketplace',
+        'marketplace': 'marketplace',
+        'forum-community-website': 'forum',
+        'forum': 'forum',
+        'entertainment-website': 'entertainment',
+        'entertainment': 'entertainment',
+        'landing-page': 'landing',
+        'landing': 'landing',
+        'government-ngo-website': 'govt-ngo',
+        'govt-ngo': 'govt-ngo',
+        'government': 'govt-ngo',
+        'ai-website': 'ai',
+        'ai': 'ai',
+        'others': 'other',
+        'other': 'other'
+      };
+
+      const matchedValue = slugMap[serviceParam.toLowerCase()] || serviceParam;
+      if (typeSelect.querySelector(`option[value="${matchedValue}"]`)) {
+        typeSelect.value = matchedValue;
       }
     }
 
@@ -2198,10 +2235,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const emailErrorSpan = document.getElementById('project-req-email-error');
 
     function clearStartProjectErrors() {
+      if (typeSelect) typeSelect.classList.remove('is-invalid');
+      if (typeErrorSpan) { typeErrorSpan.textContent = ''; typeErrorSpan.style.display = 'none'; }
       if (mobileInput) mobileInput.classList.remove('is-invalid');
       if (emailInput) emailInput.classList.remove('is-invalid');
       if (mobileErrorSpan) { mobileErrorSpan.textContent = ''; mobileErrorSpan.style.display = 'none'; }
       if (emailErrorSpan) { emailErrorSpan.textContent = ''; emailErrorSpan.style.display = 'none'; }
+    }
+
+    if (typeSelect) {
+      typeSelect.addEventListener('change', () => {
+        if (typeSelect) typeSelect.classList.remove('is-invalid');
+        if (typeErrorSpan) { typeErrorSpan.textContent = ''; typeErrorSpan.style.display = 'none'; }
+      });
     }
 
     if (mobileInput) {
@@ -2224,11 +2270,25 @@ document.addEventListener('DOMContentLoaded', () => {
       const name = document.getElementById('project-req-name')?.value.trim() || '';
       const mobile = mobileInput?.value.trim() || '';
       const email = emailInput?.value.trim() || '';
-      const serviceType = typeSelect ? typeSelect.options[typeSelect.selectedIndex].text : 'Custom Project';
-      const budget = document.getElementById('project-req-budget')?.value || 'flexible';
+      const categoryVal = typeSelect?.value || '';
+      const serviceType = (typeSelect && typeSelect.selectedIndex >= 0 && categoryVal) ? typeSelect.options[typeSelect.selectedIndex].text : '';
       const desc = document.getElementById('project-req-desc')?.value.trim() || '';
 
       let hasError = false;
+
+      // Category Validation (REQUIRED)
+      if (!categoryVal) {
+        if (typeSelect) typeSelect.classList.add('is-invalid');
+        const catErrorMsg = (translations[currentLang] && translations[currentLang].errCategoryRequired)
+          ? translations[currentLang].errCategoryRequired
+          : (currentLang === 'bn' ? 'অনুগ্রহ করে প্রজেক্টের ক্যাটাগরি নির্বাচন করুন।' : 'Please select a project category.');
+        if (typeErrorSpan) {
+          typeErrorSpan.textContent = catErrorMsg;
+          typeErrorSpan.style.display = 'block';
+        }
+        if (window.showToast) window.showToast(catErrorMsg, 'error');
+        hasError = true;
+      }
 
       // Full Name Validation
       if (!name) {
@@ -2271,7 +2331,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return null;
       }
 
-      return { name, mobile, email, serviceType, budget, desc };
+      return { name, mobile, email, categoryVal, serviceType, desc };
     }
 
     const whatsappBtn = document.getElementById('btn-project-req-whatsapp');
@@ -2280,7 +2340,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const formData = validateProjectReqForm();
         if (!formData) return;
 
-        const { name, mobile, email, serviceType, budget, desc } = formData;
+        const { name, mobile, email, serviceType, desc } = formData;
         const formattedEmail = email ? email : 'প্রদান করা হয়নি';
 
         const waText =
@@ -2288,8 +2348,7 @@ document.addEventListener('DOMContentLoaded', () => {
           `*Name:* ${name}\n` +
           `*Mobile:* ${mobile}\n` +
           `*Email:* ${formattedEmail}\n` +
-          `*Project Type:* ${serviceType}\n` +
-          `*Budget:* ${budget}\n` +
+          `*Project Category:* ${serviceType}\n` +
           `*Requirements:* ${desc}`;
 
         const waUrl = `https://wa.me/8801342697743?text=${encodeURIComponent(waText)}`;
@@ -2302,7 +2361,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const formData = validateProjectReqForm();
       if (!formData) return;
 
-      const { name, mobile, email, serviceType, budget, desc } = formData;
+      const { name, mobile, email, serviceType, desc } = formData;
 
       const submitBtn = document.getElementById('btn-project-req-submit') || form.querySelector('button[type="submit"]');
       const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
@@ -2318,7 +2377,6 @@ document.addEventListener('DOMContentLoaded', () => {
       submitFormData.append('email', email);
       submitFormData.append('category', serviceType);
       submitFormData.append('projectType', serviceType);
-      submitFormData.append('budget', budget);
       submitFormData.append('description', desc);
       submitFormData.append('requirements', desc);
       if (pendingReqFile) {
@@ -2354,7 +2412,6 @@ document.addEventListener('DOMContentLoaded', () => {
             email: email,
             contactInfo: mobile + (email ? ' | ' + email : ''),
             serviceName: serviceType,
-            budget: budget,
             description: desc,
             attachmentName: pendingReqFile ? pendingReqFile.name : null,
             status: 'pending',
@@ -3393,7 +3450,7 @@ Website: https://webworldbd.com
           if (requests.length === 0) {
             tableBody.innerHTML = `
               <tr>
-                <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">
                   <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 0.5rem; display: block; color: var(--accent-blue);"></i>
                   ${currentLang === 'bn' ? 'কোন প্রজেক্ট রিকুয়েস্ট পাওয়া যায়নি।' : 'No project requests found.'}
                 </td>
@@ -3422,7 +3479,6 @@ Website: https://webworldbd.com
                     </div>
                   </td>
                   <td>${req.serviceName || 'Custom Service'}</td>
-                  <td>${req.budget || 'Flexible'}</td>
                   <td style="max-width: 200px; font-size: 0.85rem;">${reqDetails}${attachmentHtml}</td>
                   <td>${badge}</td>
                   <td>${formattedDate}</td>

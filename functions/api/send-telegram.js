@@ -31,9 +31,8 @@ export async function onRequestPost(context) {
     const name = formData.get('name') || '';
     const mobile = formData.get('mobile') || formData.get('contact') || '';
     const email = formData.get('email') || '';
-    const projectType = formData.get('projectType') || '';
-    const budget = formData.get('budget') || '';
-    const requirements = formData.get('requirements') || '';
+    const projectType = formData.get('projectType') || formData.get('category') || '';
+    const requirements = formData.get('requirements') || formData.get('description') || '';
     const file = formData.get('file'); // may be null
 
     const formattedEmail = email ? email : 'প্রদান করা হয়নি';
@@ -43,8 +42,7 @@ export async function onRequestPost(context) {
       `*Name:* ${name}\n` +
       `*Mobile:* ${mobile}\n` +
       `*Email:* ${formattedEmail}\n` +
-      `*Project Type:* ${projectType}\n` +
-      `*Budget:* ${budget}\n` +
+      `*Project Category:* ${projectType}\n` +
       `*Requirements:* ${requirements}`;
 
     const TELEGRAM_API = `https://api.telegram.org/bot${botToken}`;
