@@ -221,7 +221,9 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'connect', url: `${p}contact.html`, icon: 'fas fa-link', i18nKey: 'menuConnect' },
         { id: 'settings', url: `${p}settings.html`, icon: 'fas fa-gear', i18nKey: 'menuSettings' },
         { id: 'theme', action: 'theme', icon: currentTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun', i18nKey: 'menuTheme' },
-        { id: 'language', action: 'language', icon: 'fas fa-globe', i18nKey: 'menuLanguage' }
+        { id: 'language', action: 'language', icon: 'fas fa-globe', i18nKey: 'menuLanguage' },
+        { id: 'shopping-now', url: 'https://shsbazar.pages.dev/', icon: 'fas fa-bag-shopping', i18nKey: 'menuShoppingNow', external: true },
+        { id: 'student-tools-ai', url: 'https://studentstoolsorai.pages.dev/', icon: 'fas fa-graduation-cap', i18nKey: 'menuStudentToolsAi', external: true }
       ];
 
       const group2 = [
@@ -231,8 +233,6 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'why', url: `${p}why-choose-me.html`, icon: 'fas fa-shield-halved', i18nKey: 'menuWhy' },
         { id: 'process', url: `${p}process.html`, icon: 'fas fa-list-check', i18nKey: 'menuProcess' },
         { id: 'faq', url: `${p}faq.html`, icon: 'fas fa-circle-question', i18nKey: 'menuFaq' },
-        { id: 'shopping-now', url: 'https://shsbazar.pages.dev/', icon: 'fas fa-bag-shopping', i18nKey: 'menuShoppingNow', external: true },
-        { id: 'student-tools-ai', url: 'https://studentstoolsorai.pages.dev/', icon: 'fas fa-graduation-cap', i18nKey: 'menuStudentToolsAi', external: true },
         { id: 'privacy-policy', url: 'https://webworldbd-privacypolicy.pages.dev/', icon: 'fas fa-shield-halved', i18nKey: 'menuPrivacyPolicy', external: true }
       ];
 
@@ -262,7 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="three-dots-user-info">
               <span class="three-dots-user-name">${displayName}</span>
-              <span class="three-dots-user-email">${displayEmail}</span>
+              <span class="three-dots-user-email" title="${displayEmail}">${displayEmail}</span>
             </div>
           </a>
         `;
@@ -286,23 +286,27 @@ document.addEventListener('DOMContentLoaded', () => {
           }
 
           if (item.action === 'theme') {
+            const themeLabel = currentTheme === 'dark' ? (currentLang === 'bn' ? 'ডার্ক' : 'Dark') : (currentLang === 'bn' ? 'লাইট' : 'Light');
             return `
               <button type="button" class="three-dots-menu-item three-dots-theme-btn" data-menu-id="${item.id}">
                 <div class="three-dots-icon-box">
                   <i class="${item.icon} three-dots-menu-icon"></i>
                 </div>
                 <span data-i18n="${item.i18nKey}">${label}</span>
+                <span class="three-dots-state-badge">${themeLabel}</span>
               </button>
             `;
           }
 
           if (item.action === 'language') {
+            const langLabel = currentLang === 'bn' ? 'বাংলা' : 'EN';
             return `
               <button type="button" class="three-dots-menu-item three-dots-lang-btn" data-menu-id="${item.id}">
                 <div class="three-dots-icon-box">
                   <i class="${item.icon} three-dots-menu-icon"></i>
                 </div>
                 <span data-i18n="${item.i18nKey}">${label}</span>
+                <span class="three-dots-state-badge">${langLabel}</span>
               </button>
             `;
           }
